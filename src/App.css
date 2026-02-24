@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@600;700&display=swap');
+
+:root {
+  --bg: #01080e;
+  --panel: #050f1a;
+  --cyan: #00f7ff;
+  --gold: #ffaa00;
+  --red: #ff3e3e;
+  --green: #00ff88;
+  --border: rgba(0, 247, 255, 0.2);
+}
+
+body { background: var(--bg); color: #fff; font-family: 'Rajdhani', sans-serif; margin: 0; }
+
+/* NAVBAR (Cleaned: No Discounts) */
+.navbar { display: flex; justify-content: space-between; padding: 15px 40px; background: #06121f; border-bottom: 1px solid var(--border); }
+.nav-links a { margin-left: 20px; color: var(--cyan); text-decoration: none; font-weight: bold; }
+
+/* SIDE NAV & LOGOUT */
+.side-nav { background: #000; border-right: 1px solid var(--border); display: flex; flex-direction: column; height: 100vh; }
+.logout-btn { background: rgba(255, 62, 62, 0.1); border: 1px solid var(--red); color: var(--red); margin: 20px; padding: 10px; cursor: pointer; transition: 0.3s; font-family: 'Orbitron'; }
+.logout-btn:hover { background: var(--red); color: #000; box-shadow: 0 0 15px var(--red); }
+
+/* CYBER VERIFY BUTTON */
+.cyber-verify-btn {
+  background: transparent; border: 1px solid var(--cyan); color: var(--cyan);
+  padding: 5px 15px; cursor: pointer; font-family: 'Orbitron'; font-size: 10px;
+  transition: 0.3s;
+}
+.cyber-verify-btn:hover { background: var(--cyan); color: #000; box-shadow: 0 0 10px var(--cyan); }
+
+/* RISK HEATMAP */
+.risk-bar-container { width: 100px; height: 8px; background: #111; border-radius: 4px; overflow: hidden; }
+.risk-fill { height: 100%; transition: 0.5s; }
+.bg-gold { background: var(--gold); box-shadow: 0 0 10px var(--gold); }
+
+/* RFID RADAR */
+.radar-disk { width: 300px; height: 300px; border: 2px solid var(--cyan); border-radius: 50%; position: relative; margin: 40px auto; background: radial-gradient(circle, #001 0%, #000 100%); }
+.radar-sweep { position: absolute; width: 50%; height: 2px; background: var(--cyan); top: 50%; left: 50%; transform-origin: left; animation: sweep 4s linear infinite; }
+.moving-dot { position: absolute; width: 10px; height: 10px; background: var(--red); border-radius: 50%; box-shadow: 0 0 10px var(--red); }
+
+@keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

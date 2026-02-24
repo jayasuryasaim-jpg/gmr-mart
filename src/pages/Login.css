@@ -1,0 +1,193 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap');
+
+.login-master {
+  width: 100vw;
+  height: 100vh;
+  background: #000810;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Rajdhani', sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+/* SCANLINE EFFECT */
+.bg-scanline {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+              linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.login-frame {
+  background: rgba(0, 20, 35, 0.8);
+  border: 1px solid rgba(0, 247, 255, 0.2);
+  padding: 50px 40px;
+  width: 420px;
+  text-align: center;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 10;
+}
+
+/* SECURITY RING ANIMATION */
+.auth-header {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+}
+
+.security-ring {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  border: 2px dashed #00f7ff;
+  border-radius: 50%;
+  animation: spin 10s linear infinite;
+}
+
+.lock-symbol {
+  font-size: 30px;
+  line-height: 80px;
+  text-shadow: 0 0 10px #00f7ff;
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+.terminal-text {
+  font-family: 'Orbitron';
+  letter-spacing: 3px;
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+.auth-subtitle {
+  color: #5d707c;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  margin-bottom: 30px;
+}
+
+/* CYBER INPUTS */
+.cyber-input-group {
+  position: relative;
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+.cyber-input-group input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding: 10px 5px;
+  color: #fff;
+  font-family: 'Orbitron';
+  font-size: 0.9rem;
+  transition: 0.3s;
+}
+
+.cyber-input-group label {
+  position: absolute;
+  top: 10px; left: 5px;
+  color: #4b6270;
+  pointer-events: none;
+  transition: 0.3s;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+}
+
+.cyber-input-group input:focus ~ label,
+.cyber-input-group input:not(:placeholder-shown) ~ label {
+  top: -15px;
+  color: #00f7ff;
+  font-size: 0.6rem;
+}
+
+.input-bar {
+  position: absolute;
+  bottom: 0; left: 0; width: 0; height: 1px;
+  background: #00f7ff;
+  transition: 0.4s;
+}
+
+.cyber-input-group input:focus ~ .input-bar { width: 100%; }
+
+/* ERROR MESSAGE */
+.error-terminal {
+  color: #ff3e3e;
+  font-size: 0.7rem;
+  margin-bottom: 20px;
+  font-family: 'Orbitron';
+}
+
+.blink { animation: blinker 1s linear infinite; }
+@keyframes blinker { 50% { opacity: 0; } }
+
+/* BUTTON */
+.auth-submit-btn {
+  width: 100%;
+  background: rgba(0, 247, 255, 0.1);
+  border: 1px solid #00f7ff;
+  color: #00f7ff;
+  padding: 12px;
+  font-family: 'Orbitron';
+  letter-spacing: 2px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+.auth-submit-btn:hover {
+  background: #00f7ff;
+  color: #000;
+  box-shadow: 0 0 20px rgba(0, 247, 255, 0.4);
+}
+
+/* ALERT OVERLAY */
+.security-threat-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(255, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse-red 1s infinite alternate;
+}
+
+@keyframes pulse-red { from { background: rgba(255, 0, 0, 0.1); } to { background: rgba(255, 0, 0, 0.3); } }
+
+.alert-content {
+  background: #000;
+  border: 2px solid #ff3e3e;
+  padding: 40px;
+  text-align: center;
+  color: #ff3e3e;
+  font-family: 'Orbitron';
+}
+
+.alert-icon { font-size: 50px; margin-bottom: 10px; }
+
+.reset-trigger {
+  display: block;
+  margin-top: 20px;
+  font-size: 0.6rem;
+  color: #4b6270;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.security-tag {
+  margin-top: 15px;
+  font-size: 0.55rem;
+  color: #2a3b47;
+}
+
+.cyan-txt { color: #00f7ff; }

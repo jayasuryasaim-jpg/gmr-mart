@@ -1,0 +1,7 @@
+[
+  { "name": "Amul Milk", "category": "Milk", "floor": "Ground Floor", "path": "assets/products/ground-floor/dairy/milk/", "filename": "amul.jpg", "price": 32, "discount": 5, "stock": 50, "row": "A1", "brand": "Amul", "mfg_date": "20-Feb-2026", "exp_date": "23-Feb-2026" },
+  { "name": "Heritage Milk", "category": "Milk", "floor": "Ground Floor", "path": "assets/products/ground-floor/dairy/milk/", "filename": "heritage.jpg", "price": 30, "discount": 0, "stock": 40, "row": "A1", "brand": "Heritage", "mfg_date": "20-Feb-2026", "exp_date": "22-Feb-2026" },
+  { "name": "Silk Saree", "category": "Women's Wear", "floor": "First Floor", "path": "assets/products/first-floor/women/sarees/", "filename": "silk-saree.jpg", "price": 2500, "discount": 20, "stock": 15, "row": "F1", "brand": "Traditional", "mfg_date": "Nov-2025", "exp_date": "N/A" },
+  { "name": "Remote Car", "category": "Toys", "floor": "Second Floor", "path": "assets/products/second-floor/toys/", "filename": "remote-car.jpg", "price": 999, "discount": 15, "stock": 15, "row": "L1", "brand": "Turbo", "mfg_date": "Aug-2025", "exp_date": "N/A" },
+  { "name": "Office Chair", "category": "Furniture", "floor": "Second Floor", "path": "assets/products/second-floor/furniture/chairs/", "filename": "office-chair.jpg", "price": 4500, "discount": 0, "stock": 5, "row": "M1", "brand": "Comfort", "mfg_date": "Sep-2025", "exp_date": "N/A" }
+]

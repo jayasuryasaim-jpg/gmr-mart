@@ -1,0 +1,63 @@
+.scan-wrapper {
+  min-height: 100vh;
+  background: #000814;
+  color: white;
+  text-align: center;
+  padding: 40px;
+}
+
+.scanner-box {
+  width: 320px;
+  margin: 40px auto;
+  border: 2px solid #00f7ff;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 0 25px #00f7ff;
+}
+
+.success-box {
+  margin-top: 50px;
+  padding: 25px;
+  background: #071b2e;
+  border-radius: 15px;
+  box-shadow: 0 0 20px #00ff88;
+}
+.scan-wrapper {
+  min-height: 100vh;
+  background: #000814;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+.scanner-container {
+  max-width: 400px;
+  margin: 30px auto;
+  border: 2px solid #00f7ff;
+  border-radius: 15px;
+  overflow: hidden;
+  background: #071b2e;
+  box-shadow: 0 0 30px rgba(0, 247, 255, 0.3);
+}
+
+/* Styling the library's internal elements */
+#reader {
+  border: none !important;
+}
+
+#reader__dashboard_section_csr button {
+  background: #00f7ff !important;
+  color: black !important;
+  padding: 10px !important;
+  border-radius: 5px !important;
+  text-transform: uppercase;
+  font-weight: bold;
+  border: none;
+  margin: 10px;
+}
+
+#reader__camera_selection {
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}

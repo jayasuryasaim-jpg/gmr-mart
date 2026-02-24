@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+.cyber-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  height: 70px;
+  background: rgba(0, 8, 20, 0.85);
+  backdrop-filter: blur(15px);
+  border-bottom: 1px solid rgba(0, 247, 255, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.nav-logo {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.logo-accent {
+  color: #00f7ff;
+  text-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
+}
+
+.nav-links-container {
+  display: flex;
+  gap: 15px;
+  height: 100%;
+  align-items: center;
+}
+
+/* THE PRO BUTTON DESIGN */
+.nav-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 20px;
+  color: #8fa3b0;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%); /* Beveled tech look */
+}
+
+.nav-btn:hover {
+  color: #fff;
+  background: rgba(0, 247, 255, 0.05);
+  border-color: rgba(0, 247, 255, 0.5);
+  box-shadow: 0 0 15px rgba(0, 247, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.nav-btn.active {
+  background: rgba(0, 247, 255, 0.1);
+  border-color: #00f7ff;
+  color: #00f7ff;
+  box-shadow: inset 0 0 10px rgba(0, 247, 255, 0.2);
+}
+
+/* SPECIAL LOGIN BUTTON HIGHLIGHT */
+.login-btn-nav {
+  border: 1px solid rgba(0, 247, 255, 0.4);
+  background: rgba(0, 247, 255, 0.05);
+}
+
+/* LOGOUT BUTTON HIGHLIGHT */
+.logout-btn {
+  border: 1px solid rgba(255, 62, 62, 0.4);
+}
+.logout-btn:hover {
+  border-color: #ff3e3e;
+  background: rgba(255, 62, 62, 0.1);
+  box-shadow: 0 0 15px rgba(255, 62, 62, 0.2);
+}
+
+/* GLIMMER EFFECT ON HOVER */
+.btn-glimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: 0.5s;
+}
+
+.nav-btn:hover .btn-glimmer {
+  left: 100%;
+}
+
+.nav-bottom-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #00f7ff, transparent);
+  opacity: 0.3;
+}

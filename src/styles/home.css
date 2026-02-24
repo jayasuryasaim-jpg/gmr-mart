@@ -1,0 +1,92 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #001f3f, #003366);
+  color: white;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 50, 0.8);
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.search-bar {
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  width: 250px;
+}
+
+.cart-status {
+  background: #00bfff;
+  padding: 8px 15px;
+  border-radius: 20px;
+}
+
+/* Floors */
+.floor-section {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 80px;
+}
+
+.floor-card {
+  width: 250px;
+  height: 200px;
+  background: rgba(0, 0, 100, 0.6);
+  border-radius: 20px;
+  text-align: center;
+  padding-top: 40px;
+  transition: 0.3s;
+}
+
+.floor-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #00bfff;
+}
+
+.enter-btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #00bfff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Guide Bot */
+.guide-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+
+.guide-img {
+  width: 120px;
+  cursor: pointer;
+}
+
+.guide-tooltip {
+  display: none;
+  position: absolute;
+  bottom: 140px;
+  right: 0;
+  background: #00bfff;
+  padding: 10px;
+  border-radius: 10px;
+  width: 200px;
+}
+
+.guide-container:hover .guide-tooltip {
+  display: block;
+}
