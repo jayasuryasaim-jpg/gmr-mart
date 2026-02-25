@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SecurityBreach from './SecurityBreach'; // Import the new component
+import SecurityBreach from './SecurityBreach'; 
 import './Login.css';
 
 const Login = ({ onLogin }) => {
@@ -9,31 +9,36 @@ const Login = ({ onLogin }) => {
   const [resetAlert, setResetAlert] = useState(false);
   const [isBreached, setIsBreached] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
+  const [userIp, setUserIp] = useState(''); // To help you debug
   const navigate = useNavigate();
 
   // Load environment variables
   const ADMIN_ID = process.env.REACT_APP_ADMIN_ID;
   const ADMIN_PASS = process.env.REACT_APP_ADMIN_PASS;
-  const ALLOWED_IP = process.env.REACT_APP_ALLOWED_IP;
+  const ALLOWED_IP_STRING = process.env.REACT_APP_ALLOWED_IP;
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsChecking(true);
 
-    // 1. SECURITY CHECK: Verify environment variables exist
-    if (!ADMIN_ID || !ADMIN_PASS || !ALLOWED_IP) {
+    // 1. INITIAL VALIDATION
+    if (!ADMIN_ID || !ADMIN_PASS || !ALLOWED_IP_STRING) {
       setError('CRITICAL: SYSTEM ENVIRONMENT NOT INITIALIZED');
       setIsChecking(false);
       return;
     }
 
     try {
-      // 2. IP VALIDATION: Check visitor's public IP
+      // 2. IP VALIDATION: Fetching current visitor IP
       const response = await fetch('https://api.ipify.org?format=json');
       const data = await response.json();
+      setUserIp(data.ip);
       
-      if (data.ip !== ALLOWED_IP) {
-        setIsBreached(true); // Trigger the "scare" page
+      // Support for multiple IPs (Comma separated in Vercel)
+      const allowedIps = ALLOWED_IP_STRING.split(',').map(ip => ip.trim());
+      
+      if (!allowedIps.includes(data.ip)) {
+        setIsBreached(true); // Trigger the Security Breach Screen
         return;
       }
 
@@ -57,10 +62,7 @@ const Login = ({ onLogin }) => {
     setTimeout(() => setResetAlert(false), 5000);
   };
 
-  // If the IP is unauthorized, show the Breach screen instead of the Login form
-  if (isBreached) {
-    return <SecurityBreach />;
-  }
+  if (isBreached) return <SecurityBreach />;
 
   return (
     <div className="login-master">
@@ -71,7 +73,7 @@ const Login = ({ onLogin }) => {
           <div className="alert-content">
             <div className="alert-icon">⚠️</div>
             <h3>PROTOCOL 404 ACTIVATED</h3>
-            <p>SURVEILLANCE ENGAGED. TRACING TERMINAL IP... PLEASE REMAIN STATIONARY.</p>
+            <p>SURVEILLANCE ENGAGED. TRACING TERMINAL IP: {userIp}</p>
           </div>
         </div>
       )}
@@ -125,7 +127,7 @@ const Login = ({ onLogin }) => {
           <span className="reset-trigger" onClick={triggerEmergencyReset}>
             FORGOT_PASS? [EMERGENCY_RESET]
           </span>
-          <div className="security-tag">AES_256_ACTIVE // TERM_01</div>
+          <div className="security-tag">AES_256_ACTIVE // YOUR_IP: {userIp}</div>
         </div>
       </div>
     </div>

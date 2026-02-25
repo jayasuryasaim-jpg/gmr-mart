@@ -9,15 +9,14 @@ import ScanCart from "./pages/ScanCart";
 import Navbar from "./components/Navbar";
 import "./App.css";
 
-// This wrapper allows us to use 'useNavigate' inside App
 const AppContent = () => {
+  // Check if user was previously logged in
   const [isAuth, setIsAuth] = useState(() => localStorage.getItem('gmr_auth') === 'true');
   const navigate = useNavigate();
 
-  // PRO-LEVEL SECURITY: KEYBOARD GHOST TRIGGER
+  // PRO-LEVEL SECURITY: KEYBOARD GHOST TRIGGER (Shift + Alt + A)
   useEffect(() => {
     const handleSecretKey = (e) => {
-      // Trigger: Shift + Alt + A
       if (e.shiftKey && e.altKey && e.key.toLowerCase() === 'a') {
         console.warn("ADMIN ACCESS DETECTED: Opening Secure Portal...");
         navigate("/terminal-v3-gate");
@@ -36,6 +35,7 @@ const AppContent = () => {
   const handleLogout = () => {
     setIsAuth(false);
     localStorage.removeItem('gmr_auth');
+    navigate("/");
   };
 
   return (
@@ -47,7 +47,6 @@ const AppContent = () => {
         <Route path="/heatmap" element={<Heatmap />} />
         <Route path="/availability" element={<StockPage />} /> 
         <Route path="/scan-cart" element={<ScanCart />} />
-        <Route path="/control-cart" element={<div>Cart Control Interface Ready</div>} />
 
         {/* GHOST LOGIN ROUTE (Hidden from Public) */}
         <Route path="/terminal-v3-gate" element={
@@ -59,14 +58,14 @@ const AppContent = () => {
           isAuth ? <AdminDashboard onLogout={handleLogout} /> : <Navigate to="/" />
         } />
 
-        {/* CATCH-ALL REDIRECT */}
+        {/* SECURITY REDIRECTS */}
         <Route path="/login" element={<Navigate to="/" />} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </>
   );
 };
 
-// Main App Component
 function App() {
   return (
     <Router>
