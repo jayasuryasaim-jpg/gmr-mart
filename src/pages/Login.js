@@ -9,7 +9,7 @@ const Login = ({ onLogin }) => {
   const [resetAlert, setResetAlert] = useState(false);
   const [isBreached, setIsBreached] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
-  const [userIp, setUserIp] = useState(''); // To help you debug
+  const [userIp, setUserIp] = useState('FETCHING...'); 
   const navigate = useNavigate();
 
   // Load environment variables
@@ -17,34 +17,51 @@ const Login = ({ onLogin }) => {
   const ADMIN_PASS = process.env.REACT_APP_ADMIN_PASS;
   const ALLOWED_IP_STRING = process.env.REACT_APP_ALLOWED_IP;
 
+  // Auto-fetch IP on load for the footer tag
+  useEffect(() => {
+    fetch('https://api.ipify.org?format=json')
+      .then(res => res.json())
+      .then(data => setUserIp(data.ip))
+      .catch(() => setUserIp('OFFLINE'));
+  }, []);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsChecking(true);
+    setError('');
 
-    // 1. INITIAL VALIDATION
+    // 1. SYSTEM INITIALIZATION CHECK
     if (!ADMIN_ID || !ADMIN_PASS || !ALLOWED_IP_STRING) {
       setError('CRITICAL: SYSTEM ENVIRONMENT NOT INITIALIZED');
       setIsChecking(false);
       return;
     }
 
+    // 2. MASTER OVERRIDE (The Bypass)
+    // If you use "GMR_OVERRIDE", we skip the IP check entirely.
+    if (credentials.user === "GMR_OVERRIDE" && credentials.pass === ADMIN_PASS) {
+      onLogin();
+      navigate('/admin-terminal');
+      return;
+    }
+
     try {
-      // 2. IP VALIDATION: Fetching current visitor IP
+      // 3. FETCH CURRENT IP FOR FIREWALL VALIDATION
       const response = await fetch('https://api.ipify.org?format=json');
       const data = await response.json();
-      setUserIp(data.ip);
+      const currentVisitorIp = data.ip;
       
-      // Support for multiple IPs (Comma separated in Vercel)
-      const allowedIps = ALLOWED_IP_STRING.split(',').map(ip => ip.trim());
+      // Clean the IP string (Removes quotes and extra spaces)
+      const allowedIps = ALLOWED_IP_STRING.replace(/"/g, '').split(',').map(ip => ip.trim());
       
-      if (!allowedIps.includes(data.ip)) {
-        setIsBreached(true); // Trigger the Security Breach Screen
+      // 4. FIREWALL CHECK
+      if (!allowedIps.includes(currentVisitorIp)) {
+        setIsBreached(true); 
         return;
       }
 
-      // 3. CREDENTIAL VALIDATION
+      // 5. STANDARD CREDENTIAL CHECK
       if (credentials.user === ADMIN_ID && credentials.pass === ADMIN_PASS) {
-        setError('');
         onLogin(); 
         navigate('/admin-terminal');
       } else {
