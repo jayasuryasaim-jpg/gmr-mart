@@ -1,88 +1,57 @@
 import { useState, useEffect } from "react";
-import "./CartControl.css";
+import { Html5QrcodeScanner } from "html5-qrcode";
+import "./ControlCart.css";
 
-function CartControl() {
-  const [cartId, setCartId] = useState("");
-  const [items, setItems] = useState([]);
+const PRODUCT_DB = {
+  "ITEM_001": { name: "Lays Chips", price: 20 },
+  "ITEM_002": { name: "Coca Cola", price: 45 },
+  "ITEM_003": { name: "Milk Bread", price: 35 }
+};
+
+function ControlCart() {
+  const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    const id = localStorage.getItem("cartId");
-    setCartId(id);
+    if (localStorage.getItem("cart_unlocked") !== "true") {
+       window.location.href = "/scan-cart";
+       return;
+    }
 
-    // Poll the backend every 2 seconds
-    const interval = setInterval(() => {
-      if (id) {
-        fetch(`http://localhost:5000/cart/${id}`)
-          .then((res) => res.json())
-          .then((data) => {
-            setItems(data);
-            const sum = data.reduce((acc, item) => acc + item.price, 0);
-            setTotal(sum);
-          })
-          .catch((err) => console.error("Backend not reachable:", err));
+    const scanner = new Html5QrcodeScanner("cart-reader", { fps: 10, qrbox: 250 });
+    scanner.render((decodedText) => {
+      if (PRODUCT_DB[decodedText]) {
+        const item = PRODUCT_DB[decodedText];
+        setCart(prev => [...prev, item]);
+        setTotal(prev => prev + item.price);
+        if (navigator.vibrate) navigator.vibrate(100); 
       }
-    }, 2000);
+    });
 
-    return () => clearInterval(interval);
+    return () => scanner.clear();
   }, []);
 
-  const handleCheckout = () => {
-    // Optional: Tell backend to clear the cart when moving to payment
-    fetch(`http://172.16.34.113:5000/clear-cart`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ cartId: cartId })
-    }).then(() => {
-      window.location.href = '/payment';
-    });
-  };
-
   return (
-    <div className="control-wrapper">
-      <div className="status-bar">
-        <span>Cart ID: <strong>{cartId}</strong></span>
-        <span className="live-indicator pulse">● LIVE SYNC</span>
-      </div>
-
-      <div className="items-box">
-        {items.length === 0 ? (
-          <div className="empty-container">
-            <img src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png" alt="Empty" className="empty-img" />
-            <p className="empty-msg">Your cart is empty. Start scanning!</p>
+    <div className="cart-container">
+      <header className="cart-header">
+        <h2>GMR SMART CART</h2>
+        <div className="status-dot">ESP32 ACTIVE</div>
+      </header>
+      <div id="cart-reader"></div>
+      <div className="items-list">
+        {cart.map((item, idx) => (
+          <div key={idx} className="cart-item">
+            <span>{item.name}</span>
+            <span>₹{item.price}</span>
           </div>
-        ) : (
-          items.map((item, index) => (
-            <div key={index} className="item-row">
-              <div className="item-details">
-                <img src={item.image} alt={item.name} className="product-thumb" />
-                <div className="text-group">
-                  <span className="product-name">{item.name}</span>
-                  <span className="product-price">₹{item.price}</span>
-                </div>
-              </div>
-              <span className="qty-tag">x1</span>
-            </div>
-          ))
-        )}
+        ))}
       </div>
-
-      <div className="total-box">
-        <div className="total-row">
-          <span>Subtotal:</span>
-          <span>₹{total}</span>
-        </div>
-        <div className="total-row grand-total">
-          <span>Grand Total:</span>
-          <span>₹{total}</span>
-        </div>
+      <div className="cart-footer">
+        <h3>Total: ₹{total}</h3>
+        <button className="pay-btn">PAY NOW</button>
       </div>
-
-      <button className="pay-btn" onClick={handleCheckout} disabled={items.length === 0}>
-        Proceed to Checkout
-      </button>
     </div>
   );
 }
 
-export default CartControl;
+export default ControlCart;

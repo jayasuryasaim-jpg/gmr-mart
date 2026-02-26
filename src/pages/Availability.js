@@ -1,100 +1,61 @@
 import React, { useState } from 'react';
-import productsData from '../products.json';
-import './Stock.css';
+import productsData from '../generateProducts'; 
+import './Availability.css';
 
 const Availability = () => {
-  const [view, setView] = useState('floors'); 
-  const [selection, setSelection] = useState({ floor: '', category: '', type: '' });
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const menuData = {
-    "Ground Floor": {
-      "Dairy": ["Milk", "Curd", "Butter", "Paneer"],
-      "Soft Drinks": ["Coca-Cola", "Pepsi", "Fruit Juices"],
-      "Snacks": ["Chips", "Biscuits", "Chocolates"],
-      "Personal Care": ["Soap", "Paste"]
-    },
-    "First Floor": {
-      "Men": ["Shirts", "Jeans"],
-      "Women": ["Sarees", "Kurtis"],
-      "Kids": ["Boys", "Girls"],
-      "Accessories": ["Belts", "Nail Cutters"]
-    },
-    "Second Floor": {
-      "Kitchen Items": ["Plates", "Water Bottles"],
-      "Home Essentials": ["Towels", "Blankets", "Buckets"],
-      "Toys": ["Cars", "Dolls"],
-      "Furniture": ["Chairs", "Tables"]
-    }
-  };
-
-  const handleBack = () => {
-    if (view === 'products') setView('types');
-    else if (view === 'types') setView('categories');
-    else if (view === 'categories') setView('floors');
-  };
+  // Group products by floor for cleaner browsing
+  const groundFloor = productsData.filter(p => p.floor === "Ground Floor");
 
   return (
-    <div className="stock-container">
-      <div className="sidebar">
-        <h2 className="sidebar-title">GMR INVENTORY</h2>
-        {view !== 'floors' && <button className="back-btn" onClick={handleBack}>← BACK</button>}
-        
-        <div className="btn-list">
-          {view === 'floors' && Object.keys(menuData).map(f => (
-            <button key={f} className="menu-btn animate-left" onClick={() => { setSelection({...selection, floor: f}); setView('categories'); }}>{f}</button>
-          ))}
-
-          {view === 'categories' && Object.keys(menuData[selection.floor]).map(c => (
-            <button key={c} className="menu-btn animate-left" onClick={() => { setSelection({...selection, category: c}); setView('types'); }}>{c}</button>
-          ))}
-
-          {view === 'types' && menuData[selection.floor][selection.category].map(t => (
-            <button key={t} className="menu-btn animate-left" onClick={() => { setSelection({...selection, type: t}); setView('products'); }}>{t}</button>
-          ))}
-        </div>
+    <div className="availability-wrapper">
+      <div className="tracking-banner">
+        ⚡ SMART TRACKING SYSTEM: {productsData.length} ITEMS SYNCED TO HEATMAP ⚡
       </div>
 
-      <div className="display-area">
-        <header className="display-header">
-           <h1>{selection.type || selection.category || selection.floor || "SELECT FLOOR"}</h1>
-        </header>
-
-        {view === 'products' && (
-          <div className="product-grid">
-            {Object.values(productsData).filter(p => p.floor === selection.floor && p.type === selection.type).map(product => (
-              <div key={product.id} className="product-card" onClick={() => setSelectedProduct(product)}>
-                <img src={product.image} alt={product.name} />
-                <h4>{product.name}</h4>
-                <p>₹{product.price}</p>
-              </div>
-            ))}
+      <div className="product-display-grid">
+        {groundFloor.map(product => (
+          <div key={product.id} className="product-info-card" onClick={() => setSelectedProduct(product)}>
+             <div className="card-top">
+                <span className="offer-badge">{product.discount.split('%')[0]}% OFF</span>
+                <img src={`https://placehold.co/150x150/000c14/00f7ff?text=${product.brand}`} alt="product" />
+             </div>
+             <div className="card-bottom">
+                <h3>{product.name}</h3>
+                <p className="price-main">₹{product.price}</p>
+                {/* PROOF OF SYNC */}
+                <div className="row-tracker">AISLE: {product.location}</div>
+             </div>
           </div>
-        )}
+        ))}
       </div>
 
-      {/* MANDATORY: SMALL DETAIL PAGE MODAL */}
+      {/* DETAIL MODAL (matches your uploaded image style) */}
       {selectedProduct && (
-        <div className="mini-detail-overlay" onClick={() => setSelectedProduct(null)}>
-          <div className="mini-detail-card" onClick={e => e.stopPropagation()}>
-            <button className="close-x" onClick={() => setSelectedProduct(null)}>×</button>
-            <img src={selectedProduct.image} className="mini-img" alt="product"/>
-            <div className="modal-info">
-                <h3>{selectedProduct.name}</h3>
-                <p><strong>Brand:</strong> {selectedProduct.brand}</p>
-                <p><strong>Weight:</strong> {selectedProduct.weight}</p>
-                <p><strong>MFG:</strong> {selectedProduct.mfgDate}</p>
-                <p><strong>EXP:</strong> {selectedProduct.expDate}</p>
-                <p><strong>Stock:</strong> {selectedProduct.stock} Units</p>
-                <hr />
-                <div className="tracking-box">
-                    <p>📍 <strong>Location:</strong> {selectedProduct.floor}, {selectedProduct.row}</p>
-                    <div className="map-placeholder">
-                        <div className="user-dot"></div>
-                        <div className="product-pin" style={{backgroundColor: selectedProduct.zone}}></div>
-                    </div>
-                </div>
+        <div className="tracking-modal-overlay" onClick={() => setSelectedProduct(null)}>
+          <div className="tracking-modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-layout">
+              <div className="image-side">
+                 <img src="https://placehold.co/300x300/white/black?text=AMUL+GOLD" alt="Amul" />
+                 <h2>{selectedProduct.name}</h2>
+                 <p className="modal-price-label">₹{selectedProduct.mrp} <span>₹{selectedProduct.price}</span></p>
+              </div>
+              <div className="details-side">
+                 <div className="detail-item"><span>BRAND:</span> {selectedProduct.brand}</div>
+                 <div className="detail-item"><span>MRP:</span> ₹{selectedProduct.mrp}</div>
+                 <div className="detail-item cyan"><span>OFFER PRICE:</span> ₹{selectedProduct.price}</div>
+                 <div className="detail-item yellow"><span>DISCOUNT:</span> {selectedProduct.discount}</div>
+                 <div className="detail-item"><span>STOCK:</span> {selectedProduct.stock} Units</div>
+                 <div className="detail-item"><span>MFG DATE:</span> {selectedProduct.mfg_date}</div>
+                 <div className="detail-item"><span>EXP DATE:</span> {selectedProduct.exp_date}</div>
+                 {/* THIS IS THE SYNCED TRACKING FIELD */}
+                 <div className="detail-item tracker-highlight">
+                    <span>LOCATION:</span> {selectedProduct.location}
+                 </div>
+              </div>
             </div>
+            <button className="close-terminal" onClick={() => setSelectedProduct(null)}>EXIT TERMINAL</button>
           </div>
         </div>
       )}
