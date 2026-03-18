@@ -1,0 +1,210 @@
+.map-wrapper {
+  position: relative;
+  width: 1300px;
+  height: 550px;
+  margin: auto;
+  background: #001c30;
+}
+
+/* SVG MUST BE ON TOP */
+.path-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.floor-box {
+  position: absolute;
+  top: 40px;
+  width: 320px;
+  height: 450px;
+  border: 3px solid #00ffff;
+  border-radius: 20px;
+  padding: 20px;
+  color: white;
+  z-index: 1;
+}
+
+.floor-title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #00ffff;
+}
+
+.row-box {
+  width: 200px;
+  margin: 20px auto;
+  padding: 15px;
+  background: #2e3b66;
+  text-align: center;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+
+/* SOURCE GLOW */
+.source-glow {
+  background: #00ff88;
+  box-shadow: 0 0 20px #00ff88;
+}
+
+/* DESTINATION GLOW */
+.dest-glow {
+  background: #ff3b3b;
+  box-shadow: 0 0 20px #ff3b3b;
+}
+
+.lift-box,
+.stairs-box {
+  position: absolute;
+  left: 10px;
+  width: 80px;
+  padding: 8px;
+  border: 2px dashed #00ffff;
+  text-align: center;
+}
+
+.lift-box {
+  top: 80px;
+}
+
+.stairs-box {
+  bottom: 70px;
+}
+
+.entrance {
+  position: absolute;
+  top: 10px;
+  left: 70px;
+  width: 180px;
+  background: green;
+  text-align: center;
+  padding: 8px;
+}
+
+.exit {
+  position: absolute;
+  bottom: 10px;
+  left: 70px;
+  width: 180px;
+  background: red;
+  text-align: center;
+  padding: 8px;
+}
+
+.trial-room {
+  position: absolute;
+  bottom: 40px;
+  left: 70px;
+  width: 200px;
+  background: purple;
+  text-align: center;
+  padding: 8px;
+}
+
+/* DASH ANIMATION */
+.dash-animate {
+  animation: dashMove 1s linear infinite;
+}
+
+@keyframes dashMove {
+  to {
+    stroke-dashoffset: -30;
+  }
+}
+
+.map-wrapper {
+  background: #0a0f1c;
+  padding: 40px;
+}
+
+.row {
+  fill: #111;
+  stroke: #00f0ff;
+  stroke-width: 2;
+}
+
+.source {
+  stroke: #00ff00;
+  stroke-width: 4;
+  filter: drop-shadow(0 0 10px #00ff00);
+}
+
+.dest {
+  stroke: #ff0000;
+  stroke-width: 4;
+  filter: drop-shadow(0 0 10px #ff0000);
+}
+
+.tracking-line {
+  fill: none;
+  stroke: yellow;
+  stroke-width: 4;
+  stroke-dasharray: 8;
+  animation: move 1s linear infinite;
+}
+
+@keyframes move {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+
+.map-wrapper {
+  background: #0b1020;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.floor-box {
+  fill: #111c33;
+  stroke: #00f0ff;
+  stroke-width: 2;
+  rx: 12;
+}
+
+.floor-title {
+  fill: #00f0ff;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.row {
+  fill: #162447;
+  stroke: #00f0ff;
+  stroke-width: 2;
+  rx: 6;
+}
+
+.row-text {
+  fill: white;
+  font-size: 14px;
+}
+
+.source {
+  stroke: #00ff00;
+  stroke-width: 4;
+  filter: drop-shadow(0 0 10px #00ff00);
+}
+
+.dest {
+  stroke: #ff0000;
+  stroke-width: 4;
+  filter: drop-shadow(0 0 10px #ff0000);
+}
+
+.tracking-line {
+  fill: none;
+  stroke: yellow;
+  stroke-width: 4;
+  stroke-dasharray: 10;
+  animation: dash 1s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -20;
+  }
+}

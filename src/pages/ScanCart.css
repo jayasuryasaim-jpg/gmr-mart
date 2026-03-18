@@ -61,3 +61,34 @@
     border-radius: 5px;
     margin-bottom: 10px;
 }
+/* Scanner Animation */
+.scanner-container {
+  position: relative; width: 250px; height: 250px;
+  border: 1px solid #00f7ff; display: flex; align-items: center; justify-content: center;
+}
+.scan-beam {
+  position: absolute; width: 100%; height: 2px; background: #00f7ff;
+  animation: scan 2s linear infinite; box-shadow: 0 0 10px #00f7ff;
+}
+@keyframes scan {
+  0% { top: 0%; } 100% { top: 100%; }
+}
+
+/* Profile Grid */
+.profile-grid { display: grid; gap: 15px; margin: 20px 0; }
+.profile-field { display: flex; justify-content: space-between; border-bottom: 1px solid #1a2a3a; padding-bottom: 5px; }
+
+/* Badge Alignment */
+.hero-branding { display: flex; flex-direction: column; align-items: center; }
+.interface-badge { margin: 15px auto; width: fit-content; }
+.follow-btn {
+  background: #00ff00;
+  color: black;
+  padding: 20px;
+  font-size: 24px;
+  border-radius: 50px;
+  border: none;
+  margin-top: 20px;
+  box-shadow: 0 0 20px #00ff00;
+  cursor: pointer;
+}

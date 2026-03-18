@@ -40,3 +40,20 @@ body { background: var(--bg); color: #fff; font-family: 'Rajdhani', sans-serif; 
 .moving-dot { position: absolute; width: 10px; height: 10px; background: var(--red); border-radius: 50%; box-shadow: 0 0 10px var(--red); }
 
 @keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+* {
+  box-sizing: border-box; /* Prevents padding from breaking layout widths */
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+  width: 100%;
+  overflow-x: hidden; /* Stops content from pushing the screen to the side */
+}
+
+/* Ensure all images and maps never exceed screen width */
+img, svg {
+  max-width: 100%;
+  height: auto;
+}

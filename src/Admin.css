@@ -1,0 +1,18 @@
+:root {
+  --bg-dark: #020d18;
+  --bg-panel: #0a1929;
+  --cyan: #00f7ff;
+  --text: #e0e6ed;
+  --border: #1a3a5a;
+}
+
+.erp-main { 
+  display: grid; 
+  grid-template-columns: 1fr 350px; 
+  gap: 20px; 
+  padding: 20px; 
+}
+.panel { background: var(--bg-panel); padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; }
+.mart-table { width: 100%; border-collapse: collapse; }
+.mart-table th { color: var(--cyan); padding: 12px; border-bottom: 2px solid var(--border); text-align: left; }
+.mart-table td { padding: 12px; border-bottom: 1px solid var(--border); }

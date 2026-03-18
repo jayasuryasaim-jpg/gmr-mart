@@ -1,150 +1,120 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import SecurityBreach from './SecurityBreach'; 
+import React, { useState } from 'react';
 import './Login.css';
 
 const Login = ({ onLogin }) => {
-  const [credentials, setCredentials] = useState({ user: '', pass: '' });
+  const [view, setView] = useState('login'); // login, register, admin, forgot
+  const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState('');
-  const [resetAlert, setResetAlert] = useState(false);
-  const [isBreached, setIsBreached] = useState(false);
-  const [isChecking, setIsChecking] = useState(false);
-  const [userIp, setUserIp] = useState('FETCHING...'); 
-  const navigate = useNavigate();
+  const [formData, setFormData] = useState({});
 
-  // Load environment variables
-  const ADMIN_ID = process.env.REACT_APP_ADMIN_ID;
-  const ADMIN_PASS = process.env.REACT_APP_ADMIN_PASS;
-  const ALLOWED_IP_STRING = process.env.REACT_APP_ALLOWED_IP;
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-  // Auto-fetch IP on load for the footer tag
-  useEffect(() => {
-    fetch('https://api.ipify.org?format=json')
-      .then(res => res.json())
-      .then(data => setUserIp(data.ip))
-      .catch(() => setUserIp('OFFLINE'));
-  }, []);
-
-  const handleLogin = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setIsChecking(true);
     setError('');
-
-    // 1. SYSTEM INITIALIZATION CHECK
-    if (!ADMIN_ID || !ADMIN_PASS || !ALLOWED_IP_STRING) {
-      setError('CRITICAL: SYSTEM ENVIRONMENT NOT INITIALIZED');
-      setIsChecking(false);
-      return;
-    }
-
-    // 2. MASTER OVERRIDE (The Bypass)
-    // If you use "GMR_OVERRIDE", we skip the IP check entirely.
-    if (credentials.user === "GMR_OVERRIDE" && credentials.pass === ADMIN_PASS) {
-      onLogin();
-      navigate('/admin-terminal');
-      return;
-    }
-
-    try {
-      // 3. FETCH CURRENT IP FOR FIREWALL VALIDATION
-      const response = await fetch('https://api.ipify.org?format=json');
-      const data = await response.json();
-      const currentVisitorIp = data.ip;
-      
-      // Clean the IP string (Removes quotes and extra spaces)
-      const allowedIps = ALLOWED_IP_STRING.replace(/"/g, '').split(',').map(ip => ip.trim());
-      
-      // 4. FIREWALL CHECK
-      if (!allowedIps.includes(currentVisitorIp)) {
-        setIsBreached(true); 
-        return;
-      }
-
-      // 5. STANDARD CREDENTIAL CHECK
-      if (credentials.user === ADMIN_ID && credentials.pass === ADMIN_PASS) {
-        onLogin(); 
-        navigate('/admin-terminal');
+    
+    if (view === 'admin') {
+      if (formData.adminId === "GMR_ADMIN" && formData.pass === "GMR_2026") {
+        onLogin({ type: 'admin', role: formData.role });
       } else {
-        setError('ACCESS DENIED: IDENTITY UNVERIFIED');
+        setError("▶ ACCESS_DENIED: UNAUTHORIZED_ID");
       }
-    } catch (err) {
-      setError('FIREWALL ERROR: UNABLE TO VERIFY LOCATION');
-    } finally {
-      setIsChecking(false);
+    } else if (view === 'register') {
+      if (formData.pass !== formData.confirmPass) return setError("▶ PASSWORDS_MISMATCH");
+      localStorage.setItem('gmr_user', JSON.stringify(formData));
+      alert("ACCOUNT CREATED: SYNCING DATA...");
+      setView('login');
+    } else if (view === 'forgot') {
+      alert("▶ RECOVERY_SENT: CHECK YOUR EMAIL/MOBILE");
+      setView('login');
+    } else {
+      const savedUser = JSON.parse(localStorage.getItem('gmr_user'));
+      if (savedUser && formData.email === savedUser.email && formData.pass === savedUser.pass) {
+        onLogin({ type: 'customer' });
+      } else {
+        setError("▶ IDENTITY_NOT_FOUND");
+      }
     }
   };
-
-  const triggerEmergencyReset = () => {
-    setResetAlert(true);
-    setTimeout(() => setResetAlert(false), 5000);
-  };
-
-  if (isBreached) return <SecurityBreach />;
 
   return (
     <div className="login-master">
       <div className="bg-scanline"></div>
       
-      {resetAlert && (
-        <div className="security-threat-overlay">
-          <div className="alert-content">
-            <div className="alert-icon">⚠️</div>
-            <h3>PROTOCOL 404 ACTIVATED</h3>
-            <p>SURVEILLANCE ENGAGED. TRACING TERMINAL IP: {userIp}</p>
-          </div>
-        </div>
-      )}
+      <div className={`login-frame ${view === 'register' ? 'wide-frame' : ''}`}>
+        <div className="frame-corner top-left"></div>
+        <div className="frame-corner bottom-right"></div>
 
-      <div className="login-frame">
-        <div className="auth-header">
-          <div className="security-ring"></div>
-          <div className="lock-symbol">🔒</div>
-        </div>
+        <h2 className="terminal-text">GMR <span className="cyan-txt">MART {view === 'admin' && 'ADMIN'}</span></h2>
+        <p className="security-tag">
+          {view === 'admin' ? "CORE_CONTROL_DASHBOARD_V4" : 
+           view === 'register' ? "USER_ENROLLMENT_PROTOCOL" : 
+           view === 'forgot' ? "SECURITY_RECOVERY_MODE" : "SECURE_RETAIL_ACCESS"}
+        </p>
 
-        <h2 className="terminal-text">GMR <span className="cyan-txt">SECURE-LINK</span></h2>
-        <p className="auth-subtitle">ENCRYPTED ADMINISTRATOR PORTAL</p>
+        <form onSubmit={handleSubmit} className="cyber-form">
+          {view === 'admin' ? (
+            <>
+              <div className="cyber-input-group"><label>ADMIN_ID</label><input type="text" name="adminId" required onChange={handleChange} placeholder="ENTER_UID" /></div>
+              <div className="cyber-input-group"><label>ROLE_AUTHORITY</label>
+                <select name="role" required onChange={handleChange} className="cyber-select">
+                  <option value="">SELECT_ROLE</option>
+                  <option value="super">Super Admin</option>
+                  <option value="inventory">Inventory Manager</option>
+                  <option value="billing">Billing Manager</option>
+                  <option value="support">Customer Support</option>
+                  <option value="device">Smart Cart Manager</option>
+                </select>
+              </div>
+            </>
+          ) : view === 'register' ? (
+            <div className="grid-inputs">
+              <div className="cyber-input-group"><label>FULL_NAME</label><input type="text" name="name" required onChange={handleChange} /></div>
+              <div className="cyber-input-group"><label>MOBILE</label><input type="text" name="mobile" required onChange={handleChange} /></div>
+              <div className="cyber-input-group"><label>EMAIL</label><input type="email" name="email" required onChange={handleChange} /></div>
+              <div className="cyber-input-group"><label>CITY</label><input type="text" name="city" required onChange={handleChange} /></div>
+              <div className="cyber-input-group"><label>PINCODE</label><input type="text" name="pincode" required onChange={handleChange} /></div>
+              <div className="cyber-input-group"><label>ADDRESS</label><input type="text" name="address" required onChange={handleChange} /></div>
+              <div className="cyber-input-group"><label>PASSWORD</label><input type={showPass ? "text" : "password"} name="pass" required onChange={handleChange} /></div>
+              <div className="cyber-input-group"><label>CONFIRM_PASS</label><input type="password" name="confirmPass" required onChange={handleChange} /></div>
+            </div>
+          ) : view === 'forgot' ? (
+            <div className="cyber-input-group">
+              <label>ENTER_EMAIL_OR_MOBILE</label>
+              <input type="text" name="recovery" required onChange={handleChange} placeholder="IDENTITY_LINK" />
+            </div>
+          ) : (
+            <div className="cyber-input-group"><label>EMAIL / MOBILE</label><input type="text" name="email" required onChange={handleChange} /></div>
+          )}
 
-        <form className="auth-form" onSubmit={handleLogin}>
-          <div className="cyber-input-group">
-            <input 
-              type="text" 
-              required 
-              autoComplete="off"
-              placeholder=" "
-              onChange={(e) => setCredentials({...credentials, user: e.target.value})}
-            />
-            <label>ADMIN_IDENTIFICATION</label>
-            <div className="input-bar"></div>
-          </div>
-          
-          <div className="cyber-input-group">
-            <input 
-              type="password" 
-              required 
-              placeholder=" "
-              onChange={(e) => setCredentials({...credentials, pass: e.target.value})}
-            />
-            <label>SECURE_PASSCODE</label>
-            <div className="input-bar"></div>
-          </div>
-
-          {error && (
-            <div className="error-terminal">
-              <span className="blink">▶</span> {error}
+          {view !== 'register' && (
+            <div className="cyber-input-group pass-wrap">
+              <label>PASSCODE</label>
+              <div className="input-with-icon">
+                <input type={showPass ? "text" : "password"} name="pass" required onChange={handleChange} />
+                <span className="eye-icon" onClick={() => setShowPass(!showPass)}>{showPass ? '🔓' : '🔒'}</span>
+              </div>
             </div>
           )}
 
-          <button type="submit" className="auth-submit-btn" disabled={isChecking}>
-            {isChecking ? "SHIELDING..." : "VERIFY IDENTITY"}
-            <div className="btn-glitch"></div>
+          {error && <div className="error-terminal">{error}</div>}
+
+          <button type="submit" className="auth-submit-btn">
+            {view === 'admin' ? "AUTHORIZE_ADMIN" : view === 'register' ? "CREATE_ACCOUNT" : view === 'forgot' ? "REGENERATE_PASS" : "VERIFY_IDENTITY"}
           </button>
         </form>
-        
-        <div className="terminal-footer-links">
-          <span className="reset-trigger" onClick={triggerEmergencyReset}>
-            FORGOT_PASS? [EMERGENCY_RESET]
-          </span>
-          <div className="security-tag">AES_256_ACTIVE // YOUR_IP: {userIp}</div>
+
+        <div className="auth-footer-toggle">
+          {view === 'login' && (
+            <>
+              <p onClick={() => setView('register')}>▶ NEW_CUSTOMER? CREATE_ACCOUNT</p>
+              <p onClick={() => setView('forgot')}>▶ FORGOT_PASSWORD? RECOVER</p>
+              <p onClick={() => setView('admin')} className="admin-link">▶ SYSTEM_ADMIN_LOGIN</p>
+            </>
+          )}
+          {view !== 'login' && <p onClick={() => setView('login')}>◀ RETURN_TO_LOGIN</p>}
         </div>
       </div>
     </div>

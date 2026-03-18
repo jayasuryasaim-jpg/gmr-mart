@@ -18,7 +18,7 @@ const Heatmap = () => {
     },
     "First Floor": {
       "F1": { label: "MEN'S WEAR", stock: 70, items: ["Levis 511 Slim Fit", "Peter England Formals", "US Polo Assn T-Shirt", "Flying Machine Jeans", "Allen Solly Shirt", "Wrangler Denim Jacket", "Nike Training Shorts", "Adidas Track Pants", "Puma Graphic Tee", "Spykar Casual Shirt", "Van Heusen Trouser", "Louis Philippe Suit", "Jack & Jones Hoodie", "Monte Carlo Sweater", "Raymond Blazer", "Roadster Checked Shirt", "Being Human Polo", "United Colors of Benetton", "Mufti Narrow Jeans", "Lee Cooper Chinos", "Fila Sports Jersey", "Killer Slim Jeans", "Park Avenue Tie", "Arrow Formal Shirt", "Blackberrys Tuxedo"] },
-      "F2": { label: "WOMEN'S WEAR", stock: 65, items: ["Biba Cotton Kurti", "W for Woman Dress", "Aurelia Palazzo", "Global Desi Top", "FabIndia Saree", "Levis 711 Skinny Jeans", "Zara Floral Dress", "H&M Casual Tee", "Forever 21 Skirt", "Veromoda Gown", "Only High Rise Denim", "Mango Evening Top", "Allen Solly Women Blazer", "Nike Leggings", "Adidas Sports Bra", "Lakme Fashion Saree", "Satya Paul Scarf", "Lifestyle Maxi Dress", "Max Fashion Tunic", "Pantaloons Ethnic Wear", "Van Heusen Dress", "Madame Winter Coat", "Avenue Checked Shirt", "Global Desi Tunic", "Rangriti Salwar Suit"] },
+      "F2": { label: "WOMEN'S WEAR", stock: 25, items: ["Biba Cotton Kurti", "W for Woman Dress", "Aurelia Palazzo", "Global Desi Top", "FabIndia Saree", "Levis 711 Skinny Jeans", "Zara Floral Dress", "H&M Casual Tee", "Forever 21 Skirt", "Veromoda Gown", "Only High Rise Denim", "Mango Evening Top", "Allen Solly Women Blazer", "Nike Leggings", "Adidas Sports Bra", "Lakme Fashion Saree", "Satya Paul Scarf", "Lifestyle Maxi Dress", "Max Fashion Tunic", "Pantaloons Ethnic Wear", "Van Heusen Dress", "Madame Winter Coat", "Avenue Checked Shirt", "Global Desi Tunic", "Rangriti Salwar Suit"] },
       "F3": { label: "FOOTWEAR", stock: 88, items: ["Nike Air Max", "Adidas Ultraboost", "Puma RS-X", "Reebok Classic", "Skechers GoWalk", "Bata Leather Shoes", "Hush Puppies Formal", "Red Tape Loafers", "Woodland Hiking Boots", "Crocs Classic Clog", "Sparx Running Shoes", "Lotto Training Footwear", "Liberty Formal Shoes", "Metro Party Wear Heels", "Mochi Sandals", "Catwalk Wedges", "Inc.5 Formal Heels", "Asics Gel Kayano", "Converse Chuck Taylor", "Vans Old Skool", "New Balance 574", "Fila Disruptor", "Birkenstock Arizona", "Flite Flip Flops", "Campus Running Shoes"] },
       "F4": { label: "ACCESSORIES", stock: 45, items: ["Fastrack Analog Watch", "Casio G-Shock", "Fossil Leather Watch", "Titan Raga", "RayBan Wayfarer", "Oakley Sports Shades", "Skybags Backpack", "American Tourister Suitcase", "Wildcraft Trekking Bag", "Levis Leather Belt", "Tommy Hilfiger Wallet", "Puma Gym Bag", "Nike Wristband", "Adidas Performance Cap", "H&M Beanie", "VIP Hard Case Luggage", "Safari Trolley Bag", "Boat Rockerz Headphones", "JBL Bluetooth Speaker", "Apple AirPods Case", "MI Power Bank", "Samsung Galaxy Watch", "Fitbit Fitness Tracker", "Guess Handbag", "Caprese Sling Bag"] }
     },
@@ -28,6 +28,12 @@ const Heatmap = () => {
       "S3": { label: "TOYS", stock: 82, items: ["Hot Wheels Car Set", "Barbie Dream House", "LEGO Classic Bricks", "Fisher Price Gym", "Nerf Elite Blaster", "Funskool Monopoly", "Scrabble Board Game", "Rubiks Cube 3x3", "Remote Control Car", "Dancing Robot Toy", "Soft Plush Teddy", "Doctor Set for Kids", "Kitchen Set Play", "Uno Card Game", "Playing Cards Premium", "Chess Wooden Set", "Carrom Board Champion", "Badminton Racket Junior", "Cricket Bat Willow", "Football Size 5", "Basketball Spalding", "Skating Shoes", "Action Figure Marvel", "Transformer Robot", "Bayblade Burst"] },
       "S4": { label: "FURNITURE", stock: 30, items: ["Nilkamal Plastic Chair", "Godrej Almirah Steel", "IKEA Study Table", "Supreme Plastic Table", "Featherlite Office Chair", "Sleepyhead Sofa Bed", "Wakefit Ortho Mattress", "Urban Ladder Bookshelf", "Pepperfry TV Unit", "Zuari Queen Bed", "Home Centre Dining Table", "Inalsa Shoe Rack", "Bean Bag Cover XL", "Wall Mirror Decorative", "Curtain Rod Metal", "Blackout Window Curtain", "Door Mat Anti-Skid", "Floor Rug Persian Style", "Cushion Cover Velvet", "Plastic Storage Cabinet", "Folding Ladder Aluminum", "Ironing Board Large", "Wardrobe Organizer", "Wall Clock Modern", "Night Stand Table"] }
     }
+  };
+
+  const getStockColor = (percent) => {
+    if (percent > 70) return '#00ff88';
+    if (percent > 30) return '#ff9100';
+    return '#ff3131';
   };
 
   useEffect(() => {
@@ -50,8 +56,8 @@ const Heatmap = () => {
 
   const floorConfig = {
     "Ground Floor": { id: "001", states: ["HIGH", "MOD", "HIGH"], colors: ["#ff3131", "#ff9100", "#ff3131"], rows: ["G1", "G2", "G3", "G4"] },
-    "First Floor": { id: "023", states: ["MOD", "LOW", "MOD"], colors: ["#ff9100", "#00ff88", "#ff9100"], rows: ["F1", "F2", "F3", "F4"] },
-    "Second Floor": { id: "021", states: ["LOW", "LOW", "MOD"], colors: ["#00ff88", "#00ff88", "#ff9100"], rows: ["S1", "S2", "S3", "S4"] }
+    "First Floor": { id: "002", states: ["MOD", "LOW", "MOD"], colors: ["#ff9100", "#00ff88", "#ff9100"], rows: ["F1", "F2", "F3", "F4"] },
+    "Second Floor": { id: "003", states: ["LOW", "LOW", "MOD"], colors: ["#00ff88", "#00ff88", "#ff9100"], rows: ["S1", "S2", "S3", "S4"] }
   };
 
   const displayRow = selectedRow || hoveredRow;
@@ -61,12 +67,7 @@ const Heatmap = () => {
       <header className="pro-header">
         <div className="brand">GMR <span>SMART MART</span></div>
         <div className="search-bar-center">
-            <input 
-                type="text" 
-                placeholder="🔍 Search product location..." 
-                className="map-search-input"
-                onChange={(e) => setSearchQuery(e.target.value)}
-            />
+            <input type="text" placeholder="🔍 Search product location..." className="map-search-input" onChange={(e) => setSearchQuery(e.target.value)} />
         </div>
         <button className={`fire-btn ${fireActive ? 'active-alarm' : ''}`} onClick={() => setFireActive(!fireActive)}>
           {fireActive ? "🚨 EMERGENCY ACTIVE" : "🛡️ FIRE SYSTEM STANDBY"}
@@ -83,9 +84,7 @@ const Heatmap = () => {
                     <span className="btn-id">{floorConfig[name].id}</span>
                     <span className="btn-name">{name}</span>
                 </div>
-                <div className="btn-status" style={{color: floorConfig[name].colors[cycle]}}>
-                    ● {floorConfig[name].states[cycle]}
-                </div>
+                <div className="btn-status" style={{color: floorConfig[name].colors[cycle]}}>● {floorConfig[name].states[cycle]}</div>
               </div>
             ))}
           </div>
@@ -94,47 +93,60 @@ const Heatmap = () => {
           <div className="analytics-scroll-area">
             {displayRow && rawData[activeFloor][displayRow] ? (
               rawData[activeFloor][displayRow].items
-                .filter(item => item.toLowerCase().includes(searchQuery.toLowerCase()))
-                .map((item, idx) => (
-                <div key={idx} className="detail-card">
+                .filter(item => searchQuery === "" || item.toLowerCase().includes(searchQuery.toLowerCase()))
+                .map((item, idx) => {
+                const stock = rawData[activeFloor][displayRow].stock;
+                const dynamicColor = getStockColor(stock);
+                return (
+                <div key={idx} className="detail-card" style={{borderLeftColor: dynamicColor}}>
                   <div className="product-name-pro">{item}</div>
-                  <div className="progress-bar-bg"><div className="progress-bar-fill" style={{width: `${rawData[activeFloor][displayRow].stock}%`}}></div></div>
+                  <div className="progress-bar-bg">
+                    <div className="progress-bar-fill" style={{width: `${stock}%`, background: dynamicColor, boxShadow: `0 0 10px ${dynamicColor}`}}></div>
+                  </div>
                   <div className="card-footer">
                       <span className="stock-label">STOCK LEVEL</span>
-                      <span className="stock-count">{rawData[activeFloor][displayRow].stock}%</span>
+                      <span className="stock-count" style={{color: dynamicColor}}>{stock}%</span>
                   </div>
                 </div>
-              ))
+              )})
             ) : <div className="placeholder-msg">SELECT AN AISLE ON THE MAP</div>}
           </div>
         </aside>
 
         <main className="pro-map-center">
           <div className="map-viewport">
+            {/* HEATMAP CLOUD LAYER */}
+            <div className="heatmap-cloud-layer">
+              {floorConfig[activeFloor].rows.map((rid, idx) => (
+                <div key={`glow-${rid}`} className="glow-spot" style={{
+                  background: fireActive ? '#ff3131' : getStockColor(rawData[activeFloor][rid].stock),
+                  left: `${15 + (idx * 20)}%`
+                }} />
+              ))}
+            </div>
+
             <div className="map-perspective-box">
                 <div className="isometric-world-pro">
                 {Object.entries(floorConfig).map(([name, data]) => (
                     <div key={name} className={`floor-slab ${activeFloor === name ? 'visible' : 'hidden'}`}>
-                    
-                    <div className="heatmap-intensity-layer" style={{ background: fireActive ? 'radial-gradient(circle at center, rgba(255, 49, 49, 0.4) 0%, transparent 70%)' : `radial-gradient(circle at center, ${data.colors[cycle]}33 0%, transparent 70%)` }}></div>
-
-                    <div className={`facility-dot-box corner-left ${fireActive ? 'emergency' : ''}`}>STAIRS</div>
-                    <div className={`facility-dot-box corner-right ${fireActive ? 'emergency' : ''}`}>LIFT</div>
-
                     <div className="aisle-container">
                         {data.rows.map(rid => {
                         const isFound = searchResults?.some(res => res.rowId === rid && res.floor === name);
+                        const stock = rawData[name]?.[rid]?.stock || 0;
+                        const dynamicColor = getStockColor(stock);
                         return (
                             <div key={rid} className={`aisle-box ${displayRow === rid || isFound ? 'active' : ''}`}
                             onMouseEnter={() => setHoveredRow(rid)} onMouseLeave={() => setHoveredRow(null)}
                             onClick={() => setSelectedRow(rid === selectedRow ? null : rid)}>
-                            
-                            <div className="parallel-label-box">
+                            <div className="parallel-label-box" style={{borderColor: dynamicColor, color: dynamicColor}}>
                                 {rawData[name]?.[rid]?.label || rid}
                             </div>
-
                             <div className="aisle-3d-body">
-                                <div className="aisle-fill" style={{ height: `${rawData[name]?.[rid]?.stock || 0}%`, background: fireActive ? 'var(--neon-red)' : 'var(--neon-cyan)' }}></div>
+                                <div className="aisle-fill" style={{ 
+                                    height: `${stock}%`, 
+                                    background: fireActive ? 'var(--neon-red)' : dynamicColor,
+                                    boxShadow: (displayRow === rid || isFound) ? `0 0 20px ${dynamicColor}` : 'none'
+                                }}></div>
                             </div>
                             </div>
                         );

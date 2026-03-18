@@ -1,0 +1,66 @@
+.profile-overlay {
+  position: fixed; inset: 0; background: rgba(0, 10, 20, 0.85);
+  display: flex; justify-content: center; align-items: center; z-index: 9999;
+  backdrop-filter: blur(12px);
+}
+
+.profile-content {
+  width: 500px; max-height: 80vh; background: #000814;
+  border: 1px solid #00f7ff; padding: 40px; color: #fff;
+  font-family: 'Rajdhani', sans-serif; overflow-y: auto;
+  box-shadow: 0 0 20px rgba(0, 247, 255, 0.2);
+}
+
+.main-heading { color: #00f7ff; text-align: center; font-size: 28px; margin-bottom: 20px; text-transform: uppercase; }
+.side-heading { color: #d4af37; font-weight: bold; font-size: 14px; }
+.data-matter { color: #ffffff; font-size: 15px; }
+
+.history-section { margin-top: 20px; border-top: 1px solid #1e3a5a; padding-top: 15px; }
+.history-item { font-size: 12px; color: #888; padding: 5px 0; border-bottom: 1px solid #111; }
+
+.btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+.action-btn { background: transparent; border: 1px solid #00f7ff; color: #00f7ff; padding: 10px; cursor: pointer; }
+.action-btn:hover { background: #00f7ff; color: #000; }
+
+.profile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 10, 20, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(12px);
+}
+
+.profile-content {
+  width: 500px;
+  max-height: 80vh;
+  background: #000814;
+  border: 1px solid #00f7ff;
+  padding: 40px;
+  color: #fff;
+  font-family: 'Rajdhani', sans-serif;
+  overflow-y: auto;
+  box-shadow: 0 0 20px rgba(0, 247, 255, 0.2);
+}
+
+.main-heading { 
+  color: #00f7ff; 
+  text-align: center; 
+  font-size: 28px; 
+  margin-bottom: 25px; 
+  text-transform: uppercase; 
+  letter-spacing: 2px;
+}
+
+.side-heading { color: #d4af37; font-weight: bold; font-size: 15px; display: inline-block; width: 100px; }
+.data-matter { color: #ffffff; font-size: 15px; }
+
+.history-section { margin-top: 30px; border-top: 1px solid #1e3a5a; padding-top: 20px; }
+.history-title { color: #00f7ff; font-size: 16px; margin-bottom: 10px; }
+.history-item { font-size: 13px; color: #ccc; padding: 6px 0; border-bottom: 1px solid #111; }
+
+.btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 30px; }
+.action-btn { background: transparent; border: 1px solid #00f7ff; color: #00f7ff; padding: 12px; cursor: pointer; transition: 0.3s; }
+.action-btn:hover { background: #00f7ff; color: #000; }

@@ -43,3 +43,96 @@ body {
   padding: 10px;
   backdrop-filter: blur(5px);
 }
+
+/* Reset and global sizing */
+* {
+  box-sizing: border-box; /* Ensures padding doesn't increase width */
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  overflow-x: hidden; /* Prevents the "horizontal scroll" bug */
+  width: 100%;
+  position: relative;
+}
+
+/* Force all images and SVGs to be responsive */
+img, svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@600;700&display=swap');
+
+:root {
+  --bg: #01080e;
+  --panel: #050f1a;
+  --cyan: #00f7ff;
+  --gold: #ffaa00;
+  --red: #ff3e3e;
+  --green: #00ff88;
+  --border: rgba(0, 247, 255, 0.2);
+}
+
+/* 1. Prevent White background on mobile stretch */
+html, body {
+  background: var(--bg) !important;
+  color: #fff;
+  font-family: 'Rajdhani', sans-serif;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden; /* CRITICAL: No side-scrolling */
+  -webkit-tap-highlight-color: transparent;
+}
+
+#root {
+  background: var(--bg);
+  min-height: 100vh;
+}
+
+/* 2. Responsive Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: #06121f;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: nowrap;
+}
+
+@media (max-width: 600px) {
+  .nav-links a { font-size: 12px; margin-left: 10px; }
+  .navbar { padding: 10px; }
+}
+
+/* 3. Global Table Fix for Mobile */
+.data-panel, table {
+  max-width: 100%;
+  overflow-x: auto;
+  display: block;
+}
+
+/* Radar & Heatmap Responsive scaling */
+.radar-disk {
+  width: 80vw; /* Responsive width */
+  height: 80vw;
+  max-width: 300px;
+  max-height: 300px;
+}
+
+/* Buttons */
+.logout-btn {
+  background: rgba(255, 62, 62, 0.1);
+  border: 1px solid var(--red);
+  color: var(--red);
+  margin: 10px;
+  padding: 10px;
+  cursor: pointer;
+  font-family: 'Orbitron';
+  transition: 0.3s;
+}

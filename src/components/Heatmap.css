@@ -5,110 +5,123 @@
   --panel-bg: #030c14;
 }
 
+/* Base Layout */
 .pro-container { background: var(--dark-base); height: 100vh; overflow: hidden; color: white; font-family: 'Inter', sans-serif; }
 .pro-header { height: 70px; border-bottom: 1px solid rgba(0, 247, 255, 0.1); display: flex; justify-content: space-between; align-items: center; padding: 0 40px; }
+.brand { font-weight: 300; letter-spacing: 1px; }
 .brand span { color: var(--neon-cyan); font-weight: 800; text-shadow: 0 0 10px var(--neon-cyan); }
 
 /* Search Bar */
 .search-bar-center { flex: 1; max-width: 450px; margin: 0 40px; }
 .map-search-input { 
-    width: 100%; background: #0a1b29; border: 1px solid #1a2a3a; padding: 10px 20px; 
-    border-radius: 4px; color: white; outline: none; transition: 0.3s;
+  width: 100%; background: #0a1b29; border: 1px solid #1a2a3a; padding: 10px 20px; 
+  border-radius: 4px; color: white; outline: none; transition: 0.3s;
 }
 .map-search-input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 247, 255, 0.2); }
 
+/* Sidebar */
 .pro-layout { display: flex; height: calc(100vh - 70px); }
-.pro-sidebar { width: 380px; background: var(--panel-bg); border-right: 1px solid #14222d; padding: 25px; display: flex; flex-direction: column; }
+.pro-sidebar { width: 380px; background: var(--panel-bg); border-right: 1px solid #14222d; padding: 25px; display: flex; flex-direction: column; z-index: 10; }
+.sidebar-title { font-size: 12px; letter-spacing: 2px; color: rgba(255,255,255,0.4); margin-bottom: 15px; }
+.mt-30 { margin-top: 30px; }
+.highlight-text { color: var(--neon-cyan); }
 
-/* Floor Button Stack */
+/* Floor Buttons */
 .floor-btn-pro { 
-    background: #0a1b29; border: 1px solid #1a2a3a; padding: 15px; border-radius: 4px; 
-    display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 8px; 
+  background: #0a1b29; border: 1px solid #1a2a3a; padding: 15px; border-radius: 4px; 
+  display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 8px; transition: 0.3s;
 }
+.floor-btn-pro:hover { background: #112335; }
 .floor-btn-pro.active { border-color: var(--neon-cyan); background: rgba(0, 247, 255, 0.05); }
-.btn-id { font-size: 10px; color: var(--neon-cyan); display: block; }
+.btn-id { font-size: 10px; color: var(--neon-cyan); display: block; margin-bottom: 2px; }
 .btn-name { font-weight: 700; font-size: 14px; }
 .btn-status { font-size: 11px; font-weight: 900; }
 
-/* MAP FITTING FIXES */
-.pro-map-center {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: radial-gradient(circle at center, #06111a 0%, #02080d 100%);
-  overflow: hidden;
-  position: relative;
-}
+/* Analytics Cards */
+.analytics-scroll-area { flex: 1; overflow-y: auto; margin-top: 15px; padding-right: 5px; }
+.detail-card { background: rgba(255,255,255,0.03); border-left: 2px solid; padding: 12px; margin-bottom: 10px; border-radius: 2px; }
+.product-name-pro { font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #fff; }
+.progress-bar-bg { height: 4px; background: #000; margin-bottom: 6px; border-radius: 2px; overflow: hidden; }
+.progress-bar-fill { height: 100%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+.card-footer { display: flex; justify-content: space-between; font-size: 10px; opacity: 0.7; }
+.stock-count { font-weight: bold; }
+.placeholder-msg { font-size: 12px; color: rgba(255,255,255,0.2); text-align: center; margin-top: 40px; border: 1px dashed rgba(255,255,255,0.1); padding: 20px; }
 
-.map-viewport {
-  width: 95%;
-  height: 95%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transform: scale(0.8); /* Shrinks the map to fit within page boundaries */
-}
+/* Map Core */
+.pro-map-center { flex: 1; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at center, #06111a 0%, #02080d 100%); overflow: hidden; position: relative; }
+.map-viewport { width: 95%; height: 95%; display: flex; justify-content: center; align-items: center; transform: scale(0.85); }
+.map-perspective-box { perspective: 1500px; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+.isometric-world-pro { transform: rotateX(55deg) rotateZ(-45deg); width: 800px; height: 400px; position: relative; transition: all 0.5s ease; }
 
-.map-perspective-box {
-  perspective: 1500px;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.isometric-world-pro {
-  transform: rotateX(55deg) rotateZ(-45deg);
-  width: 800px;
-  height: 400px; /* Reduced to avoid clipping */
-  position: relative;
-  transition: all 0.5s ease;
-}
-
-/* Parallel Labels */
-.parallel-label-box {
-  position: absolute;
-  top: -45px;
-  left: 50%;
-  transform: translateX(-50%) rotateX(-10deg); 
-  border: 1px dotted var(--neon-cyan);
-  padding: 2px 8px;
-  font-size: 10px;
-  font-weight: 900;
-  color: var(--neon-cyan);
-  background: rgba(0, 0, 0, 0.8);
-  white-space: nowrap;
-  z-index: 10;
-}
-
-.floor-slab { position: absolute; inset: 0; background: rgba(10, 25, 40, 0.9); border: 2px solid var(--neon-cyan); transition: 0.6s ease; }
+/* Floor Slabs */
+.floor-slab { position: absolute; inset: 0; background: rgba(10, 25, 40, 0.9); border: 2px solid var(--neon-cyan); transition: 0.6s ease; box-shadow: 0 0 40px rgba(0, 247, 255, 0.05); }
 .visible { opacity: 1; transform: translateZ(0); }
 .hidden { opacity: 0; transform: translateZ(-200px); pointer-events: none; }
+.heatmap-intensity-layer { position: absolute; inset: 0; pointer-events: none; transition: 0.5s; }
 
-.aisle-container { display: flex; justify-content: space-around; padding-top: 180px; position: relative; }
-.aisle-box { width: 80px; height: 160px; position: relative; cursor: pointer; transition: 0.3s; }
-.aisle-3d-body { width: 100%; height: 100%; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.5); display: flex; align-items: flex-end; }
-.aisle-fill { width: 100%; opacity: 0.4; transition: 1s ease-in-out; }
+/* Aisles */
+.aisle-container { display: flex; justify-content: space-around; padding-top: 180px; position: relative; width: 100%; }
+.aisle-box { width: 80px; height: 160px; position: relative; cursor: pointer; transition: 0.3s; transform-style: preserve-3d; }
+.aisle-3d-body { width: 100%; height: 100%; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.5); display: flex; align-items: flex-end; position: relative; }
+.aisle-fill { width: 100%; opacity: 0.4; transition: 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
+.aisle-box.active .aisle-fill { opacity: 1; }
+.aisle-box:hover { transform: scale(1.05) translateZ(10px); }
 
-.aisle-box.active .aisle-fill { opacity: 1; box-shadow: 0 0 30px var(--neon-cyan); }
-.aisle-box.active .parallel-label-box { background: var(--neon-cyan); color: black; border-style: solid; }
+/* Labels & Facilities */
+.parallel-label-box {
+  position: absolute; top: -45px; left: 50%; transform: translateX(-50%) rotateX(-10deg); 
+  padding: 2px 8px; font-size: 10px; font-weight: 900; background: rgba(0, 0, 0, 0.8);
+  white-space: nowrap; z-index: 10; border: 1px dotted; transition: 0.3s;
+}
+.aisle-box.active .parallel-label-box { background: white; color: black !important; border-style: solid; box-shadow: 0 0 15px white; }
 
-/* Fire Alert Styles */
-.fire-btn { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-.active-alarm { background: var(--neon-red); border-color: var(--neon-red); color: white; animation: blink 1s infinite; }
-@keyframes blink { 50% { opacity: 0.6; } }
-
-.facility-dot-box.emergency { border-color: var(--neon-red); color: var(--neon-red); box-shadow: 0 0 10px var(--neon-red); border-style: solid; }
-
-/* Sidebar Cards */
-.analytics-scroll-area { flex: 1; overflow-y: auto; margin-top: 15px; }
-.detail-card { background: rgba(255,255,255,0.03); border-left: 2px solid var(--neon-cyan); padding: 12px; margin-bottom: 10px; border-radius: 2px; }
-.product-name-pro { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
-.progress-bar-bg { height: 4px; background: #000; margin-bottom: 6px; }
-.progress-bar-fill { height: 100%; background: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); }
-
-.facility-dot-box { position: absolute; border: 1px dotted var(--neon-cyan); padding: 4px 8px; font-size: 9px; font-weight: bold; color: var(--neon-cyan); }
+.facility-dot-box { position: absolute; border: 1px dotted var(--neon-cyan); padding: 4px 8px; font-size: 9px; font-weight: bold; color: var(--neon-cyan); transition: 0.3s; }
 .corner-left { top: 15px; left: 15px; }
 .corner-right { top: 15px; right: 15px; }
+.emergency { border-color: var(--neon-red); color: var(--neon-red); animation: blink 1s infinite; }
+
+/* Emergency System */
+.fire-btn { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+.active-alarm { background: var(--neon-red); border-color: var(--neon-red); color: white; animation: blink 1s infinite; box-shadow: 0 0 20px var(--neon-red); }
+
+@keyframes blink { 50% { opacity: 0.4; } }
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #1a2a3a; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--neon-cyan); }
+.pro-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 80px); /* Adjust based on your header height */
+  overflow: hidden;
+  background: rgba(2, 13, 24, 0.95);
+  padding: 20px;
+  border-right: 1px solid #1a2a3a;
+}
+
+.sidebar-header-section {
+  flex-shrink: 0; /* Ensures the navigation part doesn't shrink */
+}
+
+.analytics-scroll-area {
+  flex: 1; /* Takes all remaining vertical space */
+  overflow-y: auto; /* Enables vertical scrolling */
+  padding-right: 10px;
+  margin-top: 20px;
+}
+
+/* Custom Scrollbar for a premium look */
+.analytics-scroll-area::-webkit-scrollbar {
+  width: 4px;
+}
+
+.analytics-scroll-area::-webkit-scrollbar-track {
+  background: rgba(0, 247, 255, 0.05);
+}
+
+.analytics-scroll-area::-webkit-scrollbar-thumb {
+  background: #00f7ff;
+  border-radius: 10px;
+}

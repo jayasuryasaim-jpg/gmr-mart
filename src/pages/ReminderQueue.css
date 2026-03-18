@@ -1,0 +1,92 @@
+.reminder-page-container {
+    padding: 20px;
+    color: white;
+    background: #1a1a1a;
+    min-height: 100vh;
+}
+
+.reminder-list {
+    display: grid;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.reminder-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #333;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.remove-btn {
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.item-price {
+    color: #00ffcc; /* Matches the tech/terminal aesthetic */
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.reminder-summary {
+    margin-top: 30px;
+    padding: 20px;
+    border-top: 2px solid #444;
+    text-align: right;
+    color: #fff;
+    background: #222;
+    border-radius: 8px;
+}
+.reminder-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  background: rgba(2, 13, 24, 0.5);
+  border: 1px solid #1a2a3a;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: #0a1520;
+  padding: 8px 15px;
+  border-radius: 6px;
+  border: 1px solid #1e3a5a;
+}
+
+.qty-btn {
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+  background: #00f7ff;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.qty-display {
+  font-weight: bold;
+  font-size: 18px;
+  width: 30px;
+  text-align: center;
+}
+
+.remove-btn {
+  background: #ff3b3b;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}

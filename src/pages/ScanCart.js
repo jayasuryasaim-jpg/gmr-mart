@@ -1,52 +1,64 @@
-import { useEffect, useState } from "react";
-import { Html5QrcodeScanner } from "html5-qrcode";
+import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import "./ScanCart.css";
+import QrScanner from "react-qr-scanner";
+import { handleScanSuccess } from "./scannerUtils";
 
-function ScanCart() {
+export default function ScanCart() {
   const navigate = useNavigate();
-  const [isVerifying, setIsVerifying] = useState(false);
+  const fileRef = useRef(null); // Reference for the hidden file input
 
-  useEffect(() => {
-    const scanner = new Html5QrcodeScanner(
-      "reader", { fps: 10, qrbox: 250, aspectRatio: 1.0 }, false
-    );
+  const onScan = (data) => {
+    if (data) {
+      handleScanSuccess(data.text, navigate);
+    }
+  };
 
-    scanner.render(async (decodedText) => {
-      if (decodedText !== "GMR_SECURE_CART_01") {
-        alert("❌ Invalid Hardware Token!");
-        return;
-      }
+  const onError = (err) => console.error(err);
 
-      setIsVerifying(true);
-      try {
-        const res = await fetch("/api/hardware-status");
-        const data = await res.json();
-
-        if (data.online) {
-          localStorage.setItem("cart_unlocked", "true");
-          scanner.clear().then(() => navigate("/control-cart"));
-        } else {
-          setIsVerifying(false);
-          alert("❌ ESP32 is OFFLINE. Please power on the cart.");
-        }
-      } catch (err) {
-        setIsVerifying(false);
-        alert("❌ Connection Error.");
-      }
-    });
-
-    return () => scanner.clear().catch(e => console.log(e));
-  }, [navigate]);
+  // Handle image file selection
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Create a URL for the file to scan
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        // Here you would typically use a library like 'jsqr' 
+        // to decode the image data directly
+        console.log("File loaded for scanning:", event.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
-    <div className="scan-wrapper">
-      <h1>GMR SECURE SCAN</h1>
-      {isVerifying && <div className="loader">Verifying Proximity...</div>}
-      <div id="reader"></div>
-      <p>Scan ESP32 QR to unlock</p>
+    <div style={{ padding: '20px', textAlign: 'center' }}>
+      <h1>Scan Trolley QR</h1>
+      
+      {/* Live Camera Scanner */}
+      <QrScanner
+        delay={300}
+        style={{ width: '100%', maxWidth: '400px', margin: '0 auto' }}
+        onError={onError}
+        onScan={onScan}
+      />
+
+      <div style={{ marginTop: '20px' }}>
+        <p>OR</p>
+        {/* Hidden file input triggered by custom button */}
+        <input 
+          type="file" 
+          ref={fileRef} 
+          style={{ display: 'none' }} 
+          accept="image/*" 
+          onChange={handleFileChange} 
+        />
+        <button 
+          className="pro-btn" 
+          onClick={() => fileRef.current.click()}
+        >
+          CHOOSE FROM GALLERY
+        </button>
+      </div>
     </div>
   );
 }
-
-export default ScanCart;

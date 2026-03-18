@@ -111,3 +111,57 @@
   background: linear-gradient(90deg, transparent, #00f7ff, transparent);
   opacity: 0.3;
 }
+
+/* Navbar Container */
+.cyber-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  background: #000814;
+  border-bottom: 1px solid rgba(0, 247, 255, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* Red Logout Button Design */
+.logout-btn {
+  border: 1px solid #ff3e3e !important;
+  color: #ff3e3e !important;
+  margin-left: 20px;
+  clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+}
+
+.logout-btn:hover {
+  background: #ff3e3e !important;
+  color: #000 !important;
+  box-shadow: 0 0 15px rgba(255, 62, 62, 0.6);
+}
+
+.logout-btn .btn-text {
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* Active State for other buttons */
+.nav-btn.active {
+  border-color: #00f7ff;
+  color: #00f7ff;
+  background: rgba(0, 247, 255, 0.05);
+}
+.navbar {
+  display: flex;
+  flex-wrap: wrap; /* This is the key: if buttons don't fit, they drop to the next line */
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+  height: auto; /* Changed from fixed height to auto */
+  background-color: #01080e;
+}
+
+/* Individual buttons */
+.nav-button {
+  flex: 1 1 auto; /* Allows buttons to grow/shrink to fit available space */
+  min-width: 80px;
+}
