@@ -72,6 +72,7 @@ const Login = ({ onLogin }) => {
     } else {
       const user = users.find(u => (u.email === formData.loginId || u.mobile === formData.loginId) && u.pass === formData.pass);
       if (user) {
+        // FIXED: Passes full user registration fields back to the shell state structure
         onLogin({ type: 'customer', userData: user });
       } else { 
         setError("▶ IDENTITY NOT FOUND"); 

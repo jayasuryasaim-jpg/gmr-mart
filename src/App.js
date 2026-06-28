@@ -51,10 +51,16 @@ const AppContent = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // MODIFIED: Properly save userData payload from login component
   const handleLogin = (authData) => {
     setIsAuth(true);
     localStorage.setItem('gmr_auth', 'true');
     localStorage.setItem('gmr_role', authData.type);
+    
+    if (authData.userData) {
+      localStorage.setItem('gmr_user', JSON.stringify(authData.userData));
+    }
+    
     navigate(authData.type === 'admin' ? '/admin-terminal' : '/home');
   };
 
@@ -101,9 +107,10 @@ const AppContent = () => {
         </button>
       )}
 
+      {/* MODIFIED: Reads the actual logged-in user profile, or handles fallback cleanly */}
       {showProfile && (
         <ProfileModal 
-          user={JSON.parse(localStorage.getItem('gmr_user') || '{"name":"M. Jayasuryasasi", "customerId":"GMR-C231"}')} 
+          user={JSON.parse(localStorage.getItem('gmr_user') || '{"name":"M. Jayasuryasasi", "id":"GMR-C231", "email":"jayasurya@gmr.com", "mobile":"9999999999", "dob":"2000-01-01", "gender":"Male", "regDate":"2026-03-15"}')} 
           onClose={() => setShowProfile(false)} 
           onLogout={handleLogout} 
         />
