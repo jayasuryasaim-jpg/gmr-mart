@@ -4,6 +4,7 @@ import autoTable from "jspdf-autotable";
 import './Admin.css';
 
 const AdminDashboard = ({ onLogout }) => {
+  // Added 'USERS' to the possible views
   const [view, setView] = useState('LIVE');
   const [filterDate, setFilterDate] = useState('');
   const [selectedCart, setSelectedCart] = useState(null);
@@ -12,9 +13,26 @@ const AdminDashboard = ({ onLogout }) => {
   const handleLogoutClick = (e) => {
     e.preventDefault();
     if (onLogout) {
-      onLogout(); // This must trigger the state change in your App.js
+      onLogout();
     }
   };
+
+  // --- USER LOGIN LOGS (New Feature) ---
+  const userLogs = useMemo(() => {
+    // This pulls from the database created in the Login page
+    const savedUsers = JSON.parse(localStorage.getItem('gmr_users_database')) || [];
+    return savedUsers.map((user, i) => ({
+      id: user.id || i,
+      name: user.name,
+      email: user.email,
+      mobile: user.mobile,
+      lastLoginDate: new Date().toLocaleDateString(), // Simulated current date
+      loginTime: `${10 + (i % 12)}:${(i * 7) % 60} AM`, // Simulated time
+      activeTime: `${(i * 5) + 12}m 45s`, // Simulated duration
+      status: i % 3 === 0 ? 'ONLINE' : 'OFFLINE',
+      ipAddress: `192.168.1.${100 + i}`
+    }));
+  }, []);
 
   const productLibrary = [
     { name: 'Basmati Rice', weight: '5000g', price: 850 },
@@ -51,18 +69,15 @@ const AdminDashboard = ({ onLogout }) => {
   const stats = useMemo(() => {
     const totalSales = transactions.reduce((acc, t) => acc + (t.isPaid ? t.totalPrice : 0), 0);
     const paidCount = transactions.filter(t => t.isPaid).length;
-    const pendingCount = transactions.filter(t => !t.isPaid).length;
     return [
-      { l: 'TOTAL CUSTOMERS', v: '1,240', c: '#00f7ff' },
+      { l: 'TOTAL CUSTOMERS', v: userLogs.length.toString(), c: '#00f7ff' }, // Linked to User Logs
       { l: 'TOTAL CARTS', v: '50', c: '#bf00ff' },
-      { l: 'ACTIVE CARTS', v: '12', c: '#00ff88' },
+      { l: 'ONLINE NOW', v: userLogs.filter(u => u.status === 'ONLINE').length.toString(), c: '#00ff88' }, // Linked to User Logs
       { l: 'TOTAL SALES', v: `₹${(totalSales / 1000).toFixed(1)}k`, c: '#00f7ff' },
-      { l: 'TOTAL BILLS', v: transactions.length.toString(), c: '#bf00ff' },
-      { l: 'PAID', v: paidCount.toString(), c: '#00ff88' },
-      { l: 'PENDING', v: pendingCount.toString(), c: '#ffaa00' },
+      { l: 'PAID BILLS', v: paidCount.toString(), c: '#00ff88' },
       { l: 'OCCUPANCY', v: '24%', c: '#ffaa00' }
     ];
-  }, [transactions]);
+  }, [transactions, userLogs]);
 
   const [history] = useState(() => 
     Array.from({ length: 30 }, (_, i) => ({
@@ -97,45 +112,32 @@ const AdminDashboard = ({ onLogout }) => {
 
   return (
     <div className="admin-root">
-      {/* Header modified for Mobile Wrap */}
-      <header className="page-header" style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        padding: '10px 20px',
-        flexWrap: 'wrap', // Allows items to drop to next line on small screens
-        gap: '10px'
-      }}>
+      <header className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 20px', flexWrap: 'wrap', gap: '10px' }}>
         <div className="view-toggle" style={{ order: 1 }}>
           <button onClick={() => setView('LIVE')} className={`pro-btn ${view === 'LIVE' ? 'active' : ''}`}>LIVE_FEED</button>
+          <button onClick={() => setView('USERS')} className={`pro-btn ${view === 'USERS' ? 'active' : ''}`}>USER_LOGS</button>
           <button onClick={() => setView('HISTORY')} className={`pro-btn ${view === 'HISTORY' ? 'active' : ''}`}>HISTORY</button>
         </div>
         
-        <h1 className="centered-title" style={{ 
-            margin: 0, 
-            fontSize: '1.2rem', 
-            order: { mobile: 3, desktop: 2 },
-            width: '100%', 
-            textAlign: 'center' 
-        }}>MART_SENSE DASHBOARD</h1>
+        <h1 className="centered-title" style={{ margin: 0, fontSize: '1.2rem', width: '100%', textAlign: 'center', order: 3 }}>MART_SENSE DASHBOARD</h1>
         
         <div className="header-logout" style={{ order: 2 }}>
           <button className="btn-logout" onClick={handleLogoutClick} style={{ width: 'auto', padding: '8px 16px' }}>LOG OUT</button>
         </div>
       </header>
 
-      {view === 'LIVE' ? (
-        <>
-          <div className="stats-grid">
-            {stats.map((s, i) => (
-              <div key={i} className="stat-box" style={{ borderBottom: `4px solid ${s.c}` }}>
-                <span className="stat-label">{s.l}</span>
-                <h2 className="stat-value">{s.v}</h2>
-              </div>
-            ))}
+      {/* --- STATS GRID --- */}
+      <div className="stats-grid">
+        {stats.map((s, i) => (
+          <div key={i} className="stat-box" style={{ borderBottom: `4px solid ${s.c}` }}>
+            <span className="stat-label">{s.l}</span>
+            <h2 className="stat-value">{s.v}</h2>
           </div>
-          
-          {/* Added responsive-table wrapper */}
+        ))}
+      </div>
+
+      {/* --- LIVE FEED VIEW --- */}
+      {view === 'LIVE' && (
           <div className="data-panel" style={{ overflowX: 'auto' }}>
             <table className="mart-table" style={{ minWidth: '800px' }}>
               <thead><tr><th>CART_NO</th><th>CUST_ID</th><th>NAME</th><th>PRODUCTS</th><th>STATUS</th><th>WEIGHT</th><th>TOTAL</th><th>ACTION</th></tr></thead>
@@ -155,8 +157,44 @@ const AdminDashboard = ({ onLogout }) => {
               </tbody>
             </table>
           </div>
-        </>
-      ) : (
+      )}
+
+      {/* --- NEW: USER LOGS VIEW --- */}
+      {view === 'USERS' && (
+        <div className="data-panel" style={{ overflowX: 'auto' }}>
+          <table className="mart-table" style={{ minWidth: '800px' }}>
+            <thead>
+              <tr>
+                <th>CUSTOMER_NAME</th>
+                <th>CONTACT_DETAIL</th>
+                <th>LOGIN_DATE</th>
+                <th>ENTRY_TIME</th>
+                <th>ACTIVE_TIME</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {userLogs.map((log) => (
+                <tr key={log.id}>
+                  <td><span className="txt-cyan">{log.name}</span></td>
+                  <td>{log.mobile}</td>
+                  <td>{log.lastLoginDate}</td>
+                  <td>{log.loginTime}</td>
+                  <td className="txt-dim">{log.activeTime}</td>
+                  <td>
+                    <span className={`pill ${log.status === 'ONLINE' ? 'paid' : 'unpaid'}`}>
+                      {log.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* --- HISTORY VIEW --- */}
+      {view === 'HISTORY' && (
         <div className="data-panel">
           <div className="filter-bar" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
             <input type="date" className="pro-input" onChange={(e) => setFilterDate(e.target.value)} />
@@ -176,7 +214,7 @@ const AdminDashboard = ({ onLogout }) => {
         </div>
       )}
 
-      {/* Verification Overlay - Made scrollable for small screens */}
+      {/* Verification Overlay */}
       {view === 'VERIFY' && selectedCart && (
         <div className="overlay" style={{ padding: '10px', overflowY: 'auto' }}>
           <div className="gate-sense-card" style={{ maxWidth: '100%', width: '100%' }}>

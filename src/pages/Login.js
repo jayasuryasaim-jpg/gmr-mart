@@ -2,119 +2,172 @@ import React, { useState } from 'react';
 import './Login.css';
 
 const Login = ({ onLogin }) => {
-  const [view, setView] = useState('login'); // login, register, admin, forgot
-  const [showPass, setShowPass] = useState(false);
+  const [view, setView] = useState('login'); // 'login' | 'register' | 'admin'
   const [error, setError] = useState('');
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    name: '',
+    mobile: '',
+    email: '',
+    dob: '',
+    gender: '',
+    pass: ''
+  });
+  const [generatedOtp, setGeneratedOtp] = useState('');
+  const [userOtp, setUserOtp] = useState('');
+  const [isOtpVerified, setIsOtpVerified] = useState(false);
 
   const handleChange = (e) => {
+    setError('');
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const triggerOtp = () => {
+    const target = formData.mobile;
+    if (!target) return setError("▶ ENTER MOBILE NUMBER FOR OTP");
+    
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedOtp(otp);
+    alert(`[GMR SECURITY] Your registration OTP is: ${otp}`);
+  };
+
+  const handleVerifyOtp = () => {
+    if (userOtp === generatedOtp && generatedOtp !== '') {
+      setIsOtpVerified(true);
+      setError('');
+      alert("OTP VERIFIED SUCCESSFUL");
+    } else {
+      setError("▶ INVALID OTP");
+    }
+  };
+
+  const handleRegister = (e) => {
     e.preventDefault();
-    setError('');
+    if (!isOtpVerified) return setError("▶ VERIFY OTP FIRST");
+    
+    const users = JSON.parse(localStorage.getItem('gmr_users_database')) || [];
+    const newUser = { 
+      ...formData, 
+      id: `GMR-C${1000 + users.length + 1}`,
+      regDate: new Date().toLocaleDateString() 
+    };
+    
+    localStorage.setItem('gmr_users_database', JSON.stringify([...users, newUser]));
+    alert("REGISTRATION SUCCESSFUL");
+    setView('login');
+    setIsOtpVerified(false);
+    setUserOtp('');
+    setGeneratedOtp('');
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const users = JSON.parse(localStorage.getItem('gmr_users_database')) || [];
     
     if (view === 'admin') {
-      if (formData.adminId === "GMR_ADMIN" && formData.pass === "GMR_2026") {
-        onLogin({ type: 'admin', role: formData.role });
-      } else {
-        setError("▶ ACCESS_DENIED: UNAUTHORIZED_ID");
+      if (formData.loginId === "GMR_ADMIN" && formData.pass === "GMR_2026") {
+        onLogin({ type: 'admin', userData: { name: 'System Admin', id: 'ADM-001' } });
+      } else { 
+        setError("▶ ADMIN ACCESS DENIED"); 
       }
-    } else if (view === 'register') {
-      if (formData.pass !== formData.confirmPass) return setError("▶ PASSWORDS_MISMATCH");
-      localStorage.setItem('gmr_user', JSON.stringify(formData));
-      alert("ACCOUNT CREATED: SYNCING DATA...");
-      setView('login');
-    } else if (view === 'forgot') {
-      alert("▶ RECOVERY_SENT: CHECK YOUR EMAIL/MOBILE");
-      setView('login');
     } else {
-      const savedUser = JSON.parse(localStorage.getItem('gmr_user'));
-      if (savedUser && formData.email === savedUser.email && formData.pass === savedUser.pass) {
-        onLogin({ type: 'customer' });
-      } else {
-        setError("▶ IDENTITY_NOT_FOUND");
+      const user = users.find(u => (u.email === formData.loginId || u.mobile === formData.loginId) && u.pass === formData.pass);
+      if (user) {
+        onLogin({ type: 'customer', userData: user });
+      } else { 
+        setError("▶ IDENTITY NOT FOUND"); 
       }
     }
   };
 
   return (
     <div className="login-master">
-      <div className="bg-scanline"></div>
-      
-      <div className={`login-frame ${view === 'register' ? 'wide-frame' : ''}`}>
-        <div className="frame-corner top-left"></div>
-        <div className="frame-corner bottom-right"></div>
+      <div className="login-frame">
+        <div className="logo-header">
+          <h2 className="terminal-text">GMR <span className="cyan-txt">MART</span></h2>
+          <p className="subtitle-text">
+            {view === 'admin' ? 'ADMIN ACCESS CONTROL' : view === 'register' ? 'NEW ENROLLMENT' : 'SECURE GATEWAY'}
+          </p>
+        </div>
 
-        <h2 className="terminal-text">GMR <span className="cyan-txt">MART {view === 'admin' && 'ADMIN'}</span></h2>
-        <p className="security-tag">
-          {view === 'admin' ? "CORE_CONTROL_DASHBOARD_V4" : 
-           view === 'register' ? "USER_ENROLLMENT_PROTOCOL" : 
-           view === 'forgot' ? "SECURITY_RECOVERY_MODE" : "SECURE_RETAIL_ACCESS"}
-        </p>
-
-        <form onSubmit={handleSubmit} className="cyber-form">
-          {view === 'admin' ? (
-            <>
-              <div className="cyber-input-group"><label>ADMIN_ID</label><input type="text" name="adminId" required onChange={handleChange} placeholder="ENTER_UID" /></div>
-              <div className="cyber-input-group"><label>ROLE_AUTHORITY</label>
-                <select name="role" required onChange={handleChange} className="cyber-select">
-                  <option value="">SELECT_ROLE</option>
-                  <option value="super">Super Admin</option>
-                  <option value="inventory">Inventory Manager</option>
-                  <option value="billing">Billing Manager</option>
-                  <option value="support">Customer Support</option>
-                  <option value="device">Smart Cart Manager</option>
-                </select>
+        {error && <div className="error-banner">{error}</div>}
+        
+        <form onSubmit={view === 'register' ? handleRegister : handleLogin} className="cyber-form">
+          {view === 'register' ? (
+            <div className="compact-register-grid">
+              <div className="cyber-input-group">
+                <label>FULL NAME</label>
+                <input type="text" name="name" required onChange={handleChange} placeholder="John Doe" />
               </div>
-            </>
-          ) : view === 'register' ? (
-            <div className="grid-inputs">
-              <div className="cyber-input-group"><label>FULL_NAME</label><input type="text" name="name" required onChange={handleChange} /></div>
-              <div className="cyber-input-group"><label>MOBILE</label><input type="text" name="mobile" required onChange={handleChange} /></div>
-              <div className="cyber-input-group"><label>EMAIL</label><input type="email" name="email" required onChange={handleChange} /></div>
-              <div className="cyber-input-group"><label>CITY</label><input type="text" name="city" required onChange={handleChange} /></div>
-              <div className="cyber-input-group"><label>PINCODE</label><input type="text" name="pincode" required onChange={handleChange} /></div>
-              <div className="cyber-input-group"><label>ADDRESS</label><input type="text" name="address" required onChange={handleChange} /></div>
-              <div className="cyber-input-group"><label>PASSWORD</label><input type={showPass ? "text" : "password"} name="pass" required onChange={handleChange} /></div>
-              <div className="cyber-input-group"><label>CONFIRM_PASS</label><input type="password" name="confirmPass" required onChange={handleChange} /></div>
-            </div>
-          ) : view === 'forgot' ? (
-            <div className="cyber-input-group">
-              <label>ENTER_EMAIL_OR_MOBILE</label>
-              <input type="text" name="recovery" required onChange={handleChange} placeholder="IDENTITY_LINK" />
+
+              <div className="cyber-input-group">
+                <label>MOBILE NUMBER</label>
+                <input type="text" name="mobile" required onChange={handleChange} placeholder="Enter 10-digit number" />
+              </div>
+
+              <div className="cyber-input-group">
+                <label>EMAIL ID</label>
+                <input type="email" name="email" required onChange={handleChange} placeholder="name@domain.com" />
+              </div>
+
+              <div className="grid-split">
+                <div className="cyber-input-group">
+                  <label>DATE OF BIRTH</label>
+                  <input type="date" name="dob" required onChange={handleChange} />
+                </div>
+                <div className="cyber-input-group">
+                  <label>GENDER</label>
+                  <select name="gender" required onChange={handleChange}>
+                    <option value="">Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="cyber-input-group">
+                <label>CREATE PASSWORD</label>
+                <input type="password" name="pass" required onChange={handleChange} placeholder="••••••••" />
+              </div>
+
+              <div className="otp-container">
+                <label>MOBILE VERIFICATION</label>
+                <div className="otp-row">
+                  <input type="text" placeholder="Enter OTP" onChange={(e) => setUserOtp(e.target.value)} />
+                  <button type="button" className="otp-btn send" onClick={triggerOtp}>SEND</button>
+                  <button type="button" className={`otp-btn verify ${isOtpVerified ? 'verified' : ''}`} onClick={handleVerifyOtp}>
+                    {isOtpVerified ? 'VERIFIED' : 'VERIFY'}
+                  </button>
+                </div>
+              </div>
+
+              <button type="submit" className="auth-submit-btn margin-top-lg">REGISTER</button>
             </div>
           ) : (
-            <div className="cyber-input-group"><label>EMAIL / MOBILE</label><input type="text" name="email" required onChange={handleChange} /></div>
-          )}
-
-          {view !== 'register' && (
-            <div className="cyber-input-group pass-wrap">
-              <label>PASSCODE</label>
-              <div className="input-with-icon">
-                <input type={showPass ? "text" : "password"} name="pass" required onChange={handleChange} />
-                <span className="eye-icon" onClick={() => setShowPass(!showPass)}>{showPass ? '🔓' : '🔒'}</span>
+            <div className="login-fields">
+              <div className="cyber-input-group">
+                <label>{view === 'admin' ? 'ADMIN IDENTIFIER' : 'IDENTITY (EMAIL/MOBILE)'}</label>
+                <input type="text" name="loginId" required onChange={handleChange} placeholder={view === 'admin' ? 'GMR_ADMIN' : 'Enter email or mobile'} />
               </div>
+              <div className="cyber-input-group">
+                <label>PASSWORD</label>
+                <input type="password" name="pass" required onChange={handleChange} placeholder="••••••••" />
+              </div>
+              <button type="submit" className="auth-submit-btn">
+                {view === 'admin' ? 'AUTHENTICATE_ADMIN' : 'VERIFY_IDENTITY'}
+              </button>
             </div>
           )}
-
-          {error && <div className="error-terminal">{error}</div>}
-
-          <button type="submit" className="auth-submit-btn">
-            {view === 'admin' ? "AUTHORIZE_ADMIN" : view === 'register' ? "CREATE_ACCOUNT" : view === 'forgot' ? "REGENERATE_PASS" : "VERIFY_IDENTITY"}
-          </button>
         </form>
 
-        <div className="auth-footer-toggle">
-          {view === 'login' && (
-            <>
-              <p onClick={() => setView('register')}>▶ NEW_CUSTOMER? CREATE_ACCOUNT</p>
-              <p onClick={() => setView('forgot')}>▶ FORGOT_PASSWORD? RECOVER</p>
-              <p onClick={() => setView('admin')} className="admin-link">▶ SYSTEM_ADMIN_LOGIN</p>
-            </>
+        <div className="auth-footer">
+          {view === 'login' ? (
+            <div className="footer-links">
+              <span onClick={() => setView('register')} className="footer-link">▶ NEW USER? ENROLL</span>
+              <span onClick={() => setView('admin')} className="admin-link">ADMIN_LOGIN</span>
+            </div>
+          ) : (
+            <span onClick={() => { setView('login'); setError(''); }} className="footer-link">◀ BACK TO LOGIN</span>
           )}
-          {view !== 'login' && <p onClick={() => setView('login')}>◀ RETURN_TO_LOGIN</p>}
         </div>
       </div>
     </div>
