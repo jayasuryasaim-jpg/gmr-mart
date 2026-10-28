@@ -1,45 +1,578 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
-</html>
+﻿<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GMR Smart Mart â€“ Grand Atrium</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--g:#123C2C;--gold:#E6C46E;--cream:#F4EFE0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{height:100%;margin:0;background:#07101f;color:var(--cream);font-family:Manrope,system-ui,sans-serif;overflow:hidden}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+.ui{position:fixed;inset:0;pointer-events:none}
+nav{position:absolute;top:env(safe-area-inset-top,0px);left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:20px 4vw;background:linear-gradient(#050d1ad9,transparent);pointer-events:auto;z-index:5}
+.logo{font:600 24px 'Cormorant Garamond',Georgia,serif;letter-spacing:.03em}.logo i{font-style:normal;color:var(--gold)}
+nav div{display:flex;gap:28px;font-size:14px;align-items:center}
+nav a{color:var(--cream);opacity:.88;cursor:pointer;text-shadow:0 1px 8px #000}nav a:hover{opacity:1;color:var(--gold)}
+#who{color:var(--gold);font-weight:600}
+.scrim{position:absolute;inset:0;background:linear-gradient(90deg,#050d1af0 0%,#050d1ac4 28%,#050d1a4d 52%,transparent 72%);transition:opacity .9s}
+.hero{position:absolute;left:4vw;top:50%;transform:translateY(-50%);max-width:540px;transition:opacity .9s,transform .9s;text-shadow:0 2px 24px #000c}
+.hero h1{font:600 clamp(48px,7vw,96px)/.95 'Cormorant Garamond',Georgia,serif;margin:0 0 20px;color:var(--cream)}
+.hero p{font-size:17px;line-height:1.7;color:#f4efe0;opacity:.92;max-width:440px;margin:0 0 30px}
+.hide{opacity:0!important;pointer-events:none!important}.hero.hide{transform:translateY(-50%) translateX(-30px)}
+.btn{pointer-events:auto;cursor:pointer;border:0;padding:16px 30px;font:600 14px Manrope,sans-serif;background:var(--gold);color:var(--g);border-radius:2px;margin:0 12px 10px 0}
+.btn.o{background:#06130d80;color:var(--cream);border:1px solid #f4efe099}
+.btn:focus-visible,nav a:focus-visible,input:focus-visible,.floors button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.login{position:absolute;left:50%;top:50%;transform:translate(-50%,-46%);width:min(360px,88vw);box-sizing:border-box;padding:32px 30px 28px;background:linear-gradient(160deg,#ffffff24,#ffffff0d),#0a241a59;backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);border:1px solid #e6c46e99;box-shadow:0 24px 70px #0009,inset 0 0 0 1px #ffffff1f;opacity:0;pointer-events:none;transition:opacity .9s,transform .9s;text-shadow:0 1px 6px #000a}
+.login.on{opacity:1;transform:translate(-50%,-50%);pointer-events:auto}
+.login h2{font:600 34px 'Cormorant Garamond',serif;margin:0 0 4px;color:var(--cream)}
+.login p{margin:0 0 22px;font-size:14px;color:#f4efe0e6}
+.login label{display:block;font-size:13px;font-weight:500;color:#f4efe0;margin-bottom:2px}
+.login input{width:100%;box-sizing:border-box;background:transparent;border:0;border-bottom:1.5px solid #e6c46ecc;color:#fff;padding:9px 0;margin-bottom:20px;font:16px Manrope,sans-serif;text-shadow:0 1px 6px #000a}
+.login input::placeholder{color:#f4efe0a6}
+.login .btn{width:100%;margin:6px 0 0}
+.welcome{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;width:92vw;opacity:0;transition:opacity 1s;pointer-events:none;text-shadow:0 4px 40px #000}
+.welcome.on{opacity:1}
+.welcome small{display:block;font-size:16px;color:var(--cream);margin-bottom:10px}
+.welcome h2{font:600 clamp(46px,9vw,110px)/1 'Cormorant Garamond',serif;color:var(--gold);margin:0}
+.floors{position:absolute;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(30px);opacity:0;display:flex;gap:6px;padding:8px;background:#0a241ae6;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid #e6c46e66;transition:.8s;pointer-events:none;max-width:94vw;overflow-x:auto}
+.floors.on{opacity:1;transform:translateX(-50%);pointer-events:auto}
+.floors button{border:0;background:transparent;color:var(--cream);padding:11px 16px;font:500 14px Manrope;cursor:pointer;border-radius:2px;white-space:nowrap}
+.floors button.a{background:var(--gold);color:var(--g)}
+.floors #rotb{border-left:1px solid #e6c46e66;color:var(--gold)}
+.tag{position:absolute;left:4vw;bottom:calc(100px + env(safe-area-inset-bottom,0px));max-width:380px;opacity:0;transition:.8s;text-shadow:0 2px 20px #000}
+.tag.on{opacity:1}
+.tag h3{font:600 clamp(34px,5vw,58px)/1 'Cormorant Garamond',serif;margin:0 0 8px;color:var(--cream)}
+.tag p{margin:0;font-size:15px;color:var(--cream);opacity:.9;line-height:1.6}
+.mo{position:absolute;right:4vw;bottom:calc(24px + env(safe-area-inset-bottom,0px));font-size:12px;pointer-events:auto;color:#f4efe0cc;display:flex;gap:6px;align-items:center}
+@media(max-width:700px){nav div a:not(#who):not(.si){display:none}.mo{display:none}.scrim{background:linear-gradient(#050d1af0,#050d1a99)}}
+.sb{position:absolute;top:calc(16px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);width:min(430px,36vw);z-index:6;opacity:0;pointer-events:none;transition:opacity .8s}
+.sb.on{opacity:1;pointer-events:auto}
+.sb input{width:100%;box-sizing:border-box;padding:13px 18px 13px 46px;border-radius:32px;border:1px solid #e6c46ecc;background:#0a241af0 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23E6C46E' stroke-width='2.4'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.5-4.5'/%3E%3C/svg%3E") no-repeat 17px center;color:#fff;font:500 15px Manrope,sans-serif;box-shadow:0 10px 30px #0006}
+.sb input::placeholder{color:#f4efe0b3}
+.res{display:none;margin-top:8px;background:#0a241af7;border:1px solid #e6c46e88;border-radius:14px;overflow:hidden}.res.on{display:block}
+.res button{display:block;width:100%;text-align:left;border:0;background:transparent;color:var(--cream);padding:11px 18px;cursor:pointer;font:14px Manrope,sans-serif}
+.res button:hover,.res button:focus-visible{background:#e6c46e;color:var(--g)}.res b{display:block;font-weight:600}.res span{font-size:12px;opacity:.85}.res p{margin:0;padding:12px 18px;font-size:13px;color:#f4efe0cc}
+.mp{position:absolute;left:50%;top:50%;transform:translate(-50%,-48%);width:min(1040px,94vw);height:min(640px,84vh);box-sizing:border-box;display:grid;grid-template-columns:.9fr 1.3fr;gap:24px;padding:26px;background:#071a13ee;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid #e6c46e99;box-shadow:0 30px 90px #000a;opacity:0;pointer-events:none;transition:.6s;z-index:9}
+.mp.on{opacity:1;transform:translate(-50%,-50%);pointer-events:auto}
+.xb{position:absolute;right:16px;top:14px;padding:8px 16px;margin:0}
+.ml h3{font:600 30px 'Cormorant Garamond',serif;margin:0 0 4px}.ml p,.lg{font-size:13px;color:#f4efe0cc;margin:0 0 10px}
+.stk{position:relative;height:calc(100% - 70px);perspective:1100px;min-height:300px}
+.pl{position:absolute;left:62%;width:250px;height:176px;margin-left:-125px;transform:rotateX(58deg) rotateZ(-32deg);border:1px solid #e6c46e99;cursor:pointer;background:#0e2a20;box-shadow:0 26px 30px #0007;transition:.4s}
+.pl:hover,.pl.a{border-color:#E6C46E;box-shadow:0 0 0 2px #E6C46E,0 26px 36px #0008;filter:brightness(1.25)}
+.pl svg{pointer-events:none;width:100%;height:100%}
+.pt{position:absolute;left:0;width:120px;font-size:13px;color:var(--cream);font-weight:600;line-height:1.3}.pt small{display:block;font-weight:400;opacity:.8}
+.mr{display:flex;flex-direction:column;min-height:0}
+.tabs{display:flex;gap:6px;margin-bottom:10px;padding-right:90px;flex-wrap:wrap}.tabs button{border:1px solid #e6c46e66;background:transparent;color:var(--cream);padding:9px 14px;font:500 13px Manrope,sans-serif;cursor:pointer}.tabs button.a{background:var(--gold);color:var(--g)}
+.pn{flex:1;min-height:0}.pn svg{width:100%;height:100%}.rk{cursor:pointer}.rk:hover{fill:#E6C46E}
+@media(max-width:1100px){.sb{top:calc(72px + env(safe-area-inset-top,0px));width:min(520px,90vw)}}
+@media(max-width:800px){.mp{grid-template-columns:1fr}.ml{display:none}}
+.ai{position:absolute;left:4vw;top:calc(88px + env(safe-area-inset-top,0px));width:min(350px,88vw);box-sizing:border-box;padding:14px 16px;background:#071a13eb;border:1px solid #e6c46e88;box-shadow:0 14px 40px #0008;opacity:0;pointer-events:none;transition:opacity .6s;z-index:4}
+.ai.on{opacity:1;pointer-events:auto}
+.ai .av{width:34px;height:34px;flex:none;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3c4,#E6C46E 45%,#9a7a2c);box-shadow:0 0 18px #e6c46e88;animation:pu 2.4s infinite}
+@keyframes pu{50%{box-shadow:0 0 32px #e6c46ecc}}
+.ai small{font-weight:400;opacity:.7}
+.ai p{margin:10px 0 8px;font-size:13.5px;line-height:1.55;color:var(--cream);min-height:4.6em}
+.ai input{width:100%;box-sizing:border-box;background:#0e2a20;border:1px solid #e6c46e66;color:#fff;padding:8px 10px;font:13px Manrope,sans-serif;margin-top:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chips button{border:1px solid #e6c46e88;background:transparent;color:var(--cream);padding:6px 11px;font:500 12px Manrope,sans-serif;border-radius:14px;cursor:pointer}.chips button:hover{background:var(--gold);color:var(--g)}
+.sp{position:absolute;right:3vw;top:calc(84px + env(safe-area-inset-top,0px));bottom:calc(88px + env(safe-area-inset-bottom,0px));width:min(430px,92vw);box-sizing:border-box;display:flex;flex-direction:column;background:#071a13f5;border:1px solid #e6c46e99;box-shadow:0 24px 70px #000a;opacity:0;transform:translateX(30px);pointer-events:none;transition:.6s;z-index:8}
+.sp.on{opacity:1;transform:none;pointer-events:auto}
+.sph{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #e6c46e44}.sph h3{margin:0;font:600 26px 'Cormorant Garamond',serif}
+.spb{flex:1;overflow:auto;padding:14px 16px;font-size:13px;line-height:1.5}
+.sp input,.sp select{background:#0e2a20;color:var(--cream);border:1px solid #e6c46e66;padding:8px 10px;font:13px Manrope,sans-serif;width:100%;box-sizing:border-box}
+.sp label{display:block;margin:8px 0}
+.b2{border:1px solid #e6c46e88;background:transparent;color:var(--cream);padding:8px 12px;font:600 12px Manrope,sans-serif;cursor:pointer}.b2.p{background:var(--gold);color:var(--g)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{border:1px solid #e6c46e55;padding:10px;cursor:pointer;background:#0e2a20}.card:hover{border-color:var(--gold)}
+.sw{height:50px;margin-bottom:6px;border-radius:2px}
+.note{font-size:12px;color:#f4efe0b3;border-left:2px solid var(--gold);padding-left:8px;margin:10px 0}
+.row{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #e6c46e22}
+.pv{height:210px;border:1px solid #e6c46e44;background:radial-gradient(#1b4a39,#071a13)}.pv canvas{position:static;width:100%;height:100%}
+.sp h4{margin:14px 0 4px;font:600 20px 'Cormorant Garamond',serif;color:var(--gold)}
+.sp ol{padding-left:18px}
+@media(max-width:1100px){.ai{top:calc(132px + env(safe-area-inset-top,0px))}}
+@media(max-width:700px){.ai{width:calc(100vw - 8vw);top:calc(120px + env(safe-area-inset-top,0px))}.ai p{min-height:0}.sp{top:auto;height:62vh}}
+</style></head><body>
+<div class="ui">
+<nav><span class="logo">GMR <i>Smart Mart</i></span><div><a tabindex="0" onclick="go('hero')">Home</a><a tabindex="0" onclick="atr()">Atrium</a><a tabindex="0" onclick="dep()">Departments</a><a tabindex="0" onclick="dirO()">Services</a><a tabindex="0" onclick="mapT(1)">Store map</a><span id="who"></span><a class="si" id="si" tabindex="0" onclick="sg()">Sign in</a></div></nav>
+<div class="scrim" id="scrim"></div>
+<section class="hero" id="hero"><h1>Fresh choices.<br>Better living.</h1><p>Step through the glass doors into a three-storey smart supermarket. Browse every floor from the atrium and fill your smart cart.</p><button class="btn" onclick="sg()">Enter the mart</button><button class="btn o" onclick="skip()">Skip intro</button></section>
+<form class="login" id="login" onsubmit="doLogin(event)"><h2>Sign in</h2><p>Enter your name and the doors will open.</p><label for="nm">Your name</label><input id="nm" type="text" maxlength="24" placeholder="e.g. Ravi" autocomplete="given-name" required><label for="pw">Password</label><input id="pw" type="password" placeholder="Enter any password (demo)" autocomplete="current-password"><label style="display:flex;gap:8px;align-items:center;font-size:13px;margin:0 0 6px"><input id="adm" type="checkbox" style="width:auto;margin:0">Admin access (demo)</label><button class="btn" type="submit">Sign in</button><p style="margin:12px 0 0;font-size:13px"><a id="regl" style="color:var(--gold);cursor:pointer" onclick="regT()">New customer? Create an account</a></p></form>
+<div class="welcome" id="welcome"><small>Good to see you</small><h2 id="wn"></h2></div>
+<div class="sb" id="sb"><input id="q" type="search" placeholder="Search a product: milk, honey, cereal, applesâ€¦" autocomplete="off" aria-label="Search products"><div class="res" id="res"></div></div>
+<div class="tag" id="tag"><h3 id="tt"></h3><p id="td"></p><button class="btn o" id="clr" style="display:none;padding:9px 16px" onclick="clr()">Clear route</button></div>
+<div class="floors" id="floors"><button data-k="atrium" class="a">Atrium</button><button data-k="ground">Ground</button><button data-k="first">First</button><button data-k="second">Second</button><button data-k="map">Store map</button><button data-k="svc">Services</button><button data-k="rot" id="rotb">â†» Rotate</button></div>
+<div class="mp" id="mp" role="dialog" aria-label="Store layout"><button class="btn o xb" onclick="mapT(0)">Close</button><div class="ml"><h3>Overall layout</h3><p>Three floors, one glass lift and two staircases around the atrium. Tap a floor.</p><div class="stk" id="stk"></div></div><div class="mr"><div class="tabs" id="tabs"></div><div class="pn" id="pn"></div><p class="lg">Tap any rack to fly there. Gold block: lift. Hatched strips: stairs. Dashed gold: your route.</p></div></div>
+<div class="ai" id="ai"><div style="display:flex;gap:10px;align-items:center"><div class="av"></div><b>Aria <small>Â· your mart guide</small></b></div><p id="aim"></p><div class="chips" id="chips"></div><input id="aq" placeholder="Ask Aria: where is honey? checkout? second floor?" autocomplete="off" aria-label="Ask Aria"></div>
+<div class="sp" id="sp" role="dialog" aria-label="Mart station"><div class="sph"><h3 id="spt"></h3><button class="b2" onclick="spX()">Close</button></div><div class="spb" id="spb"></div></div>
+<label class="mo"><input type="checkbox" id="rm"> Reduce motion</label>
+</div>
+<script src="%PUBLIC_URL%/js/three.min.js"></script>
+<script>
+(function(){
+var W=40,D=28,VW=12,VD=14,FH=6,TH=THREE;
+function el(i){return document.getElementById(i)}
+function cvs(w,h,f,rep){var c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'),w,h);var t=new TH.CanvasTexture(c);t.encoding=TH.sRGBEncoding;t.anisotropy=4;if(rep){t.wrapS=t.wrapT=TH.RepeatWrapping;t.repeat.set(rep[0],rep[1])}return t}
+function tx(g,s,x,y,sz,col){g.fillStyle=col;g.textAlign='center';g.textBaseline='middle';g.font='700 '+sz+'px Georgia,serif';var L=s.split('\n');L.forEach(function(l,i){g.fillText(l,x,y+(i-(L.length-1)/2)*sz*1.1)})}
+var scene=new TH.Scene();
+scene.background=new TH.Color(0x0b1a33);
+scene.fog=new TH.Fog(0x16294a,90,310);
+var cam=new TH.PerspectiveCamera(45,innerWidth/innerHeight,.1,430);
+var r=new TH.WebGLRenderer({antialias:true});r.setPixelRatio(Math.min(devicePixelRatio,2));r.setSize(innerWidth,innerHeight);
+r.shadowMap.enabled=true;r.outputEncoding=TH.sRGBEncoding;r.toneMapping=TH.ACESFilmicToneMapping;r.toneMappingExposure=1.15;
+document.body.insertBefore(r.domElement,document.body.firstChild);
+function M(c,ro,me,o){return new TH.MeshStandardMaterial(Object.assign({color:c,roughness:ro==null?.6:ro,metalness:me||0},o||{}))}
+function box(w,h,d,m,x,y,z,p,ns){var b=new TH.Mesh(new TH.BoxGeometry(w,h,d),m);b.position.set(x,y,z);b.castShadow=!ns;b.receiveShadow=true;(p||scene).add(b);return b}
+function wood(rx){return M(0xffffff,.6,0,{map:cvs(128,128,function(g,w,h){var cs=['#4a2f1b','#573720','#40281a','#5f3c22'];for(var i=0;i<8;i++){g.fillStyle=cs[i%4];g.fillRect(i*16,0,16,h);g.fillStyle='#1e120a';g.fillRect(i*16,0,2,h)}},[rx,1])})}
+var glass=new TH.MeshPhysicalMaterial({color:0xa8d8ff,roughness:.03,transparent:true,opacity:.16,clearcoat:1,side:TH.DoubleSide,depthWrite:false});
+var dglass=new TH.MeshPhysicalMaterial({color:0x8fcfe0,roughness:.03,transparent:true,opacity:.3,clearcoat:1,side:TH.DoubleSide,depthWrite:false});
+var timber=M(0x6b4426,.55),brass=M(0xC5A55A,.25,.85),green=M(0x0f3326,.45,.15),gold=M(0xE6C46E,.3,.8),dstone=M(0x8a857a,.28,.1),emis=M(0xffd68a,.4,0,{emissive:0xffc66a,emissiveIntensity:1.6}),balM=M(0x14493a,.35,.25,{emissive:0x0b2a20,emissiveIntensity:.35});
+// ---------- BLUE HOUR ENVIRONMENT ----------
+var sky=new TH.Mesh(new TH.SphereGeometry(390,32,16),new TH.MeshBasicMaterial({fog:false,side:TH.BackSide,map:cvs(1024,512,function(g,w,h){var q=g.createLinearGradient(0,0,0,h);q.addColorStop(0,'#040b1c');q.addColorStop(.3,'#0b2149');q.addColorStop(.43,'#27528a');q.addColorStop(.485,'#c98763');q.addColorStop(.5,'#8f5a49');q.addColorStop(.52,'#1a2536');q.addColorStop(1,'#0a1220');g.fillStyle=q;g.fillRect(0,0,w,h);for(var i=0;i<460;i++){g.fillStyle='rgba(255,255,255,'+(Math.random()*.8+.2)+')';var s=Math.random()*1.6+.5;g.fillRect(Math.random()*w,Math.random()*h*.4,s,s)}})}));scene.add(sky);
+var moon=new TH.Sprite(new TH.SpriteMaterial({map:cvs(256,256,function(g){var q=g.createRadialGradient(128,128,0,128,128,128);q.addColorStop(0,'#fffbe8');q.addColorStop(.11,'#fff4cf');q.addColorStop(.14,'rgba(190,210,255,.35)');q.addColorStop(1,'rgba(120,150,230,0)');g.fillStyle=q;g.fillRect(0,0,256,256)}),transparent:true,fog:false,depthWrite:false,blending:TH.AdditiveBlending}));moon.scale.set(80,80,1);moon.position.set(-130,95,-250);scene.add(moon);
+var skT=cvs(64,256,function(g,w,h){g.fillStyle='#0d1830';g.fillRect(0,0,w,h);for(var y=6;y<h-4;y+=9)for(var x=5;x<w-4;x+=9)if(Math.random()<.42){g.fillStyle=Math.random()<.7?'#ffd48a':'#bcd8ff';g.globalAlpha=.4+Math.random()*.6;g.fillRect(x,y,4,5)}g.globalAlpha=1});
+for(var ski=0;ski<26;ski++){var skbh=50+((ski*53)%80),skbw=14+((ski*29)%16),bmesh=new TH.Mesh(new TH.BoxGeometry(skbw,skbh,skbw),new TH.MeshBasicMaterial({map:skT,fog:false,color:0x8d9bb8}));bmesh.position.set(-300+ski*24+((ski*17)%9),skbh/2-8,-320-((ski*13)%30));scene.add(bmesh)}
+scene.add(new TH.HemisphereLight(0x6f8fcf,0x1d2a22,.55));scene.add(new TH.AmbientLight(0xffe2b8,.32));
+var sun=new TH.DirectionalLight(0x9db8ff,.85);sun.position.set(-30,60,45);sun.castShadow=true;
+var ms=Math.min(4096,r.capabilities.maxTextureSize);sun.shadow.mapSize.set(ms,ms);var sc=sun.shadow.camera;sc.left=-50;sc.right=50;sc.top=50;sc.bottom=-50;sc.far=170;sun.shadow.bias=-.0005;scene.add(sun);
+function pl(c,i,d,x,y,z){var p=new TH.PointLight(c,i,d);p.position.set(x,y,z);scene.add(p)}
+for(var f=0;f<3;f++){pl(0xffd9a0,1,26,-12,f*FH+4.2,0);pl(0xffd9a0,1,26,12,f*FH+4.2,0);pl(0xffd9a0,.8,26,0,f*FH+4.2,-10)}
+pl(0xffc680,1.4,34,0,3,D/2+5);
+var spT=cvs(256,256,function(g){var q=g.createRadialGradient(128,128,0,128,128,128);q.addColorStop(0,'rgba(255,200,120,.55)');q.addColorStop(1,'rgba(255,190,110,0)');g.fillStyle=q;g.fillRect(0,0,256,256)});
+function pool(x,z,sx,sz,o){var m=new TH.Mesh(new TH.PlaneGeometry(sx,sz),new TH.MeshBasicMaterial({map:spT,transparent:true,depthWrite:false,blending:TH.AdditiveBlending,opacity:o,fog:false}));m.rotation.x=-Math.PI/2;m.position.set(x,.09,z);scene.add(m)}
+pool(0,D/2+7,50,22,1);pool(-12,D/2+5,16,10,.7);pool(12,D/2+5,16,10,.7);
+for(var i=0;i<9;i++){var cg=new TH.Group();cg.position.set(-140+i*34,70+(i%3)*9,-130+(i%4)*14);for(var j=0;j<5;j++){var cb=new TH.Mesh(new TH.SphereGeometry(7+j%3*2,10,8),new TH.MeshBasicMaterial({color:0x5c7399,transparent:true,opacity:.38,fog:false}));cb.position.set(j*7-14,(j%2)*2,(j%3)*2);cb.scale.y=.55;cg.add(cb)}scene.add(cg)}
+box(700,.2,700,M(0x1f3a2c,.95),0,-.25,0,null,1);
+[[-120,-210,90],[40,-230,110],[170,-200,80],[-200,-120,70]].forEach(function(h,i){var m=new TH.Mesh(new TH.SphereGeometry(h[2],24,12),M(i%2?0x1b3326:0x203c2c,.95));m.position.set(h[0],-h[2]*.62,h[1]);m.scale.y=.8;scene.add(m)});
+var TI=new TH.InstancedMesh(new TH.ConeGeometry(2.2,7,8).translate(0,6.5,0),M(0x1f4d2e,.9),90),TT=new TH.InstancedMesh(new TH.CylinderGeometry(.25,.35,3,6).translate(0,1.5,0),timber,90),d0=new TH.Object3D(),tn=0;
+for(var i=0;i<90;i++){var a=i*2.399,rad=50+(i*37%70),x=Math.cos(a)*rad*1.4,z=Math.sin(a)*rad;if(Math.abs(x)<32&&z>-24&&z<46)continue;d0.position.set(x,0,z);d0.scale.setScalar(.8+(i%5)*.18);d0.updateMatrix();TI.setMatrixAt(tn,d0.matrix);TT.setMatrixAt(tn,d0.matrix);tn++}
+TI.count=TT.count=tn;TI.frustumCulled=TT.frustumCulled=false;TI.castShadow=true;scene.add(TI,TT);
+// plaza + road
+box(W+30,.12,14,M(0xffffff,.35,.05,{map:cvs(128,128,function(g,w,h){g.fillStyle='#a39d88';g.fillRect(0,0,w,h);g.strokeStyle='#6b6858';g.lineWidth=3;g.strokeRect(0,0,w,h);g.fillStyle='#ffffff14';g.fillRect(0,0,w/2,h/2)},[(W+30)/2.5,5.6])}),0,-.02,D/2+7,null,1);
+box(240,.2,.5,M(0x8a8d86,.6),0,.05,D/2+14.3,null,1);box(260,.1,12,M(0x2a3033,.85),0,-.03,D/2+21,null,1);
+for(var i=-12;i<=12;i++)box(2.4,.02,.2,M(0xE6C46E,.5),i*5,.03,D/2+21,null,1);
+for(var i=-8;i<=8;i++){var bx=i*4.6;box(.24,.9,.24,M(0x2a2118,.4,.6),bx,.5,D/2+11.2,null,1);box(.3,.06,.3,emis,bx,.98,D/2+11.2,null,1);pool(bx,D/2+11.2,5,5,.5)}
+// interior floor
+var ft=cvs(256,256,function(g,w,h){g.fillStyle='#8a857a';g.fillRect(0,0,w,h);g.strokeStyle='#c9ac5a66';g.lineWidth=2;g.strokeRect(0,0,w,h);g.fillStyle='#ffffff0c';g.fillRect(0,0,w/2,h/2);g.fillRect(w/2,h/2,w/2,h/2)},[W/2.5,D/2.5]);
+box(W,.2,D,M(0xffffff,.2,.15,{map:ft}),0,-.05,0);
+box(.2,.02,D,M(0x00A86B,.4,0,{emissive:0x00A86B,emissiveIntensity:.5}),0,.07,0,null,1);
+// slabs, balustrades
+var T7=(D-VD)/2,S14=(W-VW)/2,F3=FH*3;
+function bal(y,z,g){var p=[-VW/2].concat(g.reduce(function(a,b){return a.concat(b)},[]),[VW/2]);for(var i=0;i<p.length;i+=2){var a=p[i],b=p[i+1],w=b-a;if(w<.1)continue;var m=new TH.Mesh(new TH.BoxGeometry(w,1.1,.07),balM);m.position.set((a+b)/2,y+.7,z);scene.add(m);box(w,.07,.1,brass,(a+b)/2,y+1.27,z,null,1)}}
+[1,2].forEach(function(f){var y=f*FH;
+ box(W,.3,T7,dstone,0,y,-(VD/2+T7/2));box(W,.3,T7,dstone,0,y,VD/2+T7/2);box(S14,.3,VD,dstone,-(VW/2+S14/2),y,0);box(S14,.3,VD,dstone,VW/2+S14/2,y,0);
+ bal(y,-VD/2,f===1?[[-1.4,1.4],[3.3,5.9]]:[[-1.4,1.4],[-5.9,-3.3]]);bal(y,VD/2,f===1?[[-5.9,-3.3]]:[]);
+ [-1,1].forEach(function(s){var b=new TH.Mesh(new TH.BoxGeometry(.07,1.1,VD),balM);b.position.set(s*VW/2,y+.7,0);scene.add(b);box(.1,.07,VD,brass,s*VW/2,y+1.27,0,null,1)});
+ box(W,.12,.12,brass,0,y+.15,D/2-.1,null,1)});
+for(var f=0;f<3;f++)[-9.5,-14.5,9.5,14.5].forEach(function(x){box(.14,.05,13,emis,x,(f+1)*FH-.25,0,null,1)});
+// walls + roof
+box(.4,F3,D,wood(D/1.2),-W/2,F3/2,0);box(.4,F3,D,wood(D/1.2),W/2,F3/2,0);box(W,F3,.4,wood(W/1.2),0,F3/2,-D/2);
+var rw=wood(W/1.2),ry=F3+.2;box(W+1,.4,T7,rw,0,ry,-(VD/2+T7/2),null,1);box(W+1,.4,T7,rw,0,ry,VD/2+T7/2,null,1);box(S14,.4,VD,rw,-(VW/2+S14/2),ry,0,null,1);box(S14,.4,VD,rw,VW/2+S14/2,ry,0,null,1);
+var sk=new TH.Mesh(new TH.BoxGeometry(VW,.1,VD),glass);sk.position.set(0,ry,0);scene.add(sk);[-1,0,1].forEach(function(s){box(.12,.15,VD,brass,s*VW/2,ry+.05,0,null,1)});
+// facade
+// ---- GMR brand cladding (colour panels instead of glass) ----
+function leaf(g,x,y,sz,r,c){g.save();g.translate(x,y);g.rotate(r);g.fillStyle=c;g.beginPath();g.ellipse(0,-sz*.5,sz*.28,sz*.5,0,0,6.3);g.fill();g.strokeStyle='#0f3326';g.lineWidth=Math.max(1,sz*.04);g.beginPath();g.moveTo(0,0);g.lineTo(0,-sz);g.stroke();g.restore()}
+function emblem(g,x,y,r){g.strokeStyle='#E6C46E';g.lineWidth=r*.07;g.beginPath();g.arc(x,y,r,0,6.3);g.stroke();g.lineWidth=r*.025;g.beginPath();g.arc(x,y,r*.88,0,6.3);g.stroke();leaf(g,x,y+r*.4,r*.95,-.5,'#E6C46E');leaf(g,x,y+r*.4,r*.78,.55,'#c9a24a');tx(g,'GMR',x,y+r*.64,r*.3,'#E6C46E')}
+var LV=[['LEVEL 2 Â· HOME & CARE','rgba(185,130,43,.32)'],['LEVEL 1 Â· BEVERAGES & DAIRY','rgba(27,106,122,.34)'],['LEVEL G Â· FRESH MARKET','rgba(31,107,73,.36)']];
+function brandTex(mode,cw,ch){return cvs(cw,ch,function(g,w,h){
+ var q=g.createLinearGradient(0,0,0,h);q.addColorStop(0,'#0b2a1f');q.addColorStop(1,'#15523c');g.fillStyle=q;g.fillRect(0,0,w,h);
+ g.strokeStyle='rgba(230,196,110,.15)';g.lineWidth=1.5;for(var i=-h;i<w+h;i+=44){g.beginPath();g.moveTo(i,0);g.lineTo(i+h,h);g.stroke();g.beginPath();g.moveTo(i,h);g.lineTo(i+h,0);g.stroke()}
+ for(var y=30;y<h;y+=88)for(var x=((y/88|0)%2?22:66);x<w;x+=88)leaf(g,x,y+14,26,((x+y)%5-2)*.5,'rgba(230,196,110,.12)');
+ if(mode==='C'){emblem(g,w/2,205,125);tx(g,'SMART MART',w/2,372,38,'#f4efe0');tx(g,'GMR',w/2,520,120,'#E6C46E');tx(g,'FRESH CHOICES.\nBETTER LIVING.',w/2,650,34,'#f4efe0');tx(g,'WELCOME',w/2,835,30,'#E6C46E');return}
+ LV.forEach(function(L,z){var y0=h*z/3;g.fillStyle=L[1];g.fillRect(0,y0,w,h/3);g.strokeStyle='#E6C46E';g.lineWidth=4;g.beginPath();g.moveTo(0,y0+h/3);g.lineTo(w,y0+h/3);g.stroke();
+  g.fillStyle='#0f3326';g.fillRect(w/2-230,y0+22,460,44);g.strokeStyle='#E6C46E';g.lineWidth=2;g.strokeRect(w/2-230,y0+22,460,44);tx(g,L[0],w/2,y0+44,24,'#E6C46E')});
+ tx(g,mode==='L'?'FRESH\nCHOICES.':'BETTER\nLIVING.',w/2,h/6+20,84,'#E6C46E');
+ emblem(g,w/2,h/2+10,115);tx(g,'GMR SMART MART',w/2,h/2+168,30,'#f4efe0');
+ tx(g,mode==='L'?'Farm-fresh produce, baked daily.\nSmart carts. Smart checkout.':'Bring a reusable bag.\nEarn eco rewards.',w/2,h*5/6+30,30,'#f4efe0')})}
+function brandMat(t){return M(0xffffff,.5,.1,{map:t,emissive:0xffffff,emissiveMap:t,emissiveIntensity:.5})}
+var doorM=brandMat(cvs(256,512,function(g,w,h){g.fillStyle='#0f3326';g.fillRect(0,0,w,h);g.strokeStyle='rgba(230,196,110,.35)';g.lineWidth=2;for(var x=12;x<w;x+=16){g.beginPath();g.moveTo(x,20);g.lineTo(x,h-20);g.stroke()}g.strokeStyle='#E6C46E';g.lineWidth=6;g.strokeRect(8,8,w-16,h-16);g.fillStyle='#0f3326';g.fillRect(w/2-80,h/2-110,160,220);emblem(g,w/2,h/2-10,62);tx(g,'WELCOME',w/2,h/2+88,26,'#E6C46E')}));
+function gl(w,h,x,y,mode,cw,ch){var m=new TH.Mesh(new TH.BoxGeometry(w,h,.3),brandMat(brandTex(mode,cw,ch)));m.position.set(x,y,D/2);m.castShadow=true;m.receiveShadow=true;scene.add(m)}
+gl(15.8,F3,-10.9,F3/2,'L',640,730);gl(15.8,F3,10.9,F3/2,'R',640,730);gl(6,F3-4.8,0,4.8+(F3-4.8)/2,'C',400,880);
+[-1,1].forEach(function(s){box(1.2,F3,.6,green,s*19.4,F3/2,D/2);box(.24,4.8,.3,brass,s*3,2.4,D/2);});
+box(6.5,.25,.3,brass,0,4.8,D/2);
+for(var f=0;f<4;f++){box(W+.4,.45,.5,green,0,f*FH+(f?0:.1),D/2+.15);box(W+.4,.06,.1,brass,0,f*FH+.3,D/2+.42,null,1)}
+box(12,2,.35,green,0,F3+1.5,D/2+.1);
+var sgn=new TH.Mesh(new TH.PlaneGeometry(11.4,1.7),new TH.MeshBasicMaterial({transparent:true,map:cvs(1024,153,function(g,w,h){g.fillStyle='#E6C46E';g.beginPath();g.ellipse(100,h/2,15,40,.6,0,6.3);g.fill();g.strokeStyle='#E6C46E';g.lineWidth=5;g.beginPath();g.moveTo(88,h/2+34);g.lineTo(112,h/2-26);g.stroke();tx(g,'GMR SMART MART',w/2+50,h/2,92,'#E6C46E')})}));sgn.position.set(0,F3+1.5,D/2+.29);scene.add(sgn);
+// brand light ribbon, pylons and plaza inlay
+box(W+.8,.14,.14,emis,0,F3+.36,D/2+.35,null,1);[-1,1].forEach(function(s){box(.14,F3+.4,.14,emis,s*(W/2+.2),(F3+.4)/2,D/2+.35,null,1)});
+[-1,1].forEach(function(s){var py=new TH.Group();py.position.set(s*26,0,D/2+9);py.rotation.y=-s*.35;scene.add(py);box(1.8,7,.6,green,0,3.5,0,py);box(1.9,.12,.7,brass,0,7.05,0,py,1);box(1.9,.12,.7,brass,0,.06,0,py,1);
+ var pf=new TH.Mesh(new TH.PlaneGeometry(1.6,6.6),new TH.MeshBasicMaterial({map:cvs(256,1024,function(g,w,h){g.fillStyle='#0f3326';g.fillRect(0,0,w,h);g.strokeStyle='#E6C46E';g.lineWidth=6;g.strokeRect(6,6,w-12,h-12);emblem(g,w/2,260,90);tx(g,'GMR',w/2,470,64,'#E6C46E');tx(g,'SMART\nMART',w/2,590,40,'#f4efe0');tx(g,'FRESH CHOICES.\nBETTER\nLIVING.',w/2,820,26,'#E6C46E')})}));pf.position.set(0,3.5,.31);py.add(pf);pool(s*26,D/2+10.5,9,9,.8)});
+var inl=new TH.Mesh(new TH.PlaneGeometry(9,9),new TH.MeshBasicMaterial({transparent:true,depthWrite:false,fog:false,opacity:.88,map:cvs(512,512,function(g,w,h){emblem(g,w/2,h/2-10,200);tx(g,'WELCOME TO GMR',w/2,h-50,34,'#E6C46E')})}));inl.rotation.x=-Math.PI/2;inl.position.set(0,.075,D/2+8);scene.add(inl);
+// doors
+var dl=new TH.Group(),dr=new TH.Group();dl.position.set(0,0,D/2+.12);dr.position.copy(dl.position);scene.add(dl,dr);
+function door(g,s){var p=new TH.Mesh(new TH.BoxGeometry(3.02,4.7,.08),doorM);p.position.set(s*1.5,2.4,0);g.add(p);box(3.06,.12,.1,brass,s*1.5,4.76,0,g,1);box(3.06,.2,.1,brass,s*1.5,.1,0,g,1);box(.07,4.7,.1,brass,s*3,2.4,0,g,1);box(.07,4.7,.1,brass,0,2.4,0,g,1);box(.05,1.3,.08,gold,s*.3,2.2,.1,g,1)}
+door(dl,-1);door(dr,1);box(6.4,.04,.4,brass,0,.03,D/2+.1,null,1);
+// outside trees + lamps
+[-14,-8,8,14].forEach(function(x){var g=new TH.Group();g.position.set(x,0,D/2+5);scene.add(g);box(1.3,.7,1.3,dstone,0,.35,0,g);var t=new TH.Mesh(new TH.CylinderGeometry(.1,.16,2.2,8),timber);t.position.y=1.7;g.add(t);
+ var c=new TH.Mesh(new TH.SphereGeometry(1.6,14,10),M(0x24593a,.9));c.position.y=3.9;c.castShadow=true;g.add(c);box(1.5,.05,1.5,emis,0,.72,0,g,1)});
+[-26,-12,12,26].forEach(function(x){box(.14,5.4,.14,M(0x222,.4,.6),x,2.7,D/2+13,null,1);var b=new TH.Mesh(new TH.SphereGeometry(.3,12,10),emis);b.position.set(x,5.6,D/2+13);scene.add(b);pool(x,D/2+14.5,11,11,.85)});
+// central planter
+var pc=new TH.Mesh(new TH.CylinderGeometry(1.8,1.9,.5,28),dstone);pc.position.set(0,.3,0);pc.receiveShadow=true;scene.add(pc);
+var pg=new TH.Mesh(new TH.TorusGeometry(1.82,.04,8,40),brass);pg.rotation.x=Math.PI/2;pg.position.set(0,.55,0);scene.add(pg);
+for(var i=0;i<10;i++){var a=i/10*6.28,s=new TH.Mesh(new TH.SphereGeometry(.42,10,8),M(0x2f7d4a,.9));s.position.set(Math.cos(a)*1,.8,Math.sin(a)*1);scene.add(s)}
+// abstract silhouettes on the plaza
+var PN=18,PM=M(0x1a2230,.8),PB=new TH.InstancedMesh(new TH.CylinderGeometry(.2,.26,1.25,10).translate(0,.8,0),PM,PN),PH=new TH.InstancedMesh(new TH.SphereGeometry(.17,10,8).translate(0,1.62,0),PM,PN),PD=[],o3=new TH.Object3D();
+PB.frustumCulled=PH.frustumCulled=false;PB.castShadow=PH.castShadow=true;scene.add(PB,PH);
+for(var i=0;i<PN;i++)PD.push({x:i*3.4-30,z:D/2+7.5+(i*7%5)*.9,v:(.35+(i*13%6)*.1)*(i%2?1:-1),ph:i});
+function people(T){PD.forEach(function(p,i){var x=(((p.x+T*p.v+30)%60)+60)%60-30;o3.position.set(x,.04+Math.abs(Math.sin(T*3+p.ph))*.03,p.z);o3.rotation.y=p.v>0?Math.PI/2:-Math.PI/2;o3.updateMatrix();PB.setMatrixAt(i,o3.matrix);PH.setMatrixAt(i,o3.matrix)});PB.instanceMatrix.needsUpdate=PH.instanceMatrix.needsUpdate=true}
+people(0);
+// ---------- PRODUCTS ----------
+var BR=[['KOLA','#8e1b1b','#f1c40f'],['MANGO\nFIZZ','#e8871e','#3a2a10'],['LIME\nSPARK','#2f9e44','#f4efe0'],['BERRY','#6c2e7c','#f6b6cf'],['PURE\nSPRING','#1f78b4','#d4ecf7'],['COCO\nWATER','#1f8a78','#f4efe0']];
+var BX=[['OAT\nCRUNCH','#d98a1f','#7a3b10'],['CHOCO\nBITES','#5b3a29','#f1c40f'],['CORN\nFLAKES','#e9b62c','#c0392b'],['MUESLI','#6d8f3a','#f4efe0'],['TEA\nLEAF','#2c6e49','#e6c46e'],['RICE\nCRISPS','#b84a39','#f4efe0']];
+var CT=[['WHOLE\nMILK','#2b6cb0','#f4efe0'],['OAT\nMILK','#c9a46a','#2c6e49'],['ORANGE\nJUICE','#ee8a1e','#2f9e44'],['LASSI','#d94f8a','#f4efe0']];
+var JR=[['PEANUT\nBUTTER','#b9772e','#8e1b1b'],['HONEY','#d99b20','#4a2f1b'],['MANGO\nPICKLE','#c0392b','#f1c40f'],['JAM','#7a1f4a','#f4efe0']];
+function lathe(p,s,rep){var pts=p.map(function(a){return new TH.Vector2(a[0],a[1])});var g=new TH.LatheGeometry(pts,20);g.scale(s,s,s);g.rotateY(Math.PI);return g}
+var gBot=lathe([[0,0],[.17,0],[.2,.04],[.2,.15],[.2,.25],[.2,.35],[.2,.45],[.2,.55],[.2,.62],[.17,.72],[.075,.82],[.07,.96],[.085,.96],[.085,1.04],[0,1.04]],.3);
+var gJar=lathe([[0,0],[.36,0],[.4,.04],[.4,.16],[.4,.28],[.4,.4],[.4,.52],[.4,.64],[.37,.72],[.37,.74],[.4,.74],[.4,.95],[0,.95]],.17);
+var gCan=new TH.CylinderGeometry(.042,.042,.125,16).translate(0,.0625,0).rotateY(Math.PI);
+var gBox=new TH.BoxGeometry(.16,.27,.06).translate(0,.135,0),gCar=new TH.BoxGeometry(.11,.2,.07).translate(0,.1,0),gGab=new TH.BoxGeometry(.11,.04,.045).translate(0,.22,0);
+function bottleTex(b){return cvs(128,256,function(g,w,h){g.fillStyle=b[1];g.fillRect(0,0,w,h);g.fillStyle=b[2];g.fillRect(0,0,w,h*.2);g.fillStyle='#efe8d4';g.fillRect(0,h*.44,w,h*.34);g.fillStyle=b[1];g.fillRect(0,h*.44,w,10);g.fillRect(0,h*.78-10,w,10);tx(g,b[0],w/2,h*.61,30,b[1])})}
+function jarTex(b){return cvs(128,256,function(g,w,h){g.fillStyle=b[1];g.fillRect(0,0,w,h);g.fillStyle=b[2];g.fillRect(0,0,w,h*.17);g.fillStyle='#efe8d4';g.fillRect(0,h*.4,w,h*.34);tx(g,b[0],w/2,h*.57,26,b[2])})}
+function canTex(b){return cvs(256,128,function(g,w,h){g.fillStyle=b[1];g.fillRect(0,0,w,h);g.fillStyle=b[2];g.fillRect(0,0,w,12);g.fillRect(0,h-12,w,12);g.fillStyle='#ffffff26';g.beginPath();g.moveTo(60,12);g.lineTo(120,12);g.lineTo(80,h-12);g.lineTo(20,h-12);g.fill();tx(g,b[0],w/2,h/2,36,b[2])})}
+function boxTex(b){return cvs(128,192,function(g,w,h){g.fillStyle=b[1];g.fillRect(0,0,w,h);g.fillStyle=b[2];g.fillRect(0,0,w,26);g.fillRect(0,h-16,w,16);tx(g,b[0],w/2,64,26,'#f4efe0');g.fillStyle='#f4efe0';g.beginPath();g.arc(w/2,130,30,0,6.3);g.fill();g.fillStyle=b[2];g.beginPath();g.arc(w/2,130,20,0,6.3);g.fill()})}
+var P={};function reg(k,g,m){P[k]={g:g,m:m,l:[]}}var mt=M(0xc8cdd0,.3,.8);
+BR.forEach(function(b,i){reg('b'+i,gBot,M(0xffffff,.22,.1,{map:bottleTex(b)}));reg('c'+i,gCan,[M(0xffffff,.35,.5,{map:canTex(b)}),mt,mt])});
+BX.forEach(function(b,i){var s=M(b[1],.7);reg('x'+i,gBox,[s,s,s,s,M(0xffffff,.7,0,{map:boxTex(b)}),s])});
+CT.forEach(function(b,i){var s=M(b[1],.6);reg('m'+i,gCar,[s,s,s,s,M(0xffffff,.6,0,{map:boxTex(b)}),s])});reg('gab',gGab,M(0xd8d0b8,.6));
+JR.forEach(function(b,i){reg('j'+i,gJar,M(0xffffff,.25,.1,{map:jarTex(b)}))});
+var HB=[['CLEAN\nWASH','#0f7ea8','#f1c40f'],['SOFT\nSOAP','#d96a8f','#f4efe0'],['SHINE','#3a9d4a','#f4efe0'],['FRESH\nHOME','#7a52a8','#e6c46e']];
+var HK=[['TISSUE\nBOX','#4aa3c4','#f4efe0'],['LAUNDRY\nPODS','#e08a1e','#0f3326'],['SHAMPOO','#2c6e49','#e6c46e'],['TOOTH\nPASTE','#c0392b','#f4efe0']];
+HB.forEach(function(b,i){reg('h'+i,gBot,M(0xffffff,.22,.1,{map:bottleTex(b)}))});
+HK.forEach(function(b,i){var s=M(b[1],.7);reg('k'+i,gBox,[s,s,s,s,M(0xffffff,.7,0,{map:boxTex(b)}),s])});
+var TY=[{k:'b',n:6,p:.14,c:'Soft drinks',L:BR},{k:'c',n:6,p:.098,c:'Canned drinks',L:BR,s:' can'},{k:'x',n:6,p:.18,c:'Cereal breakfast',L:BX},{k:'m',n:4,p:.125,c:'Dairy milk juice',L:CT,gab:1},{k:'j',n:4,p:.16,c:'Spreads pickles pantry',L:JR},{k:'h',n:4,p:.14,c:'Cleaning household',L:HB},{k:'k',n:4,p:.18,c:'Household personal care',L:HK}];
+var TYF=[[2,4],[0,1,3],[5,6]];
+function ttl(s){return s.replace('\n',' ').toLowerCase().replace(/\b\w/g,function(c){return c.toUpperCase()})}
+var darkG=M(0x0f2a20,.5,.2),CAT=['Fresh & grocery','Beverages & dairy','Home & care'],FLN=['Ground floor','First floor','Second floor'];
+var RK=[],IB={t:[],d:[],b:[]},IDX=[];
+function part(k,gm,x,y,z,w,h,d){IB[k].push(gm.clone().multiply(new TH.Matrix4().makeTranslation(x,y,z)).multiply(new TH.Matrix4().makeScale(w,h,d)))}
+function gondola(f,cx,cz,rot,seed,lbl,zn){var y0=f?f*FH+.15:.05,gm=new TH.Matrix4().compose(new TH.Vector3(cx,y0,cz),new TH.Quaternion().setFromAxisAngle(new TH.Vector3(0,1,0),rot),new TH.Vector3(1,1,1));
+ part('d',gm,0,.11,0,2.7,.22,1.05);part('d',gm,0,1.1,0,2.6,2.1,.06);[-1,1].forEach(function(s){part('t',gm,s*1.31,1.05,0,.08,2.1,1.05)});part('t',gm,0,2.14,0,2.7,.06,1.08);
+ var rk={f:f,x:cx,z:cz,y0:y0,rot:rot,w:2.7,d:1.05,lbl:lbl,zn:zn,items:[[],[]]};
+ [0,1].forEach(function(face){var fz=face?-1:1;[.34,.82,1.3,1.78].forEach(function(y,t){part('t',gm,0,y-.02,fz*.27,2.54,.04,.5);part('b',gm,0,y+.01,fz*.52,2.54,.03,.03);
+  var Ty=TY[TYF[f][(seed+t+face)%TYF[f].length]],i=0,seen={};
+  for(var x=-1.2;x<=1.22;x+=Ty.p,i++){var d=(seed*3+t+face*2+Math.floor(i/4))%Ty.n,m=gm.clone().multiply(new TH.Matrix4().makeTranslation(x*fz,y,fz*.27)).multiply(new TH.Matrix4().makeRotationY(face?Math.PI:0));
+   P[Ty.k+d].l.push(m);if(Ty.gab)P.gab.l.push(m);if(!seen[d]){seen[d]=1;rk.items[face].push({n:ttl(Ty.L[d][0])+(Ty.s||''),c:Ty.c,k:Ty.k+d})}}})});
+ RK.push(rk)}
+function special(x,z,w,items,lbl){RK.push({f:0,x:x,z:z,y0:.05,rot:0,w:w,d:1.3,lbl:lbl,zn:'P',items:[items.map(function(n){return{n:n,c:'Fresh produce fruit vegetables bakery'}}),[]]})}
+var Zs=[-5.6,-2.8,0,2.8,5.6];
+for(var f=0;f<3;f++){var y0=f?f*FH+.15:.05;
+ [9.5,14.5].forEach(function(c,ci){Zs.forEach(function(z,j){gondola(f,-c,z,Math.PI/2,f*7+ci*2+j,'W'+(ci+1)+'-'+(j+1),'W');gondola(f,c,z,Math.PI/2,f*7+ci*3+j+1,'E'+(ci+1)+'-'+(j+1),'E')})});
+ if(f)[-16.8,-14,-11.2,-8.4,-5.6,5.6,8.4,11.2,14,16.8].forEach(function(x,j){gondola(f,x,-10.4,0,f*5+j,'N'+(j+1),'N')});
+ var sc2=cvs(1024,170,function(g,w,h){g.fillStyle='#0f3326';g.fillRect(0,0,w,h);g.strokeStyle='#E6C46E';g.lineWidth=6;g.strokeRect(8,8,w-16,h-16);tx(g,CAT[f].toUpperCase(),w/2,h/2,76,'#E6C46E')});
+ [-1,1].forEach(function(s){[-.4,.4].forEach(function(o){var m=new TH.Mesh(new TH.PlaneGeometry(3.8,.64),new TH.MeshBasicMaterial({map:sc2}));m.position.set(s*8+o,y0+4.5,0);m.rotation.y=o>0?Math.PI/2:-Math.PI/2;scene.add(m)});[-1.6,1.6].forEach(function(q){box(.02,1.2,.02,brass,s*8,y0+5.2,q,null,1)})});
+ if(f){[-1,1].forEach(function(s){[7.5,13.5].forEach(function(x){var X1=s*x;box(2.4,.5,.95,M(0x1d5a45,.8),X1,y0+.3,11.3);box(2.4,.6,.2,M(0x1d5a45,.8),X1,y0+.8,10.85);var tb=new TH.Mesh(new TH.CylinderGeometry(.6,.6,.45,18),timber);tb.position.set(X1,y0+.25,12.8);tb.castShadow=true;scene.add(tb)})})}}
+// ground extras: produce tables, bakery, checkout
+var fr=[],FC=[0xc0392b,0xee8a1e,0xf1c40f,0x5aa845,0xd63a2f,0x8bc34a],FN=['Apples','Oranges','Lemons','Limes','Tomatoes','Green apples'],ci=0;
+[-13.5,-8.5,8.5,13.5].forEach(function(tx0){box(4.5,.9,1.3,M(0x3a2414,.6),tx0,.5,-9.6);var nm=[];
+ for(var c=0;c<3;c++){var cx=tx0-1.5+c*1.5,z0=-9.6;box(1.3,.05,.95,timber,cx,.93,z0);box(1.3,.2,.04,timber,cx,1.05,z0-.46);box(1.3,.2,.04,timber,cx,1.05,z0+.46);box(.04,.2,.95,timber,cx-.64,1.05,z0);box(.04,.2,.95,timber,cx+.64,1.05,z0);
+  var col=FC[ci%6];nm.push(FN[ci%6]);ci++;for(var l=0;l<2;l++)for(var a=0;a<8-l;a++)for(var b=0;b<5-l;b++)fr.push({x:cx-.45+a*.13+l*.065,y:.95+.07+l*.08,z:z0-.28+b*.15+l*.075,c:col,s:col==0xf1c40f?.85:1})}
+ special(tx0,-9.6,4.5,nm,'Produce '+(tx0<0?'W':'E')+(Math.abs(tx0)>10?2:1))});
+box(8,.9,1.3,M(0x3a2414,.5),0,.45,-12.4);var bg=new TH.Mesh(new TH.BoxGeometry(8,.55,1.2),glass);bg.position.set(0,1.18,-12.4);scene.add(bg);box(8,.04,1.3,brass,0,.92,-12.4,null,1);
+special(0,-12.4,8,['Fresh bread','Cakes','Croissants'],'Bakery');
+var fm=new TH.InstancedMesh(new TH.SphereGeometry(.055,12,9),M(0xffffff,.4),fr.length+22),dm=new TH.Object3D(),cc=new TH.Color();fm.frustumCulled=false;fm.castShadow=true;
+fr.forEach(function(q,i){dm.position.set(q.x,q.y,q.z);dm.scale.set(1,q.s,1);dm.updateMatrix();fm.setMatrixAt(i,dm.matrix);fm.setColorAt(i,cc.setHex(q.c).offsetHSL((Math.random()-.5)*.02,0,(Math.random()-.5)*.08))});
+for(var i=0;i<22;i++){var k=fr.length+i;dm.position.set(-3.2+i*.31,1.06,-12.4);dm.scale.set(2.6,1.1,1.5);dm.updateMatrix();fm.setMatrixAt(k,dm.matrix);fm.setColorAt(k,cc.setHex(0xb5651d).offsetHSL(0,0,(Math.random()-.5)*.1))}
+scene.add(fm);
+function sgn2(t,w,x,y,z,ry){var m=new TH.Mesh(new TH.PlaneGeometry(w,.7),new TH.MeshBasicMaterial({map:cvs(1024,Math.round(1024*.7/w),function(g,a,b){g.fillStyle='#0f3326';g.fillRect(0,0,a,b);g.strokeStyle='#E6C46E';g.lineWidth=6;g.strokeRect(8,8,a-16,b-16);tx(g,t,a/2,b/2,b*.5,'#E6C46E')})}));m.position.set(x,y,z);m.rotation.y=ry||0;scene.add(m)}
+sgn2('FRESH BAKERY',5,0,3.4,-13.7);sgn2('FRESH PRODUCE',5,-11,3.4,-13.7);sgn2('FRESH PRODUCE',5,11,3.4,-13.7);
+[-1,1].forEach(function(s){[7.5,10.5,13.5,16.5].forEach(function(x){var X1=s*x;box(1.5,.95,.75,M(0x1f3d31,.5,.2),X1,.5,11.4);box(2.1,.06,.5,M(0x151515,.6),X1+s*.1,1.0,11.4,null,1);var sc3=box(.5,.35,.05,M(0x00A86B,.3,0,{emissive:0x00A86B,emissiveIntensity:.8}),X1,1.55,11.1,null,1);sc3.rotation.x=-.3});sgn2('SMART CHECKOUT',5,s*12,4.6,12.7,Math.PI)});
+// smart cart
+var cart=new TH.Group();cart.position.set(-4.4,.08,12.6);scene.add(cart);cart.add(new TH.Mesh(new TH.BoxGeometry(.7,.45,.45),M(0xaaaaaa,.4,.4,{wireframe:true})).translateY(.65));box(.7,.04,.45,mt,0,.4,0,cart,1);box(.55,.04,.04,M(0x00A86B,.3,.4),0,1.05,-.25,cart,1);
+// ---------- LIFT ----------
+var LZ=-5.85,SH=F3+.8;
+[-1.3,1.3].forEach(function(x){[-7,-4.7].forEach(function(z){box(.16,SH,.16,brass,x,SH/2,z,null,1)})});
+var fgl=new TH.Mesh(new TH.BoxGeometry(2.6,SH,.04),glass);fgl.position.set(0,SH/2,-4.7);scene.add(fgl);
+[-1,1].forEach(function(s){var m=new TH.Mesh(new TH.BoxGeometry(.04,SH,2.3),glass);m.position.set(s*1.3,SH/2,LZ+.0);scene.add(m)});
+box(2.9,.3,2.6,green,0,SH+.1,LZ);
+var lsg=cvs(512,160,function(g,w,h){g.fillStyle='#0f3326';g.fillRect(0,0,w,h);g.strokeStyle='#E6C46E';g.lineWidth=6;g.strokeRect(6,6,w-12,h-12);tx(g,'LIFT',w/2-30,h/2,80,'#E6C46E');tx(g,'â–²â–¼',w-90,h/2,56,'#E6C46E')});
+for(var f=0;f<3;f++){var ly=f?f*FH+.15:.05;box(2.64,.12,.1,brass,0,ly+3.5,-4.7,null,1);var lm=new TH.Mesh(new TH.PlaneGeometry(1.7,.53),new TH.MeshBasicMaterial({map:lsg}));lm.position.set(0,ly+4.1,-4.66);scene.add(lm)}
+var cab=new TH.Group();cab.position.set(0,.05,LZ);scene.add(cab);
+box(2.3,.1,2.0,dstone,0,.05,0,cab);box(2.3,.08,2.0,darkG,0,2.7,0,cab,1);box(1.6,.03,1.4,emis,0,2.64,0,cab,1);
+[-1,1].forEach(function(sx){[-1,1].forEach(function(sz){box(.07,2.7,.07,brass,sx*1.13,1.35,sz*.98,cab,1)});var m=new TH.Mesh(new TH.BoxGeometry(.03,2.5,1.9),glass);m.position.set(sx*1.14,1.3,0);cab.add(m);box(.05,.05,1.9,brass,sx*1.12,1.0,0,cab,1)});
+var cf=new TH.Mesh(new TH.BoxGeometry(2.2,2.5,.03),glass);cf.position.set(0,1.3,.99);cab.add(cf);
+var cdl=new TH.Mesh(new TH.BoxGeometry(1.1,2.5,.04),dglass),cdr=cdl.clone();cdl.position.set(-.57,1.3,-.99);cdr.position.set(.57,1.3,-.99);cab.add(cdl,cdr);
+// ---------- STAIRS ----------
+function stair(x,zs,ys,ze,ye){var n=36,rs=(ye-ys)/n,ds=(ze-zs)/n,w=2.2,L=Math.hypot(ze-zs,ye-ys),an=Math.atan2(ye-ys,Math.abs(ze-zs)),zm=(zs+ze)/2,ym=(ys+ye)/2;
+ for(var i=0;i<n;i++){box(w,.07,Math.abs(ds)+.02,timber,x,ys+rs*(i+1)-.035,zs+ds*(i+.5));box(w,rs,.03,darkG,x,ys+rs*(i+.5),zs+ds*i)}
+ [-1,1].forEach(function(s){var sx=x+s*(w/2+.06);[[.12,-.28,.45,dstone],[.06,.62,.95,balM],[.07,1.12,.07,brass]].forEach(function(q){var m=box(q[0],q[2],L,q[3],sx,ym+q[1],zm,null,q[3]===balM);m.rotation.x=an})})}
+stair(4.6,7,.05,-7,FH+.15);stair(-4.6,7,FH+.15,-7,2*FH+.15);
+// flush instanced
+Object.keys(P).forEach(function(k){var o=P[k];if(!o.l.length)return;var im=new TH.InstancedMesh(o.g,o.m,o.l.length);im.frustumCulled=false;o.l.forEach(function(m,i){im.setMatrixAt(i,m)});scene.add(im)});
+var FM={t:timber,d:darkG,b:brass};['t','d','b'].forEach(function(k){var im=new TH.InstancedMesh(new TH.BoxGeometry(1,1,1),FM[k],IB[k].length);im.castShadow=k!=='b';im.receiveShadow=true;im.frustumCulled=false;IB[k].forEach(function(m,i){im.setMatrixAt(i,m)});scene.add(im)});
+RK.forEach(function(rk){rk.items.forEach(function(a,face){a.forEach(function(it){IDX.push({n:it.n,c:it.c,k:it.k,rk:rk,face:face})})})});
+// ---------- STATION KIOSKS + ADMIN OFFICES ----------
+function kiosk(x,z,rot,t1,t2){var g=new TH.Group();g.position.set(x,.05,z);g.rotation.y=rot;scene.add(g);
+ box(1.1,.95,.5,green,0,.48,0,g);box(1.16,.05,.56,brass,0,.97,0,g,1);box(1.16,.05,.56,brass,0,.03,0,g,1);
+ var s1=new TH.Mesh(new TH.PlaneGeometry(1,.62),new TH.MeshBasicMaterial({map:cvs(512,320,function(c,w,h){c.fillStyle='#0f3326';c.fillRect(0,0,w,h);c.strokeStyle='#E6C46E';c.lineWidth=8;c.strokeRect(10,10,w-20,h-20);tx(c,t1,w/2,h*.4,40,'#E6C46E');tx(c,t2,w/2,h*.72,26,'#f4efe0')})}));s1.position.set(0,1.28,.14);s1.rotation.x=-.5;g.add(s1);
+ var s2=new TH.Mesh(new TH.PlaneGeometry(1.7,.42),new TH.MeshBasicMaterial({side:TH.DoubleSide,map:cvs(680,168,function(c,w,h){c.fillStyle='#0f3326';c.fillRect(0,0,w,h);c.strokeStyle='#E6C46E';c.lineWidth=6;c.strokeRect(5,5,w-10,h-10);tx(c,t1.toUpperCase(),w/2,h/2,40,'#E6C46E')})}));s2.position.set(0,2.35,0);g.add(s2);
+ [-.8,.8].forEach(function(q){box(.04,1.4,.04,brass,q,1.65,0,g,1)});
+ var gp=new TH.Mesh(new TH.CylinderGeometry(.75,.75,.02,28),new TH.MeshBasicMaterial({color:0xE6C46E,transparent:true,opacity:.22,depthWrite:false}));gp.position.set(0,.02,.55);g.add(gp)}
+kiosk(-2.6,3.6,0,'Eco welcome board','Store Â· Trolley Â· Eco rewards');
+kiosk(2.95,3.6,0,'Shop & Find','Catalogue Â· Search Â· Track');
+kiosk(2.95,-1.2,0,'Store guide','Floor maps Â· Stock levels');
+kiosk(-2.6,-1.2,0,'My list','Reminder list');
+kiosk(-4.4,10.4,Math.PI,'Trolley bay & rules','Scan Â· Control Â· Rules');
+kiosk(10.5,9.4,Math.PI,'Smart checkout','Cart Â· Orders Â· Payment');
+var OFF={};
+function drawScr(k,t,L){var o=OFF[k];if(!o)return;var g=o.c.getContext('2d');g.fillStyle='#0b1c16';g.fillRect(0,0,512,320);g.fillStyle='#E6C46E';g.fillRect(0,0,512,46);g.fillStyle='#0f3326';g.font='700 24px Georgia,serif';g.textAlign='left';g.textBaseline='middle';g.fillText(t,16,24);g.fillStyle='#f4efe0';g.font='20px Arial,sans-serif';L.slice(0,8).forEach(function(q,i){g.fillText(q,18,78+i*30)});o.t.needsUpdate=true}
+function office(key,x,title){var y0=2*FH+.15,g=new TH.Group();g.position.set(x,y0,-11);scene.add(g);
+ box(3.7,.06,5.2,M(0x23352c,.9),0,.03,0,g,1);
+ [[3.7,2.9,.04,0,1.5,2.6],[.04,2.9,5.2,-1.85,1.5,0],[.04,2.9,5.2,1.85,1.5,0]].forEach(function(q){var m=new TH.Mesh(new TH.BoxGeometry(q[0],q[1],q[2]),glass);m.position.set(q[3],q[4],q[5]);g.add(m)});
+ box(3.78,.08,.08,brass,0,2.96,2.6,g,1);box(3.78,.08,.08,brass,0,.06,2.6,g,1);[-1.85,0,1.85].forEach(function(px){box(.08,2.96,.08,brass,px,1.48,2.6,g,1)});
+ box(2.2,.06,.8,timber,0,.78,-2.0,g);[-1,1].forEach(function(q){box(.06,.75,.7,timber,q*1.05,.38,-2.0,g)});
+ box(.7,.025,.46,M(0xb9bec2,.3,.8),0,.82,-1.95,g,1);
+ var c=document.createElement('canvas');c.width=512;c.height=320;var t=new TH.CanvasTexture(c);t.encoding=TH.sRGBEncoding;OFF[key]={c:c,t:t};
+ var bz=box(.72,.46,.02,M(0x222222,.4,.6),0,1.05,-2.21,g,1);bz.rotation.x=-.3;
+ var sc4=new TH.Mesh(new TH.PlaneGeometry(.68,.43),new TH.MeshBasicMaterial({map:t}));sc4.position.set(0,1.05,-2.19);sc4.rotation.x=-.3;g.add(sc4);
+ var ch=new TH.Mesh(new TH.CylinderGeometry(.28,.28,.07,16),M(0x1d1d1d,.6));ch.position.set(0,.5,-1.0);g.add(ch);box(.5,.55,.07,M(0x1d1d1d,.6),0,.85,-.75,g,1);box(.05,.45,.05,mt,0,.25,-1.0,g,1);
+ var sg=new TH.Mesh(new TH.PlaneGeometry(3.2,.5),new TH.MeshBasicMaterial({map:cvs(640,100,function(q,w,h){q.fillStyle='#0f3326';q.fillRect(0,0,w,h);q.strokeStyle='#E6C46E';q.lineWidth=5;q.strokeRect(4,4,w-8,h-8);tx(q,title,w/2,h/2,40,'#E6C46E')})}));sg.position.set(0,3.25,2.6);g.add(sg);
+ if(key==='store'){box(.5,.04,1.8,dstone,1.5,.5,-1.2,g);box(.5,.04,1.8,dstone,1.5,1.2,-1.2,g);box(.5,.04,1.8,dstone,1.5,1.9,-1.2,g);[-.9,.9].forEach(function(q){box(.05,2,.05,brass,1.72,1.0,-1.2+q,g,1)});
+  [.52,1.22,1.92].forEach(function(y){[-.6,.1,.8].forEach(function(z){box(.4,.3,.5,M(0xa4733f,.7),1.5,y+.17,-1.2+z,g)})});
+  box(.5,.5,.5,M(0xa4733f,.7),-1.5,.25,-2.1,g);box(.5,.5,.5,M(0xb08049,.7),-1.5,.75,-2.1,g);box(.5,.5,.5,M(0xa4733f,.7),-1.5,.25,-1.4,g)}
+ else{var wb=new TH.Mesh(new TH.PlaneGeometry(2,.9),new TH.MeshBasicMaterial({map:cvs(256,115,function(q,w,h){q.fillStyle='#f1efe6';q.fillRect(0,0,w,h);q.strokeStyle='#2c8a5a';q.lineWidth=3;q.beginPath();q.moveTo(20,85);q.lineTo(70,50);q.lineTo(120,70);q.lineTo(180,25);q.lineTo(235,40);q.stroke();q.fillStyle='#123C2C';q.font='bold 16px Arial';q.fillText('CART PLAN',20,22)})}));wb.position.set(-.6,1.9,-2.67);g.add(wb);
+  var pt=new TH.Mesh(new TH.SphereGeometry(.28,12,10),M(0x2f7d4a,.9));pt.position.set(1.4,.75,-2.1);g.add(pt);box(.3,.45,.3,M(0x7a5a3a,.7),1.4,.23,-2.1,g)}
+ pl(0xfff0d8,.9,9,x,y0+2.6,-11)}
+office('store',-2,'STORE ROOM Â· ADMIN');office('dept',2,'DEPARTMENT OFFICE Â· ADMIN');
+function offSign(){var a=role==='admin';drawScr('store','STORE ROOM',a?['Signed in as admin','Open this office from Services','to see hardware settings.']:['LOCKED','Admin access required.','Sign in with Admin access.']);drawScr('dept','DEPARTMENT OFFICE',a?['Signed in as admin','Open this office from Services','to run the cart simulator.']:['LOCKED','Admin access required.','Sign in with Admin access.'])}
+offSign();
+// ---------- HIGHLIGHT + ROUTE ----------
+var hl=new TH.Group();hl.visible=false;scene.add(hl);
+var hb=new TH.Mesh(new TH.BoxGeometry(3,2.4,1.4),new TH.MeshBasicMaterial({color:0x35e0a0,transparent:true,opacity:.16,depthWrite:false,blending:TH.AdditiveBlending}));hb.position.y=1.2;hl.add(hb);
+var hbe=new TH.LineSegments(new TH.EdgesGeometry(hb.geometry),new TH.LineBasicMaterial({color:0xE6C46E}));hbe.position.y=1.2;hl.add(hbe);
+var beam=new TH.Mesh(new TH.CylinderGeometry(.14,.14,8,12,1,true),new TH.MeshBasicMaterial({color:0xE6C46E,transparent:true,opacity:.5,blending:TH.AdditiveBlending,depthWrite:false,side:TH.DoubleSide}));beam.position.y=6.4;hl.add(beam);
+var lc=document.createElement('canvas');lc.width=512;lc.height=128;var lt=new TH.CanvasTexture(lc);lt.encoding=TH.sRGBEncoding;var lsp=new TH.Sprite(new TH.SpriteMaterial({map:lt,transparent:true,depthTest:false}));lsp.scale.set(5,1.25,1);lsp.position.y=3.7;lsp.renderOrder=9;hl.add(lsp);
+function lblT(t){var g=lc.getContext('2d');g.clearRect(0,0,512,128);g.fillStyle='#0f3326ee';g.fillRect(0,20,512,88);g.strokeStyle='#E6C46E';g.lineWidth=4;g.strokeRect(2,22,508,84);g.fillStyle='#E6C46E';g.font='700 44px Georgia,serif';g.textAlign='center';g.textBaseline='middle';g.fillText(t,256,66);lt.needsUpdate=true}
+var rt=new TH.Group();scene.add(rt);var RP=[],RC=[],RL=0,RSEG=[],SEL=null;
+var dot=new TH.Mesh(new TH.SphereGeometry(.2,14,10),new TH.MeshBasicMaterial({color:0xfff2c0}));dot.visible=false;scene.add(dot);
+function clearRoute(){while(rt.children.length)rt.remove(rt.children[0]);RP=[];RSEG=[];dot.visible=false}
+function setHL(e){var rk=e.rk;SEL=e;hl.visible=true;hl.position.set(rk.x,rk.y0,rk.z);hl.rotation.y=rk.rot;hb.scale.set((rk.w+.3)/3,1,(rk.d+.35)/1.4);hbe.scale.copy(hb.scale);lblT(e.n.length>20?e.n.slice(0,19)+'â€¦':e.n)}
+function route(e,from){clearRoute();var rk=e.rk,f=rk.f,a=rk.rot+(e.face?Math.PI:0),sx=rk.x+Math.sin(a)*1.9,sz=rk.z+Math.cos(a)*1.9,yf=rk.y0+.06,pts=[];
+ function A(x,y,z){pts.push(new TH.Vector3(x,y,z))}var L0=from==='lift'&&f>0;if(!L0){A(0,.11,13.4);A(0,.11,8.2)}
+ if(f===0){if(rk.zn==='P'){A(2.35,.11,8.2);A(2.35,.11,sz);A(sx,.11,sz)}else{A(sx,.11,8.2);A(sx,.11,sz)}}
+ else{if(!L0){A(2.35,.11,8.2);A(2.35,.11,-8.3);A(0,.11,-8.3);A(0,.11,LZ)}A(0,yf,LZ);A(0,yf,-8.3);
+  if(rk.zn==='N'&&sz<-10.5){var sg=sx<0?-1:1;A(sg*18.6,yf,-8.3);A(sg*18.6,yf,sz);A(sx,yf,sz)}else{A(sx,yf,-8.3);A(sx,yf,sz)}}
+ RP=pts;RC=[0];var cur2=null;
+ for(var i=1;i<pts.length;i++){var p=pts[i-1],q=pts[i],len=p.distanceTo(q);RC.push(RC[i-1]+len);
+  if(Math.abs(p.y-q.y)<.01&&len>.01){var m=new TH.Mesh(new TH.BoxGeometry(.28,.03,len+.28),new TH.MeshBasicMaterial({color:0xE6C46E,transparent:true,opacity:.85}));m.position.copy(p).add(q).multiplyScalar(.5);m.lookAt(q);rt.add(m);
+   var fi=p.y>FH*2?2:p.y>FH?1:0;if(!cur2||cur2.f!==fi||cur2.end!==i-1){cur2={f:fi,pts:[[p.x,p.z]],end:0};RSEG.push(cur2)}cur2.pts.push([q.x,q.z]);cur2.end=i}else cur2=null}
+ RL=RC[RC.length-1];dot.visible=true}
+// ---------- CINEMATIC CAMERA ----------
+var WP={hero:{p:[0,5,30],l:[0,3.5,14],v:65},door:{p:[0,2.4,D/2+9.5],l:[0,3,D/2],v:52},lobby:{p:[0,2.4,10],l:[0,3.2,-9],v:58},atrium:{p:[0,9.5,7.5],l:[0,7.5,-8],v:62},rack:{p:[0,5,0],l:[0,1,-5],v:50}};
+function setV(f,a){var y=[0,FH,2*FH][f],V=[{p:[0,y+2.5,6.4],l:[0,y+2,-9]},{p:[17.5,y+3.4,3],l:[-6,y+1.6,-2]},{p:[0,y+4.2,-12.6],l:[0,y+1.2,10]},{p:[-17.5,y+3.4,3],l:[6,y+1.6,-2]}][a];V.v=a?60:56;WP[['ground','first','second'][f]]=V}
+[0,1,2].forEach(function(f){setV(f,0)});
+var INFO={atrium:['The atrium','Three floors, one lift and two staircases around a skylit void. Search above or open the store map.'],ground:['Ground floor','Fresh produce, bakery, grocery and smart checkout.'],first:['First floor','Beverages, dairy, cans and the cafÃ© lounge.'],second:['Second floor','Household, personal care and the lounge.'],rack:['','']};
+var cur=new TH.Vector3(0,5,30),curL=new TH.Vector3(-6,6,0),fp=cur.clone(),fl=curL.clone(),tp=cur.clone(),tl=curL.clone();
+var t=1,key='hero',authed=false,name='',open=.4,doorT=.4,shown=false,curF=-1,rm=el('rm'),clk=new TH.Clock(),mx=0,my=0,RES=[],mf=0,fv0=56,fv1=40,dur=2.6,intro=true,ang=0,AN=['Front','Right','Back','Left'];
+cam.fov=56;
+rm.checked=matchMedia('(prefers-reduced-motion:reduce)').matches;
+function ease(x){return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2}
+function go(k){if(!authed&&k!=='hero')k='door';key=k;shown=false;fp.copy(cur);fl.copy(curL);fv0=cam.fov;fv1=WP[k].v;tp.fromArray(WP[k].p);tl.fromArray(WP[k].l);dur=0.001;intro=false;t=1;
+ var fi=['ground','first','second'].indexOf(k);if(fi>-1)curF=fi;else if(k!=='rack'&&k!=='st')curF=-1;
+ el('hero').classList.toggle('hide',k!=='hero');el('scrim').classList.toggle('hide',k!=='hero');el('login').classList.remove('on');
+ doorT=k==='hero'?(authed?1:.4):(k==='door'?0:1);
+ var i=INFO[k],on=authed&&!!i&&(k!=='rack'||i[0]);el('floors').classList.toggle('on',on);el('tag').classList.toggle('on',on);
+ el('sb').classList.toggle('on',authed&&k!=='hero'&&k!=='door'&&k!=='lobby');el('clr').style.display=k==='rack'?'inline-block':'none';
+ if(i){el('tt').textContent=k==='atrium'&&name?'Welcome, '+name:i[0];el('td').textContent=i[1]}
+ [].forEach.call(document.querySelectorAll('#floors button'),function(b){b.classList.toggle('a',b.dataset.k===k)});aiGo(k)}
+function toAtr(){go('lobby');setTimeout(function(){go('atrium')},rm.checked?100:5600)}
+function setWho(){el('who').textContent=authed?'Welcome, '+name+(role==='admin'?' Â· Admin':''):'';el('si').textContent=authed?'Sign out':'Sign in'}
+function out(){authed=false;role='customer';offSign();spX();name='';setWho();hl.visible=false;clearRoute();go('hero')}
+window.go=go;window.sg=function(){if(authed){out();return}go('door')};
+window.atr=function(){authed?go('atrium'):go('door')};window.dep=function(){authed?go('first'):go('door')};
+window.skip=function(){authed=true;name='Guest';setWho();toAtr()};
+window.doLogin=function(e){e.preventDefault();var n=el('nm').value.trim();if(!n)return;name=n.replace(/\b\w/g,function(c){return c.toUpperCase()});authed=true;role=el('adm').checked?'admin':'customer';offSign();
+ el('login').classList.remove('on');el('wn').textContent='Welcome, '+name;el('welcome').classList.add('on');setWho();
+ setTimeout(function(){doorT=1},1900);setTimeout(function(){el('welcome').classList.remove('on')},3200);setTimeout(toAtr,3000)};
+function toRack(e){if(!authed)return;var rk=e.rk,a=rk.rot+(e.face?Math.PI:0),dx=Math.sin(a),dz=Math.cos(a);
+ WP.rack={p:[rk.x+dx*4.3,rk.y0+3.7,rk.z+dz*4.3],l:[rk.x,rk.y0+1.1,rk.z],v:50};var fr0=(curF===rk.f&&rk.f>0)?'lift':'door';setHL(e);route(e,fr0);pOpen(e,fr0);
+ INFO.rack=[e.n,FLN[rk.f]+' Â· '+CAT[rk.f]+' Â· Rack '+rk.lbl+'. '+(rk.f?'Take the lift to the '+FLN[rk.f].toLowerCase()+', then follow the gold line.':'Follow the gold line from the entrance.')];
+ var fk=['ground','first','second'][rk.f];el('res').classList.remove('on');
+ if(curF!==rk.f){go(fk);setTimeout(function(){go('rack')},rm.checked?100:2500)}else go('rack')}
+window.clr=function(){hl.visible=false;clearRoute();SEL=null;go(['ground','first','second'][curF]||'atrium')};
+window.rot=function(){if(curF<0||!authed)return;ang=(ang+1)%4;setV(curF,ang);el('rotb').textContent='â†» '+AN[ang];go(['ground','first','second'][curF])};
+el('floors').addEventListener('click',function(e){var k=e.target.dataset.k;if(!k)return;if(k==='rot'){rot();return}if(k==='map'){mapT(1);return}if(k==='svc'){dirO();return}ang=0;el('rotb').textContent='â†» Rotate';[0,1,2].forEach(function(f){setV(f,0)});go(k)});
+// search
+// ---------- AI GUIDE, STATIONS AND PANELS ----------
+var role='customer',LIST=[],CART=[],ORD=[],RULES=0,HM=0,regm=0,sf=-1,CUR=null,PFR='door',PVR=null,CL=[],CF={q:'',fl:'-1',c:'',o:0,s:'n'},sT=0,SIMT=0,SIMEV=[],SIMS={on:0,cart:'Cart 01',sc:'Normal shopping',n:0},HW={esp:1,rfid:1,qr:1,wt:1,mot:1,id:'TRL-01',poll:5};
+try{LIST=JSON.parse(localStorage.getItem('gmrList')||'[]')}catch(x){}
+function saveL(){try{localStorage.setItem('gmrList',JSON.stringify(LIST))}catch(x){}}
+var CLN={'Fresh produce fruit vegetables bakery':'Fresh produce & bakery','Cereal breakfast':'Cereal & breakfast','Dairy milk juice':'Dairy & juices','Spreads pickles pantry':'Spreads & pantry','Cleaning household':'Cleaning','Household personal care':'Personal care'};
+function cn(c){return CLN[c]||c}
+function hs(q){var h=7;for(var i=0;i<q.length;i++)h=(h*31+q.charCodeAt(i))%9973;return h}
+function pinfo(n){var h=hs(n),p=20+h%46*9;return{p:p,was:Math.round(p*1.22),st:h%7===0?0:4+h%97,o:h%3===0}}
+var PC={b:BR,c:BR,x:BX,m:CT,j:JR,h:HB,k:HK};
+function pcol(k,n){var a=k&&PC[k[0]]&&PC[k[0]][+k.slice(1)];return a?a[1]:'#'+('00000'+FC[hs(n||'')%6].toString(16)).slice(-6)}
+function findE(n){for(var i=0;i<IDX.length;i++)if(IDX[i].n===n)return IDX[i]}
+function rkc(rk){if(HM===1){var v=hs(rk.lbl)%100;return v<25?'#c0392b':v<60?'#d9a21f':'#2c8a5a'}if(HM===2)return'#6b3a3a';return'#8a5a2b'}
+window.hmT=function(m){HM=HM===m?0:m;buildMap()};
+function rup(n){return'â‚¹'+n}
+// AI guide
+function say(t,ch){var p=el('aim');clearInterval(sT);var i=0;if(rm.checked){p.textContent=t}else{p.textContent='';sT=setInterval(function(){i+=3;p.textContent=t.slice(0,i);if(i>=t.length)clearInterval(sT)},22)}
+ var c=el('chips');c.innerHTML='';(ch||[]).forEach(function(x){var b=document.createElement('button');b.textContent=x[0];b.onclick=x[1];c.appendChild(b)})}
+var DEP=['fresh produce on open timber tables, a bakery counter, cereals and grocery, and 8 smart checkouts','beverages, canned drinks, dairy and juices, with a cafÃ© lounge','household cleaning and personal care, a lounge, and the admin store room and department office'];
+function fsum(f){var rs=RK.filter(function(r){return r.f===f}).length,nm={},pc=0;IDX.forEach(function(e){if(e.rk.f===f&&!nm[e.n]){nm[e.n]=1;pc++}});return'This floor has '+rs+' display racks and tables carrying '+pc+' different products: '+DEP[f]+'.'}
+function aiGo(k){var fi=['ground','first','second'].indexOf(k);el('ai').classList.toggle('on',authed&&k!=='hero'&&k!=='door');
+ if(k==='hero'||k==='door'){spX();sf=-1;return}
+ if(k==='lobby'){sf=-1;say('Welcome to the ground floor, '+(name||'guest')+'. I am Aria, your mart guide. '+fsum(0));return}
+ if(k==='atrium'){sf=-1;say('This is the atrium: three floors around one skylit void. Search a product above, or open Services for the trolley bay, checkout, store guide and more.',[['Services',dirO],['Find a product',function(){stGo('shop')}],['Ground floor',function(){go('ground')}]]);return}
+ if(fi>-1&&sf!==fi){sf=fi;say('Welcome to the '+FLN[fi].toLowerCase()+', '+(name||'guest')+'. '+fsum(fi),[['Find a product',function(){stGo('shop')}],['Services',dirO],['Rotate view',rot]])}}
+function ask(q){var l=q.toLowerCase(),M2={checkout:'checkout',cart:'checkout',order:'checkout',payment:'checkout',trolley:'trolley',rules:'trolley',scan:'trolley',list:'list',reminder:'list',map:'guide',guide:'guide',offer:'shop',catalogue:'shop','store room':'store',hardware:'store',simulator:'dept',office:'dept',welcome:'welcome'};
+ for(var k in M2)if(l.indexOf(k)>-1){stGo(M2[k]);return}
+ var fl=['ground','first','second'];for(var i=0;i<3;i++)if(l.indexOf(fl[i])>-1){go(fl[i]);return}
+ var tk=l.replace(/[^a-z ]/g,' ').split(' ').filter(function(w){return w.length>2&&['where','find','the','show','can','get','how','buy','for','are','you','take','please'].indexOf(w)<0});
+ for(var j=0;j<tk.length;j++){var hit=null;for(var n=0;n<IDX.length;n++)if(IDX[n].n.toLowerCase().indexOf(tk[j])>-1){hit=IDX[n];break}if(hit){toRack(hit);return}}
+ say('I can find any product, or fly you to a counter or floor. Try "where is honey?", "checkout" or "second floor".',[['Services',dirO]])}
+el('aq').addEventListener('keydown',function(e){if(e.key==='Enter'&&this.value.trim()){if(!authed){go('door');return}ask(this.value);this.value=''}});
+// panels
+function stopPV(){if(PVR){PVR.dead=1;cancelAnimationFrame(PVR.id);PVR.r.dispose();var c=PVR.r.domElement;if(c.parentNode)c.parentNode.removeChild(c);PVR=null}}
+function spO(t,h){stopPV();el('spt').textContent=t;el('spb').innerHTML=h;el('spb').scrollTop=0;el('sp').classList.add('on')}
+window.spX=function(){el('sp').classList.remove('on');stopPV()};
+window.regT=function(){regm=!regm;var l=el('login');l.querySelector('h2').textContent=regm?'Create account':'Sign in';l.querySelector('button.btn').textContent=regm?'Register':'Sign in';el('regl').textContent=regm?'Already registered? Sign in':'New customer? Create an account'};
+// directory
+var ST=[
+{id:'welcome',f:0,r:0,x:-2.6,z:3.6,t:'Eco welcome board',d:'Store and trolley status, plus the eco-shopping message.',a:'This is the eco welcome board: store occupancy and smart-trolley status show here. Bring a reusable bag to earn eco rewards.'},
+{id:'shop',f:0,r:0,x:2.95,z:3.6,t:'Shop & Find',d:'Browse by floor and category, search, offers, sort, and locate any product.',a:'Shop & Find: browse, search, filter offers and sort. Pick any product and I will draw your route.'},
+{id:'guide',f:0,r:0,x:2.95,z:-1.2,t:'Store guide',d:'Floor maps with a stock overlay and an emergency preview.',a:'Opening the store guide: floor plans with a stock overlay and an emergency preview.'},
+{id:'list',f:0,r:0,x:-2.6,z:-1.2,t:'My list',d:'Reminder list with quantities and an estimated total.',a:'Your reminder list: change quantities, remove items and see an estimated total.'},
+{id:'trolley',f:0,r:Math.PI,x:-4.4,z:10.4,t:'Trolley bay & rules',d:'Scan a trolley QR code, use cart control and read the rules.',a:'This is the trolley bay. Scan a trolley QR, read the rules, then use cart control.'},
+{id:'checkout',f:0,r:Math.PI,x:10.5,z:9.4,t:'Smart checkout',d:'Cart, order history and payment.',a:'Smart checkout: your cart, your orders and payment.'},
+{id:'store',f:2,r:0,x:-2,z:-13,t:'Store room',d:'Admin: hardware settings for the trolley controller and sensors.',a:'Welcome to the store room. The laptop shows the hardware settings.'},
+{id:'dept',f:2,r:0,x:2,z:-13,t:'Department office',d:'Admin: cart simulator, scenarios and recent events.',a:'Welcome to the department office. The laptop runs the cart simulator.'}];
+window.dirO=function(){if(!authed){go('door');return}var h='<p class="note">Pick any counter and I will fly you there. The admin offices need an admin account.</p>';
+ [0,1,2].forEach(function(f){h+='<h4>'+FLN[f]+'</h4><p>'+fsum(f)+'</p>';var L=ST.filter(function(q){return q.f===f});if(!L.length)h+='<p><small>Shelves only here. Use Shop & Find to locate any product.</small></p>';L.forEach(function(q){var ad=q.id==='store'||q.id==='dept';h+='<div class="row"><div><b>'+q.t+(ad?' ðŸ”’':'')+'</b><br><small>'+q.d+'</small></div><button class="b2 p" onclick="stGo(\''+q.id+'\')">Go</button></div>'})});
+ spO('Mart directory',h);say('Here is everything in the mart. Choose a counter and I will take you there.')};
+window.stGo=function(id){if(!authed){go('door');return}var q=ST.filter(function(z){return z.id===id})[0],adm=id==='store'||id==='dept';
+ if(adm&&role!=='admin'){spO('Admin only','<p>The store room and department office are for admin accounts. Sign out, then sign in with "Admin access" ticked.</p>');say('That office is locked: it needs an admin account.',[['Services',dirO]]);return}
+ spX();hl.visible=false;INFO.st=[q.t,q.d];var dl=rm.checked?100:2600;
+ if(adm){var rk={f:2,x:q.x,z:-10.6,y0:2*FH+.15,rot:0,zn:'O',lbl:q.t,w:2,d:1,items:[[],[]]};route({n:q.t,rk:rk,face:0},curF===2?'lift':'door')}else clearRoute();
+ var run=function(){curF=q.f;
+  if(adm){var xs=q.x<0?-1:1,y0=2*FH+.15;WP.st={p:[q.x+xs*5.5,y0+2.7,-5.9],l:[q.x,y0+1.2,-12],v:48};go('st');
+   setTimeout(function(){WP.st={p:[q.x+xs*.5,y0+1.55,-9.6],l:[q.x,y0+.98,-13.1],v:34};go('st');setTimeout(function(){stPanel(id)},dl)},dl)}
+  else{WP.st={p:[q.x+Math.sin(q.r)*4.4,2,q.z+Math.cos(q.r)*4.4],l:[q.x,1.3,q.z],v:46};go('st');setTimeout(function(){stPanel(id)},rm.checked?100:2400)}};
+ if(curF!==q.f){go(['ground','first','second'][q.f]);setTimeout(run,rm.checked?100:2500)}else run()};
+function stPanel(id){var q=ST.filter(function(z){return z.id===id})[0];say(q.a);
+ if(id==='welcome')wlO();else if(id==='shop')shopO();else if(id==='guide'){spX();mapT(1)}else if(id==='list')listO();else if(id==='trolley')trO('s');else if(id==='checkout')coO('c');else if(id==='store')hwO();else if(id==='dept')simO('s')}
+// home / welcome
+function wlO(){spO('Eco welcome board','<div class="grid"><div class="card" style="cursor:default"><b>Store occupancy</b><br>Unavailable</div><div class="card" style="cursor:default"><b>Smart trolley</b><br>Device service not connected</div></div><h4>A kinder way to shop</h4><p>Good for your home. Gentle on our planet.</p><p class="note">Bring a reusable bag and collect eco rewards at checkout.</p><button class="b2 p" onclick="stGo(\'trolley\')">Start smart-cart session</button> <button class="b2" onclick="stGo(\'shop\')">Shop & Find</button>')}
+// catalogue
+window.shopO=function(){var cats={};IDX.forEach(function(e){cats[e.c]=1});var o='<option value="">All categories</option>';Object.keys(cats).forEach(function(c){o+='<option value="'+c+'"'+(CF.c===c?' selected':'')+'>'+cn(c)+'</option>'});
+ spO('Shop & Find','<input id="cq" placeholder="Search productsâ€¦" value="'+CF.q+'" oninput="shopU()"><div class="grid" style="margin:8px 0"><select id="cf" onchange="shopU()"><option value="-1">All floors</option><option value="0">Ground</option><option value="1">First</option><option value="2">Second</option></select><select id="cc" onchange="shopU()">'+o+'</select><select id="cs" onchange="shopU()"><option value="n">Sort: name</option><option value="l">Price: low to high</option><option value="h">Price: high to low</option></select><label style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="co" style="width:auto" onchange="shopU()">Offers only</label></div><p class="note">Prices and stock are demo values; no live stock sensors are connected.</p><div class="grid" id="cg"></div>');
+ el('cf').value=CF.fl;el('cs').value=CF.s;el('co').checked=!!CF.o;shopG()};
+window.shopU=function(){CF.q=el('cq').value;CF.fl=el('cf').value;CF.c=el('cc').value;CF.s=el('cs').value;CF.o=el('co').checked?1:0;shopG()};
+function shopG(){var q=CF.q.trim().toLowerCase(),seen={},o=[];IDX.forEach(function(e){var k=e.n+'|'+e.rk.f;if(seen[k])return;seen[k]=1;if(CF.fl!=='-1'&&e.rk.f!==+CF.fl)return;if(CF.c&&e.c!==CF.c)return;if(q&&(e.n+' '+e.c).toLowerCase().indexOf(q)<0)return;if(CF.o&&!pinfo(e.n).o)return;o.push(e)});
+ o.sort(function(a,b){return CF.s==='n'?(a.n<b.n?-1:1):CF.s==='l'?pinfo(a.n).p-pinfo(b.n).p:pinfo(b.n).p-pinfo(a.n).p});CL=o.slice(0,60);
+ el('cg').innerHTML=CL.map(function(e,i){var pi=pinfo(e.n);return'<div class="card" onclick="pickC('+i+')"><div class="sw" style="background:'+pcol(e.k,e.n)+'"></div><b>'+e.n+'</b><br>'+(pi.o?'<s style="opacity:.6">'+rup(pi.was)+'</s> ':'')+'<b style="color:var(--gold)">'+rup(pi.p)+'</b><br><small>'+(pi.st?pi.st+' in stock':'Out of stock')+' Â· '+['G','F1','F2'][e.rk.f]+' Â· '+e.rk.lbl+'</small></div>'}).join('')||'<p>No products match.</p>'}
+window.pickC=function(i){toRack(CL[i])};
+// product details + route
+function steps(e,from){var rk=e.rk,f=rk.f;if(f===0)return['Start at the main entrance','Follow the gold line along the main aisle','Arrive at rack '+rk.lbl+' on the ground floor'];if(from==='lift')return['Start at the lift on the '+FLN[f].toLowerCase(),'Follow the gold line to rack '+rk.lbl];return['Start at the main entrance','Walk to the glass lift at the back of the atrium','Ride to the '+FLN[f].toLowerCase(),'Follow the gold line to rack '+rk.lbl]}
+function pOpen(e,from){CUR=e;PFR=from;var pi=pinfo(e.n);pRender();say('Found '+e.n+' on the '+FLN[e.rk.f].toLowerCase()+', rack '+e.rk.lbl+'. I have drawn the route from '+(from==='lift'?'the lift':'the main entrance')+', about '+Math.round(RL)+' metres.',[['Add to cart',function(){addC(e.n)}],['Back to catalogue',shopO]])}
+function pRender(){var e=CUR,rk=e.rk,pi=pinfo(e.n);
+ var h='<div class="pv" id="pv"></div><div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:10px"><div><b style="font-size:20px">'+e.n+'</b><br><small>'+cn(e.c)+'</small></div><div style="text-align:right">'+(pi.o?'<s style="opacity:.6">'+rup(pi.was)+'</s> <span style="color:#35e0a0">Offer</span><br>':'')+'<b style="font-size:22px;color:var(--gold)">'+rup(pi.p)+'</b></div></div>';
+ h+='<div class="row"><span>Stock (demo)</span><b>'+(pi.st?pi.st+' units':'Out of stock')+'</b></div><div class="row"><span>Location</span><b>'+FLN[rk.f]+' Â· Rack '+rk.lbl+' ('+(e.face?'back':'front')+')</b></div><div class="row"><span>Department</span><b>'+CAT[rk.f]+'</b></div>';
+ h+='<div style="display:flex;gap:6px;margin:12px 0;flex-wrap:wrap"><button class="b2 p" onclick="addC(\''+e.n+'\')">Add to cart</button><button class="b2" onclick="addL(\''+e.n+'\')">Add to list</button><button class="b2" onclick="shopO()">Catalogue</button></div>';
+ var fr=rk.f>0?'<select onchange="pFrom(this.value)" style="margin:6px 0"><option value="door"'+(PFR==='door'?' selected':'')+'>Start: main entrance</option><option value="lift"'+(PFR==='lift'?' selected':'')+'>Start: lift on this floor</option></select>':'';
+ h+='<h4>Route to this product</h4><small>about '+Math.round(RL)+' m</small>'+fr+'<ol>'+steps(e,PFR).map(function(q){return'<li>'+q+'</li>'}).join('')+'</ol>';
+ if(rk.f>0&&PFR==='door')h+='<small>Ground floor: walk to the lift</small>'+plan(0,0);
+ h+='<small>'+FLN[rk.f]+'</small>'+plan(rk.f,0)+'<p class="note">Route and stock use demo data; no indoor positioning is connected.</p>';
+ spO('Product details',h);pvStart(e.k,e.n)}
+window.pFrom=function(v){PFR=v;route(CUR,v);pRender()};
+function pvStart(k,nm){var h=el('pv');if(!h)return;var w2=h.clientWidth||380,h2=210,rr=new TH.WebGLRenderer({antialias:true,alpha:true});rr.setPixelRatio(Math.min(devicePixelRatio,2));rr.setSize(w2,h2);rr.outputEncoding=TH.sRGBEncoding;rr.toneMapping=TH.ACESFilmicToneMapping;h.appendChild(rr.domElement);
+ var s3=new TH.Scene(),c3=new TH.PerspectiveCamera(30,w2/h2,.05,50),grp=new TH.Group(),o=P[k];c3.position.set(0,.62,2.1);c3.lookAt(0,.4,0);
+ s3.add(new TH.HemisphereLight(0xffffff,0x335544,1.1));var d3=new TH.DirectionalLight(0xfff0d0,2.4);d3.position.set(2,3,3);s3.add(d3);var d4=new TH.DirectionalLight(0x88aaff,.8);d4.position.set(-3,1,-2);s3.add(d4);
+ if(o){o.g.computeBoundingBox();var bb=o.g.boundingBox,sc5=.78/(bb.max.y-bb.min.y);grp.add(new TH.Mesh(o.g,o.m));if(k[0]==='m'&&P.gab)grp.add(new TH.Mesh(P.gab.g,P.gab.m));grp.scale.setScalar(sc5);grp.position.y=-bb.min.y*sc5+.02}
+ else{var sp=new TH.Mesh(new TH.SphereGeometry(.34,24,18),new TH.MeshStandardMaterial({color:pcol(k,nm),roughness:.45}));sp.position.y=.38;grp.add(sp)}
+ s3.add(grp);var ring=new TH.Mesh(new TH.CylinderGeometry(.55,.6,.03,40),new TH.MeshStandardMaterial({color:0xC5A55A,metalness:.85,roughness:.3}));ring.position.y=-.005;s3.add(ring);
+ PVR={r:rr,id:0,dead:0};(function lp(){if(!PVR||PVR.dead)return;PVR.id=requestAnimationFrame(lp);grp.rotation.y+=.014;rr.render(s3,c3)})()}
+// list, cart, orders
+function loc(n){var e=findE(n);return e?FLN[e.rk.f]+' Â· '+e.rk.lbl:'â€”'}
+function tot(A){return A.reduce(function(a,x){return a+pinfo(x.n).p*x.q},0)}
+function lrows(A,kind){return A.map(function(x,i){return'<div class="row"><div><b>'+x.n+'</b><br><small>'+loc(x.n)+' Â· '+rup(pinfo(x.n).p)+'</small></div><div style="white-space:nowrap">'+(kind==='l'?'<button class="b2" onclick="fnd(\''+x.n+'\')">Find</button> ':'')+'<button class="b2" onclick="qty(\''+kind+'\','+i+',-1)">âˆ’</button> '+x.q+' <button class="b2" onclick="qty(\''+kind+'\','+i+',1)">+</button> <button class="b2" onclick="qty(\''+kind+'\','+i+',0)">Remove</button></div></div>'}).join('')}
+window.fnd=function(n){var e=findE(n);if(e)toRack(e)};
+window.qty=function(kind,i,d){var A=kind==='l'?LIST:CART;if(d===0)A.splice(i,1);else{A[i].q+=d;if(A[i].q<1)A.splice(i,1)}if(kind==='l'){saveL();listO()}else coO('c')};
+window.addL=function(n){var f=LIST.filter(function(x){return x.n===n})[0];if(f)f.q++;else LIST.push({n:n,q:1});saveL();say(n+' is on your list ('+LIST.length+' item'+(LIST.length>1?'s':'')+').',[['Open my list',function(){stGo('list')}]])};
+window.addC=function(n){var f=CART.filter(function(x){return x.n===n})[0];if(f)f.q++;else CART.push({n:n,q:1});say(n+' is in your cart ('+CART.length+' item'+(CART.length>1?'s':'')+').',[['Go to checkout',function(){stGo('checkout')}]])};
+function listO(){spO('My list',(LIST.length?lrows(LIST,'l')+'<div class="row"><b>Estimated total</b><b style="color:var(--gold)">'+rup(tot(LIST))+'</b></div>':'<p>Your reminder list is empty. Add products from Shop & Find.</p>')+'<p class="note">Saved in this browser only; not synced to an account.</p>')}
+function tabs(a,cur,fn){return'<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">'+a.map(function(x){return'<button class="b2'+(cur===x[0]?' p':'')+'" onclick="'+fn+'(\''+x[0]+'\')">'+x[1]+'</button>'}).join('')+'</div>'}
+window.coO=function(t){var h=tabs([['c','Cart'],['o','Orders'],['p','Payment']],t,'coO');
+ if(t==='c')h+=(CART.length?lrows(CART,'c')+'<div class="row"><b>Total</b><b style="color:var(--gold)">'+rup(tot(CART))+'</b></div><button class="b2 p" style="margin-top:10px" onclick="place()">Place order</button>':'<p>Your cart is empty. Add products from Shop & Find.</p>')+'<p class="note">Demo cart held in this session; no server cart is connected.</p>';
+ else if(t==='o')h+=(ORD.length?ORD.map(function(o,i){return'<div class="card" style="cursor:default;margin-bottom:8px"><b>'+o.id+'</b> Â· '+o.s+' Â· '+rup(o.t)+'<br><small>'+o.i+'</small>'+(o.s==='Pending payment'?'<br><button class="b2 p" style="margin-top:6px" onclick="coO(\'p\')">Continue to payment</button> <button class="b2" onclick="cxl('+i+')">Cancel order</button>':'')+'</div>'}).join(''):'<p>No orders yet.</p>');
+ else h+='<h4>Payment unavailable</h4><p>Payment is not configured. This demo never confirms a payment on return from a provider; an order counts as paid only after server verification.</p>';
+ spO('Smart checkout',h)};
+window.place=function(){if(!CART.length)return;ORD.unshift({id:'GM'+(1001+ORD.length),i:CART.map(function(x){return x.n+' Ã—'+x.q}).join(', '),t:tot(CART),s:'Pending payment'});CART=[];coO('o');say('Order placed and waiting for payment. Payment is not configured in this demo.')};
+window.cxl=function(i){ORD[i].s='Cancelled';coO('o')};
+// trolley
+var RT=['Use one trolley at a time and keep it with you.','Do not overload the trolley or seat children in it.','Scan products only at the trolley or the checkout.','Keep trolleys on the shop floor and use the lift, not the stairs.','Return the trolley to the bay after checkout.','Follow staff instructions during any emergency.','Smart-cart controls may be unavailable when the device service is offline.'];
+window.trO=function(t){var h=tabs([['s','Scan'],['c','Control'],['r','Rules']],t,'trO');
+ if(t==='s')h+='<div class="pv" style="height:150px;display:grid;place-items:center;text-align:center;padding:10px;box-sizing:border-box">Camera scan area<br><small>Camera scanning needs the trolley device service, which is not connected.</small></div><input id="tq" placeholder="Trolley code, e.g. TRL-01" style="margin-top:10px"><button class="b2 p" style="margin-top:8px" onclick="trScan()">Scan trolley</button><p class="note" id="tmsg" style="display:none"></p>';
+ else if(t==='c')h+=(RULES?'<h4>Your smart cart</h4><p class="note">Cart service unavailable: trolley controls need the authenticated device service.</p>'+(CART.length?lrows(CART,'c')+'<div class="row"><b>Total</b><b>'+rup(tot(CART))+'</b></div>':'<p>Cart items: none yet.</p>')+'<button class="b2 p" style="margin-top:10px" onclick="stGo(\'checkout\')">Go to checkout</button>':'<p>Read and accept the trolley rules before using cart control.</p><button class="b2 p" onclick="trO(\'r\')">Open rules</button>');
+ else h+='<h4>Smart-cart policies</h4><ol style="height:200px;overflow:auto;border:1px solid #e6c46e44;padding:10px 10px 10px 28px;margin:0">'+RT.map(function(x){return'<li style="margin-bottom:8px">'+x+'</li>'}).join('')+'</ol><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="rac" style="width:auto"'+(RULES?' checked':'')+'>I have read and agree</label><button class="b2 p" onclick="rulesAcc()">Accept &amp; continue</button>';
+ spO('Trolley bay',h)};
+window.trScan=function(){var m=el('tmsg');m.style.display='block';m.textContent='Trolley activation is unavailable: the authenticated device service is not connected.'};
+window.rulesAcc=function(){if(!el('rac').checked){say('Please tick the box to accept the rules.');return}RULES=1;say('Rules accepted. Cart control is ready.');trO('c')};
+// admin: store room (hardware) and department office (simulator)
+var HWN=[['esp','ESP32 trolley controller'],['rfid','RFID reader'],['qr','QR scanner'],['wt','Weight sensor'],['mot','Motor driver']];
+function hwScr(){drawScr('store','HARDWARE SETTINGS',['Controller ID: '+HW.id,'Polling: every '+HW.poll+' s'].concat(HWN.map(function(x){return x[1]+': '+(HW[x[0]]?'ON':'OFF')}),['Device service: not connected']))}
+function hwO(){spO('Hardware settings','<p class="note">Device service not connected. Settings stay in this browser and are not sent to any device.</p><label>Controller ID<input id="hid" value="'+HW.id+'"></label><label>Polling interval (seconds)<input id="hpl" type="number" min="1" max="60" value="'+HW.poll+'"></label>'+HWN.map(function(x){return'<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="h_'+x[0]+'" style="width:auto"'+(HW[x[0]]?' checked':'')+'>'+x[1]+'</label>'}).join('')+'<button class="b2 p" style="margin-top:10px" onclick="hwS()">Save settings</button><p class="note" id="hm" style="display:none"></p>');hwScr()}
+window.hwS=function(){HW.id=el('hid').value;HW.poll=+el('hpl').value||5;HWN.forEach(function(x){HW[x[0]]=el('h_'+x[0]).checked?1:0});hwScr();var m=el('hm');m.style.display='block';m.textContent='Saved in this browser only (demo).'};
+function simScr(){drawScr('dept','CART SIMULATOR',[SIMS.cart+' Â· '+SIMS.sc,'Status: '+(SIMS.on?'RUNNING':'idle')].concat(SIMEV.slice(0,5),['Adapter: demo, not connected']))}
+var SEV={'Normal shopping':['Item scanned','Item added to cart','Moved to next aisle','Weight check passed'],'Low battery':['Battery 18%','Battery 15%: return to bay','Speed reduced'],'Scan error':['RFID read failed','Retrying scan','Item not recognised'],'Emergency stop':['Emergency stop pressed','Motor locked','Staff notified']};
+function simTick(){var E=SEV[SIMS.sc];SIMEV.unshift(SIMS.cart+': '+E[SIMS.n++%E.length]+' (demo)');SIMEV=SIMEV.slice(0,20);cart.position.x=-4.4+Math.sin(SIMS.n)*1.4;var v=el('sevt');if(v&&el('sp').classList.contains('on'))v.innerHTML=SIMEV.slice(0,8).map(function(x){return'<div class="row">'+x+'</div>'}).join('');simScr()}
+window.simO=function(t){var h=tabs([['s','Simulator'],['t','Terminal']],t,'simO');
+ if(t==='t')h+='<h4>Admin terminal unavailable</h4><p>This frontend does not include that console.</p>';
+ else{h+='<label>Cart<select id="sc1" onchange="simU()">'+['Cart 01','Cart 02','Cart 03','Cart 04'].map(function(x){return'<option'+(SIMS.cart===x?' selected':'')+'>'+x+'</option>'}).join('')+'</select></label><label>Scenario<select id="sc2" onchange="simU()">'+Object.keys(SEV).map(function(x){return'<option'+(SIMS.sc===x?' selected':'')+'>'+x+'</option>'}).join('')+'</select></label><div style="display:flex;gap:6px;margin:10px 0"><button class="b2 p" onclick="simB(\'s\')">Start</button><button class="b2" onclick="simB(\'p\')">Pause</button><button class="b2" onclick="simB(\'r\')">Reset</button></div><p class="note">Status: '+(SIMS.on?'running':'idle')+'. API and adapter readiness: demo only, not connected.</p><h4>Recent events</h4><div id="sevt">'+SIMEV.slice(0,8).map(function(x){return'<div class="row">'+x+'</div>'}).join('')+'</div>'}
+ spO('Cart simulator',h);simScr()};
+window.simU=function(){SIMS.cart=el('sc1').value;SIMS.sc=el('sc2').value;simScr()};
+window.simB=function(a){if(a==='s'&&!SIMS.on){SIMS.on=1;SIMEV.unshift('Started: '+SIMS.cart+' Â· '+SIMS.sc);clearInterval(SIMT);SIMT=setInterval(simTick,1700)}else if(a==='p'){SIMS.on=0;clearInterval(SIMT);SIMEV.unshift('Paused')}else if(a==='r'){SIMS.on=0;clearInterval(SIMT);SIMEV=[];SIMS.n=0;cart.position.x=-4.4}simO('s')};
+offSign();
+var qi=el('q'),rs=el('res');
+qi.addEventListener('input',function(){var q=qi.value.trim().toLowerCase(),o=[],seen={};
+ if(q)IDX.forEach(function(e){var k=e.n+e.rk.f;if(seen[k])return;if((e.n+' '+e.c+' '+CAT[e.rk.f]).toLowerCase().indexOf(q)>-1){seen[k]=1;o.push(e)}});
+ RES=o.slice(0,8);rs.innerHTML=RES.map(function(e,i){return'<button data-i="'+i+'"><b>'+e.n+'</b><span>'+FLN[e.rk.f]+' Â· '+CAT[e.rk.f]+' Â· Rack '+e.rk.lbl+'</span></button>'}).join('')||(q?'<p>No match. Try milk, cereal, honey, apples or soap.</p>':'');rs.classList.toggle('on',!!q)});
+rs.addEventListener('click',function(e){var b=e.target.closest('button');if(b)toRack(RES[+b.dataset.i])});
+qi.addEventListener('keydown',function(e){if(e.key==='Enter'&&RES[0])toRack(RES[0])});
+// store map
+var DZ=[[[-19.6,-7,-6.2,7,'#2c8a5a','Grocery & pantry'],[6.2,-7,19.6,7,'#2c8a5a','Grocery & pantry'],[-19.6,-11.6,-6.2,-7.3,'#d98a1f','Fresh produce'],[6.2,-11.6,19.6,-7.3,'#d98a1f','Fresh produce'],[-4,-13.8,4,-11.4,'#b5651d','Bakery'],[-19.6,9.6,-5.5,13.6,'#2b6cb0','Smart checkout'],[5.5,9.6,19.6,13.6,'#2b6cb0','Smart checkout']],
+ [[-19.6,-13.8,-6,7,'#1f78b4','Beverages & dairy'],[6,-13.8,19.6,7,'#1f78b4','Beverages & dairy'],[-6,-13.8,6,-7.2,'#1f78b4'],[-19.6,7.4,19.6,13.8,'#8a5a2b','CafÃ© lounge']],
+ [[-19.6,-13.8,-6,7,'#7a52a8','Home & care'],[6,-13.8,19.6,7,'#7a52a8','Home & care'],[-6,-13.8,6,-7.2,'#7a52a8'],[-19.6,7.4,19.6,13.8,'#8a5a2b','Lounge']]];
+function floorIdx(){return Math.max(0,Math.min(2,Math.floor((cam.position.y+.5)/FH)))}
+function plan(f,mini){var X=function(x){return(x+20)*10},Z=function(z){return(z+14)*10},s='<svg viewBox="-6 -6 412 292" xmlns="http://www.w3.org/2000/svg" style="font-family:Manrope,sans-serif"><defs><pattern id="ht" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="6" fill="#E6C46Eaa"/></pattern></defs><rect width="400" height="280" fill="#0e2a20" stroke="#E6C46E" stroke-width="2.5"/>',tl2='';
+ DZ[f].forEach(function(z){s+='<rect x="'+X(z[0])+'" y="'+Z(z[1])+'" width="'+(z[2]-z[0])*10+'" height="'+(z[3]-z[1])*10+'" fill="'+z[4]+'" fill-opacity=".32"/>';if(!mini&&z[5])tl2+='<text x="'+X((z[0]+z[2])/2)+'" y="'+(Z(z[3])-6)+'" fill="#f4efe0" font-size="10" text-anchor="middle" opacity=".9">'+z[5]+'</text>'});
+ s+='<rect x="140" y="70" width="120" height="140" fill="#06130d" stroke="#E6C46E" stroke-dasharray="5 4"/>';
+ [3.4,-5.8].forEach(function(x){s+='<rect x="'+X(x)+'" y="70" width="24" height="140" fill="url(#ht)" stroke="#E6C46E"/>'});
+ s+='<rect x="187" y="70" width="26" height="23" fill="#E6C46E"/>';
+ RK.forEach(function(rk,i){if(rk.f!==f)return;var w=(rk.rot?rk.d:rk.w)*10,h=(rk.rot?rk.w:rk.d)*10;s+='<rect '+(mini?'':'class="rk" onclick="pickRack('+i+')"')+' x="'+(X(rk.x)-w/2)+'" y="'+(Z(rk.z)-h/2)+'" width="'+w+'" height="'+h+'" fill="'+(SEL&&SEL.rk===rk?'#35e0a0':rkc(rk))+'" stroke="#0e2a20"/>'});
+ RSEG.forEach(function(g){if(g.f===f)s+='<polyline points="'+g.pts.map(function(p){return X(p[0])+','+Z(p[1])}).join(' ')+'" fill="none" stroke="#E6C46E" stroke-width="3" stroke-dasharray="7 5" stroke-linecap="round"/>'});
+ if(SEL&&SEL.rk.f===f)s+='<circle cx="'+X(SEL.rk.x)+'" cy="'+Z(SEL.rk.z)+'" r="9" fill="#35e0a0" stroke="#0e2a20" stroke-width="2"/>';
+ s+='<rect x="170" y="276" width="60" height="5" fill="#E6C46E"/>';if(HM===2)s+='<rect x="0" y="0" width="400" height="280" fill="#ff2a2a" fill-opacity=".1"/><rect x="170" y="266" width="60" height="14" fill="#ff4d4d"/><text x="200" y="260" fill="#ff9a9a" font-size="11" text-anchor="middle" font-weight="700">EXIT</text>';
+ if(!mini){tl2+='<text x="200" y="130" fill="#f4efe0" font-size="11" text-anchor="middle">Atrium void</text><text x="200" y="85" fill="#0f3326" font-size="10" text-anchor="middle" font-weight="700">Lift</text><text x="'+(X(4.6))+'" y="140" fill="#f4efe0" font-size="10" text-anchor="middle" transform="rotate(-90 '+X(4.6)+' 140)">Stairs</text><text x="'+X(-4.6)+'" y="140" fill="#f4efe0" font-size="10" text-anchor="middle" transform="rotate(-90 '+X(-4.6)+' 140)">Stairs</text><text x="200" y="270" fill="#E6C46E" font-size="11" text-anchor="middle" font-weight="700">Entrance</text>';
+  if(authed&&floorIdx()===f)tl2+='<circle cx="'+X(cam.position.x)+'" cy="'+Z(Math.max(-14,Math.min(14,cam.position.z)))+'" r="6" fill="#ff6b4a" stroke="#fff" stroke-width="2"/>'}
+ return s+tl2+'</svg>'}
+function buildMap(){var st='',tb='',tps=[230,120,10];
+ [2,1,0].forEach(function(f){st+='<div class="pl'+(f===mf?' a':'')+'" style="top:'+tps[f]+'px" onclick="mapF('+f+')">'+plan(f,1)+'</div><div class="pt" style="top:'+(tps[f]+30)+'px">'+FLN[f]+'<small>'+CAT[f]+'</small></div>'});
+ el('stk').innerHTML=st;[0,1,2].forEach(function(f){tb+='<button class="'+(f===mf?'a':'')+'" onclick="mapF('+f+')">'+FLN[f]+'</button>'});tb+='<button class="'+(HM===1?'a':'')+'" onclick="hmT(1)">Stock overlay</button><button class="'+(HM===2?'a':'')+'" onclick="hmT(2)">Emergency preview</button>';el('tabs').innerHTML=tb;el('pn').innerHTML=plan(mf,0)}
+window.mapF=function(f){mf=f;buildMap()};
+window.mapT=function(on){if(on&&!authed){go('door');return}if(on){mf=floorIdx();buildMap()}el('mp').classList.toggle('on',!!on)};
+window.pickRack=function(i){mapT(0);var it=RK[i].items[0][0]||{};toRack({n:it.n||'Rack '+RK[i].lbl,c:it.c||'',k:it.k,rk:RK[i],face:0})};
+addEventListener('keydown',function(e){if(e.key==='Escape')mapT(0)});
+addEventListener('pointermove',function(e){mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5});
+addEventListener('resize',function(){cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();r.setSize(innerWidth,innerHeight)});
+var LS=[.05,FH+.15,2*FH+.15];
+function loop(){requestAnimationFrame(loop);var d=Math.min(clk.getDelta(),.05),T=clk.elapsedTime;
+ if(t<1)t=Math.min(1,t+d/dur);var e=ease(t);cur.lerpVectors(fp,tp,e);curL.lerpVectors(fl,tl,e);
+ cam.fov=fv0+(fv1-fv0)*e;cam.updateProjectionMatrix();
+ cam.position.copy(cur);
+ if(!rm.checked&&key!=='door'){cam.position.x+=mx*.6;cam.position.y-=my*.35;
+  if(key==='hero'){cam.position.x+=Math.sin(T*.15)*4;cam.position.y+=Math.sin(T*.21)*.9}
+  else if(key==='atrium'){cam.position.x+=Math.sin(T*.3)*4.5;cam.position.y+=Math.sin(T*.2)*.7}
+  else if(curF>-1&&key!=='rack'&&key!=='lobby'){if(ang%2)cam.position.z+=Math.sin(T*.25)*1.4;else cam.position.x+=Math.sin(T*.25)*1.4}}
+ cam.lookAt(curL);
+ if(key==='door'&&!authed&&t>=1&&!shown&&open<.05){shown=true;el('login').classList.add('on');setTimeout(function(){el('nm').focus({preventScroll:true})},900)}
+ open+=(doorT-open)*(rm.checked?1:.045);dl.position.x=-open*3.15;dr.position.x=open*3.15;
+ var tt=T%26,leg=Math.floor(tt/6.5),lt2=tt%6.5,a0=[0,1,2,1][leg],a1=[1,2,1,0][leg],cy=LS[a0],od=0;
+ if(lt2<3)od=Math.min(1,lt2/.6,(3-lt2)/.6);else cy=LS[a0]+(LS[a1]-LS[a0])*ease((lt2-3)/3.5);
+ cab.position.y=cy;cdl.position.x=-.57-od*.55;cdr.position.x=.57+od*.55;
+ if(hl.visible){beam.material.opacity=.38+.2*Math.sin(T*3);hb.material.opacity=.14+.07*Math.sin(T*3)}
+ if(RP.length>1){var dd=(T*4.5)%RL,i=1;while(i<RC.length-1&&RC[i]<dd)i++;var u=(dd-RC[i-1])/Math.max(.001,RC[i]-RC[i-1]);dot.position.lerpVectors(RP[i-1],RP[i],u);dot.position.y+=.25;dot.scale.setScalar(1+.25*Math.sin(T*8))}
+ if(!rm.checked)people(T);
+ cart.position.y=.08+Math.sin(T)*.012;r.render(scene,cam)}
+setWho();go('hero');loop();
+})();
+</script></body></html>
