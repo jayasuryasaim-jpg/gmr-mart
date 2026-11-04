@@ -1,6 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
+import React, { useState, useMemo } from 'react';
 import './Admin.css';
 
 const AdminDashboard = ({ onLogout }) => {
@@ -94,7 +92,11 @@ const AdminDashboard = ({ onLogout }) => {
 
   const filteredHistory = useMemo(() => filterDate ? history.filter(h => h.date === filterDate) : history, [filterDate, history]);
 
-  const exportPDF = () => {
+  const exportPDF = async () => {
+    const [{ jsPDF }, { default: autoTable }] = await Promise.all([
+      import("jspdf"),
+      import("jspdf-autotable")
+    ]);
     const doc = new jsPDF();
     doc.text("MART_SENSE TRANSACTION HISTORY REPORT", 14, 15);
     autoTable(doc, {
@@ -125,6 +127,10 @@ const AdminDashboard = ({ onLogout }) => {
           <button className="btn-logout" onClick={handleLogoutClick} style={{ width: 'auto', padding: '8px 16px' }}>LOG OUT</button>
         </div>
       </header>
+
+      <p role="status" style={{ margin: '12px 20px', padding: '12px 16px', border: '1px solid #f59e0b', borderRadius: '8px', background: '#fffbeb', color: '#78350f' }}>
+        Demo dashboard: users, carts, occupancy, sales, and history are sample data, not live store records.
+      </p>
 
       {/* --- STATS GRID --- */}
       <div className="stats-grid">

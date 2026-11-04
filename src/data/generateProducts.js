@@ -22,7 +22,7 @@ const SYNC_MAP = {
 const floorMap = { "G": "Ground Floor", "F": "First Floor", "S": "Second Floor" };
 const folderNameMap = { "G": "ground-floor", "F": "first-floor", "S": "second-floor" };
 
-function generateProducts() {
+export function generateProducts() {
   const products = [];
   let idCounter = 1;
 
@@ -33,11 +33,11 @@ function generateProducts() {
     const floorFolder = folderNameMap[floorPrefix];
 
     namesList.forEach((name, index) => {
-      const mrp = Math.floor(Math.random() * 350) + 500;
+      const productSeed = idCounter;
+      const mrp = 500 + ((productSeed * 73) % 350);
       
-      // LOGIC: Only 30% of items get a discount
-      const hasDiscount = Math.random() > 0.7;
-      const discountVal = hasDiscount ? Math.floor(Math.random() * 25) + 5 : 0;
+      const hasDiscount = productSeed % 10 >= 7;
+      const discountVal = hasDiscount ? 5 + ((productSeed * 7) % 25) : 0;
       
       products.push({
         id: idCounter++,
@@ -46,7 +46,7 @@ function generateProducts() {
         mrp: mrp,
         price: hasDiscount ? Math.floor(mrp * (1 - discountVal / 100)) : mrp,
         discount: hasDiscount ? `${discountVal}% OFF` : null,
-        stock: Math.floor(Math.random() * 100) + 5,
+        stock: 5 + ((productSeed * 13) % 100),
         location: rowID,
         floor: floorMap[floorPrefix],
         image: `/assets/products/${floorFolder}/${cat}/product-${index + 1}.jpg`,

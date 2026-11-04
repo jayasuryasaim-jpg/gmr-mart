@@ -1,178 +1,243 @@
-import React, { useState } from 'react';
-import './Login.css';
+import React, { useState } from "react";
+import { useAuth } from "../auth/AuthProvider";
+import { useNavigate } from "react-router-dom";
+import "./Login.css";
 
-const Login = ({ onLogin }) => {
-  const [view, setView] = useState('login'); // 'login' | 'register' | 'admin'
-  const [error, setError] = useState('');
-  const [formData, setFormData] = useState({
-    name: '',
-    mobile: '',
-    email: '',
-    dob: '',
-    gender: '',
-    pass: ''
-  });
-  const [generatedOtp, setGeneratedOtp] = useState('');
-  const [userOtp, setUserOtp] = useState('');
-  const [isOtpVerified, setIsOtpVerified] = useState(false);
+const FEATURES = [
+  { ico: "🗺️", label: "Interactive Store Map & Navigation" },
+  { ico: "🛒", label: "IoT Smart Cart with QR Activation" },
+  { ico: "📦", label: "Real-time Inventory Browsing" },
+  { ico: "📋", label: "Personal Shopping List & Reminders" },
+];
 
-  const handleChange = (e) => {
-    setError('');
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+export default function Login() {
+  const { user, login, register, logout } = useAuth();
+  const navigate = useNavigate();
 
-  const triggerOtp = () => {
-    const target = formData.mobile;
-    if (!target) return setError("▶ ENTER MOBILE NUMBER FOR OTP");
-    
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    setGeneratedOtp(otp);
-    alert(`[GMR SECURITY] Your registration OTP is: ${otp}`);
-  };
+  const [tab, setTab]         = useState("signin");
+  const [email, setEmail]     = useState("");
+  const [password, setPassword] = useState("");
+  const [showPw, setShowPw]   = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState("");
 
-  const handleVerifyOtp = () => {
-    if (userOtp === generatedOtp && generatedOtp !== '') {
-      setIsOtpVerified(true);
-      setError('');
-      alert("OTP VERIFIED SUCCESSFUL");
-    } else {
-      setError("▶ INVALID OTP");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(""); setLoading(true);
+    try {
+      if (tab === "signin" || tab === "admin") {
+        await login(email, password);
+      } else {
+        await register(email, password);
+      }
+      navigate("/home");
+    } catch (err) {
+      setError(err.message || "Authentication failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleRegister = (e) => {
-    e.preventDefault();
-    if (!isOtpVerified) return setError("▶ VERIFY OTP FIRST");
-    
-    const users = JSON.parse(localStorage.getItem('gmr_users_database')) || [];
-    const newUser = { 
-      ...formData, 
-      id: `GMR-C${1000 + users.length + 1}`,
-      regDate: new Date().toLocaleDateString() 
-    };
-    
-    localStorage.setItem('gmr_users_database', JSON.stringify([...users, newUser]));
-    alert("REGISTRATION SUCCESSFUL");
-    setView('login');
-    setIsOtpVerified(false);
-    setUserOtp('');
-    setGeneratedOtp('');
-  };
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    const users = JSON.parse(localStorage.getItem('gmr_users_database')) || [];
-    
-    if (view === 'admin') {
-      if (formData.loginId === "GMR_ADMIN" && formData.pass === "GMR_2026") {
-        onLogin({ type: 'admin', userData: { name: 'System Admin', id: 'ADM-001' } });
-      } else { 
-        setError("▶ ADMIN ACCESS DENIED"); 
-      }
-    } else {
-      const user = users.find(u => (u.email === formData.loginId || u.mobile === formData.loginId) && u.pass === formData.pass);
-      if (user) {
-        // FIXED: Passes full user registration fields back to the shell state structure
-        onLogin({ type: 'customer', userData: user });
-      } else { 
-        setError("▶ IDENTITY NOT FOUND"); 
-      }
-    }
-  };
+  /* ── Already signed-in view ── */
+  if (user) {
+    const initial = user.email?.[0]?.toUpperCase() || "U";
+    return (
+      <div className="login-root">
+        <div className="login-bg">
+          <div className="login-bg-blob blob-1" />
+          <div className="login-bg-blob blob-2" />
+          <div className="login-bg-grid" />
+        </div>
+        <div className="login-panel" style={{ maxWidth:480,minHeight:'auto' }}>
+          <div className="login-form-side" style={{ flex:'1' }}>
+            <div className="login-card">
+              <div className="login-signed-in">
+                <div className="login-si-avatar">{initial}</div>
+                <h2 style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'1.4rem', fontWeight:700, color:'#f0f4f8' }}>
+                  Welcome back!
+                </h2>
+                <p style={{ color:'#6a8aaa', fontSize:14 }}>{user.email}</p>
+                <span className={`login-role ${user.role || 'customer'}`}>{user.role || 'customer'}</span>
+                <button className="login-btn" style={{ marginTop:8 }} onClick={() => navigate("/home")}>
+                  Go to Dashboard →
+                </button>
+                <button onClick={logout} style={{ background:'none',border:'none',color:'#3a5070',fontSize:13,cursor:'pointer',marginTop:4,fontFamily:'Inter,sans-serif' }}>
+                  Sign out
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="login-master">
-      <div className="login-frame">
-        <div className="logo-header">
-          <h2 className="terminal-text">GMR <span className="cyan-txt">MART</span></h2>
-          <p className="subtitle-text">
-            {view === 'admin' ? 'ADMIN ACCESS CONTROL' : view === 'register' ? 'NEW ENROLLMENT' : 'SECURE GATEWAY'}
-          </p>
+    <div className="login-root">
+      {/* Background */}
+      <div className="login-bg">
+        <div className="login-bg-blob blob-1" />
+        <div className="login-bg-blob blob-2" />
+        <div className="login-bg-grid" />
+      </div>
+
+      <div className="login-panel">
+        {/* ── LEFT: Branding ───────────────── */}
+        <div className="login-branding">
+          <div className="login-branding-inner">
+            <div className="login-logo-wrap">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                <line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+              </svg>
+            </div>
+
+            <h1 className="login-brand-name">
+              GMR<br /><span>Smart Mart</span>
+            </h1>
+            <p className="login-tagline">
+              The future of retail is here. Shop smarter with AI-powered navigation,
+              IoT carts, and real-time inventory tracking.
+            </p>
+
+            <div className="login-feats">
+              {FEATURES.map(f => (
+                <div key={f.label} className="login-feat">
+                  <div className="login-feat-ico">{f.ico}</div>
+                  {f.label}
+                </div>
+              ))}
+            </div>
+
+            <div className="login-stats">
+              <div>
+                <span className="login-stat-val">500+</span>
+                <span className="login-stat-label">Products</span>
+              </div>
+              <div>
+                <span className="login-stat-val">3</span>
+                <span className="login-stat-label">Floors</span>
+              </div>
+              <div>
+                <span className="login-stat-val">24/7</span>
+                <span className="login-stat-label">Live Data</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {error && <div className="error-banner">{error}</div>}
-        
-        <form onSubmit={view === 'register' ? handleRegister : handleLogin} className="cyber-form">
-          {view === 'register' ? (
-            <div className="compact-register-grid">
-              <div className="cyber-input-group">
-                <label>FULL NAME</label>
-                <input type="text" name="name" required onChange={handleChange} placeholder="John Doe" />
+        {/* ── RIGHT: Form ──────────────────── */}
+        <div className="login-form-side">
+          <div className="login-card">
+            {/* Tabs */}
+            <div className="login-tabs">
+              <button className={`login-tab ${tab==='signin'?'active':''}`} onClick={() => { setTab('signin'); setError(''); }}>Sign In</button>
+              <button className={`login-tab ${tab==='register'?'active':''}`} onClick={() => { setTab('register'); setError(''); }}>Register</button>
+              <button className={`login-tab ${tab==='admin'?'active':''}`} onClick={() => { setTab('admin'); setError(''); }}>Admin</button>
+            </div>
+
+            {/* Card Header */}
+            <div className="login-card-header">
+              {tab === 'signin'   && <><h2 className="login-card-title">Welcome back</h2><p className="login-card-sub">Sign in to your GMR account</p></>}
+              {tab === 'register' && <><h2 className="login-card-title">Create account</h2><p className="login-card-sub">Join GMR Smart Mart today</p></>}
+              {tab === 'admin'    && (
+                <>
+                  <h2 className="login-card-title">Admin Access</h2>
+                  <p className="login-card-sub">Restricted to authorized staff</p>
+                  <div className="login-admin-warn">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+                    </svg>
+                    Requires admin credentials
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Error */}
+            {error && (
+              <div className="login-error" style={{ marginBottom:16 }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                {error}
+              </div>
+            )}
+
+            {/* Form */}
+            <form className="login-form" onSubmit={handleSubmit}>
+              <div className="login-field">
+                <label className="login-label">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                  Email address
+                </label>
+                <input
+                  className="login-input"
+                  type="email"
+                  placeholder={tab==='admin'?'admin@gmrmart.in':'you@example.com'}
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                />
               </div>
 
-              <div className="cyber-input-group">
-                <label>MOBILE NUMBER</label>
-                <input type="text" name="mobile" required onChange={handleChange} placeholder="Enter 10-digit number" />
-              </div>
-
-              <div className="cyber-input-group">
-                <label>EMAIL ID</label>
-                <input type="email" name="email" required onChange={handleChange} placeholder="name@domain.com" />
-              </div>
-
-              <div className="grid-split">
-                <div className="cyber-input-group">
-                  <label>DATE OF BIRTH</label>
-                  <input type="date" name="dob" required onChange={handleChange} />
-                </div>
-                <div className="cyber-input-group">
-                  <label>GENDER</label>
-                  <select name="gender" required onChange={handleChange}>
-                    <option value="">Select</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="cyber-input-group">
-                <label>CREATE PASSWORD</label>
-                <input type="password" name="pass" required onChange={handleChange} placeholder="••••••••" />
-              </div>
-
-              <div className="otp-container">
-                <label>MOBILE VERIFICATION</label>
-                <div className="otp-row">
-                  <input type="text" placeholder="Enter OTP" onChange={(e) => setUserOtp(e.target.value)} />
-                  <button type="button" className="otp-btn send" onClick={triggerOtp}>SEND</button>
-                  <button type="button" className={`otp-btn verify ${isOtpVerified ? 'verified' : ''}`} onClick={handleVerifyOtp}>
-                    {isOtpVerified ? 'VERIFIED' : 'VERIFY'}
+              <div className="login-field">
+                <label className="login-label">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+                  </svg>
+                  Password
+                </label>
+                <div className="login-input-wrap">
+                  <input
+                    className="login-input"
+                    type={showPw ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    required
+                    autoComplete={tab==='register'?'new-password':'current-password'}
+                  />
+                  <button type="button" className="login-pw-toggle" onClick={() => setShowPw(v => !v)} aria-label="Toggle password">
+                    {showPw
+                      ? <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                      : <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    }
                   </button>
                 </div>
+                {tab === 'register' && <p className="login-hint">Use 8+ characters with a mix of letters and numbers</p>}
               </div>
 
-              <button type="submit" className="auth-submit-btn margin-top-lg">REGISTER</button>
-            </div>
-          ) : (
-            <div className="login-fields">
-              <div className="cyber-input-group">
-                <label>{view === 'admin' ? 'ADMIN IDENTIFIER' : 'IDENTITY (EMAIL/MOBILE)'}</label>
-                <input type="text" name="loginId" required onChange={handleChange} placeholder={view === 'admin' ? 'GMR_ADMIN' : 'Enter email or mobile'} />
-              </div>
-              <div className="cyber-input-group">
-                <label>PASSWORD</label>
-                <input type="password" name="pass" required onChange={handleChange} placeholder="••••••••" />
-              </div>
-              <button type="submit" className="auth-submit-btn">
-                {view === 'admin' ? 'AUTHENTICATE_ADMIN' : 'VERIFY_IDENTITY'}
+              <button
+                type="submit"
+                className={`login-btn ${tab==='admin'?'admin-btn':''}`}
+                disabled={loading}
+              >
+                {loading
+                  ? <><span className="login-spinner" /> Authenticating…</>
+                  : tab === 'signin'   ? 'Sign In to Dashboard →'
+                  : tab === 'register' ? 'Create My Account →'
+                  : 'Access Admin Console →'
+                }
+              </button>
+            </form>
+
+            <div className="login-footer">
+              <div className="login-divider">or</div>
+              <button
+                className="login-demo"
+                onClick={() => navigate("/home")}
+              >
+                Browse as guest →
               </button>
             </div>
-          )}
-        </form>
-
-        <div className="auth-footer">
-          {view === 'login' ? (
-            <div className="footer-links">
-              <span onClick={() => setView('register')} className="footer-link">▶ NEW USER? ENROLL</span>
-              <span onClick={() => setView('admin')} className="admin-link">ADMIN_LOGIN</span>
-            </div>
-          ) : (
-            <span onClick={() => { setView('login'); setError(''); }} className="footer-link">◀ BACK TO LOGIN</span>
-          )}
+          </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default Login;
+}

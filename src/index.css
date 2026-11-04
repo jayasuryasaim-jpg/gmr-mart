@@ -1,14 +1,85 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap');
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* ═══════════════════════════════════════════════
+   GMR MART — WHITE + GREEN DESIGN SYSTEM
+   ═══════════════════════════════════════════════ */
+:root {
+  /* ── Brand Colors ── */
+  --green:        #00c853;
+  --green-dark:   #009624;
+  --green-hover:  #00b748;
+  --green-light:  #edfaf3;
+  --green-mid:    #d0f4e0;
+  --green-glow:   rgba(0,200,83,0.18);
+
+  /* ── Backgrounds ── */
+  --bg-page:    #f4f6f8;
+  --bg-white:   #ffffff;
+  --bg-subtle:  #f9fafb;
+
+  /* ── Text ── */
+  --text-dark:  #111827;
+  --text-body:  #374151;
+  --text-muted: #6b7280;
+  --text-light: #9ca3af;
+
+  /* ── Borders ── */
+  --border:       #e5e7eb;
+  --border-dark:  #d1d5db;
+  --border-green: rgba(0,200,83,0.28);
+
+  /* ── Shadows ── */
+  --shadow-xs:    0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-sm:    0 2px 8px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-md:    0 4px 20px rgba(0,0,0,0.1),  0 2px 6px rgba(0,0,0,0.05);
+  --shadow-lg:    0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-xl:    0 24px 64px rgba(0,0,0,0.14), 0 8px 24px rgba(0,0,0,0.08);
+  --shadow-green: 0 8px 28px rgba(0,200,83,0.3);
+
+  /* ── Radii ── */
+  --r-xs:   6px;
+  --r-sm:   10px;
+  --r-md:   14px;
+  --r-lg:   20px;
+  --r-xl:   28px;
+  --r-pill: 999px;
+
+  /* ── Fonts ── */
+  --f-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --f-head: 'Space Grotesk', 'Inter', sans-serif;
 }
 
+/* ─── Reset ──────────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
 body {
-  background: #071120;
-  color: white;
-  font-family: Arial, Helvetica, sans-serif;
-  overflow-x: hidden;
+  background: var(--bg-page);
+  color: var(--text-body);
+  font-family: var(--f-body);
+  font-size: 15px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+img, svg { max-width:100%; display:block; }
+a { color:inherit; text-decoration:none; }
+button { cursor:pointer; font-family:inherit; }
+input, select, textarea { font-family:inherit; }
+
+/* ─── Scrollbar ──────────────────────────────── */
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-track { background:#f1f5f9; }
+::-webkit-scrollbar-thumb { background:#00c853; border-radius:3px; }
+
+/* ─── App Shell ──────────────────────────────── */
+.app-shell { min-height:100vh; background:var(--bg-page); }
+.system-container { min-height:calc(100vh - 68px); }
+
+/* ─── Keyframes ──────────────────────────────── */
+@keyframes fadeInUp  { from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);} }
+@keyframes fadeIn    { from{opacity:0;}to{opacity:1;} }
+@keyframes float     { 0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);} }
+@keyframes spin      { to{transform:rotate(360deg);} }
+@keyframes shimmer   { 0%{background-position:-800px 0;}100%{background-position:800px 0;} }
+@keyframes pulse-green { 0%,100%{box-shadow:0 0 0 0 rgba(0,200,83,0.45);}60%{box-shadow:0 0 0 8px rgba(0,200,83,0);} }
+@keyframes scan      { 0%{top:8px;opacity:1;}88%{top:100px;opacity:1;}100%{top:100px;opacity:0;} }

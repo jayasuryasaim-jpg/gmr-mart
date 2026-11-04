@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState } from 'react';
 import './Heatmap.css';
 
 const Heatmap = () => {
@@ -7,7 +7,6 @@ const Heatmap = () => {
   const [hoveredRow, setHoveredRow] = useState(null);   
   const [fireActive, setFireActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [cycle, setCycle] = useState(0);
 
   // Full product list integrated into rows
   const rawData = {
@@ -37,23 +36,15 @@ const Heatmap = () => {
     return '#ff3131'; 
   };
 
-  useEffect(() => {
-    const timer = setInterval(() => setCycle((prev) => (prev + 1) % 3), 10000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const searchResults = useMemo(() => {
-    if (!searchQuery) return null;
-    const found = [];
-    Object.keys(rawData).forEach(floor => {
-      Object.keys(rawData[floor]).forEach(rowId => {
-        if (rawData[floor][rowId].items.some(i => i.toLowerCase().includes(searchQuery.toLowerCase()))) {
-          found.push({ floor, rowId });
-        }
-      });
-    });
-    return found;
-  }, [searchQuery]);
+  const searchResults = searchQuery
+    ? Object.keys(rawData).flatMap(floor =>
+        Object.keys(rawData[floor])
+          .filter(rowId => rawData[floor][rowId].items.some(
+            item => item.toLowerCase().includes(searchQuery.toLowerCase())
+          ))
+          .map(rowId => ({ floor, rowId }))
+      )
+    : null;
 
   const floorConfig = {
     "Ground Floor": { id: "001", states: ["HIGH", "MOD", "HIGH"], colors: ["#ff3131", "#ff9100", "#ff3131"], rows: ["G1", "G2", "G3", "G4"] },
@@ -76,9 +67,13 @@ const Heatmap = () => {
           />
         </div>
         <button className={`fire-btn ${fireActive ? 'active-alarm' : ''}`} onClick={() => setFireActive(!fireActive)}>
-          {fireActive ? "🚨 EMERGENCY ACTIVE" : "🛡️ FIRE SYSTEM STANDBY"}
+          {fireActive ? "Overlay preview active" : "Preview emergency overlay"}
         </button>
       </header>
+
+      <p role="status" style={{ padding: '10px 20px', background: '#fffbeb', color: '#78350f' }}>
+        Demonstration map and sample shelf levels only. No live occupancy, inventory, or emergency sensors are connected.
+      </p>
 
       <div className="pro-layout">
         <aside className="pro-sidebar">
@@ -91,8 +86,8 @@ const Heatmap = () => {
                     <span className="btn-id">{floorConfig[name].id}</span>
                     <span className="btn-name">{name}</span>
                   </div>
-                  <div className="btn-status" style={{color: floorConfig[name].colors[cycle]}}>
-                    ● {floorConfig[name].states[cycle]}
+                  <div className="btn-status" style={{color: floorConfig[name].colors[0]}}>
+                    ● SAMPLE DATA
                   </div>
                 </div>
               ))}
@@ -130,7 +125,7 @@ const Heatmap = () => {
               <div className="isometric-world-pro">
                 {Object.entries(floorConfig).map(([name, data]) => (
                   <div key={name} className={`floor-slab ${activeFloor === name ? 'visible' : 'hidden'}`}>
-                    <div className="heatmap-intensity-layer" style={{ background: fireActive ? 'radial-gradient(circle at center, rgba(255, 49, 49, 0.4) 0%, transparent 70%)' : `radial-gradient(circle at center, ${data.colors[cycle]}33 0%, transparent 70%)` }}></div>
+                    <div className="heatmap-intensity-layer" style={{ background: fireActive ? 'radial-gradient(circle at center, rgba(255, 49, 49, 0.4) 0%, transparent 70%)' : `radial-gradient(circle at center, ${data.colors[0]}33 0%, transparent 70%)` }}></div>
                     
                     <div className={`facility-dot-box corner-left ${fireActive ? 'emergency' : ''}`}>STAIRS</div>
                     <div className={`facility-dot-box corner-right ${fireActive ? 'emergency' : ''}`}>LIFT</div>

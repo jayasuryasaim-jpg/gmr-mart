@@ -1,0 +1,50 @@
+.hardware-page{max-width:1440px;margin:0 auto;padding:36px clamp(18px,4vw,56px) 64px;color:#20342a;font-family:"DM Sans",sans-serif}
+.hardware-header{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:26px}
+.hardware-header h1{margin:4px 0 8px;font-size:clamp(28px,4vw,40px);letter-spacing:-1.5px}
+.hardware-header p{max-width:760px;margin:0;color:#647369;line-height:1.55}
+.hardware-eyebrow{margin:0;color:#56806a;font-size:11px;font-weight:800;letter-spacing:1.6px}
+.hardware-mode-badge,.hardware-state{display:inline-flex;align-items:center;white-space:nowrap;border:1px solid #dbe9dd;background:#f1f7ef;color:#386a4c;border-radius:99px;padding:7px 11px;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase}
+.hardware-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.hardware-card,.metric-card{background:#fff;border:1px solid #e1e9e0;border-radius:18px;box-shadow:0 8px 24px rgba(26,55,37,.045);padding:22px}
+.hardware-card-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hardware-card h2{font-size:19px;margin:5px 0 0;letter-spacing:-.4px}
+.hardware-description{font-size:13px;color:#6a786e;min-height:38px;line-height:1.5}
+.hardware-state{background:#f6f8f6;border-color:#e2e8e2;color:#6b786f}
+.hardware-state.is-enabled{background:#edf8ef;color:#2f7544;border-color:#d6ecd9}
+.hardware-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.hardware-field{display:flex;flex-direction:column;gap:6px;color:#42564a;font-size:12px;font-weight:700}
+.hardware-field input,.hardware-field select,.hardware-toolbar input,.hardware-toolbar select,.sim-controls select{box-sizing:border-box;width:100%;height:40px;border:1px solid #dbe4dc;border-radius:9px;background:#fff;padding:0 11px;color:#24372b;font:inherit;font-weight:500}
+.hardware-toggle{display:flex;align-items:center;gap:9px;color:#42564a;font-size:12px;font-weight:700}
+.hardware-toggle input{width:17px;height:17px;accent-color:#2d794b}
+.hardware-footnote{margin:16px 0 0;color:#768279;font-size:11px;line-height:1.5}
+.hardware-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:16px}
+.hardware-button{border:0;border-radius:9px;padding:10px 15px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.hardware-button:disabled{opacity:.55;cursor:wait}
+.hardware-button.primary{background:#246b43;color:#fff}
+.hardware-button.secondary{background:#eef3ee;color:#42564a}
+.hardware-alert,.hardware-notice{padding:12px 15px;border-radius:10px;margin:0 0 18px;font-size:14px}
+.hardware-alert{background:#fff0ee;color:#9b352a}.hardware-notice{background:#edf8ef;color:#2f7043}
+.hardware-metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.metric-card{padding:16px}.metric-card span{display:block;color:#69796e;font-size:11px;font-weight:700;min-height:28px}.metric-card strong{font-size:27px;color:#245c3b}
+.hardware-toolbar{display:grid;grid-template-columns:180px 180px minmax(220px,1fr);gap:12px;padding:14px;background:#f1f5f0;border:1px solid #e1e9e0;border-radius:14px;margin-bottom:18px}
+.hardware-toolbar label,.sim-controls label{display:flex;flex-direction:column;gap:6px;color:#42564a;font-size:12px;font-weight:700}
+.hardware-dashboard-grid{display:grid;grid-template-columns:minmax(250px,.8fr) minmax(380px,1.2fr);gap:16px;align-items:start}
+.cart-list{display:grid;gap:7px;margin-top:15px}
+.cart-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;padding:13px;border:1px solid #e5ebe5;border-radius:11px;background:#fff;color:#24372b;cursor:pointer}
+.cart-row-selected{border-color:#55a56e;background:#f1f8f1}
+.cart-row strong,.cart-row small{display:block}.cart-row small{margin-top:5px;color:#77847a;font-size:11px}
+.cart-status{text-transform:uppercase;font-size:10px;font-weight:800;color:#578065}
+.cart-readings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}
+.cart-readings div{padding:10px;background:#f7f9f7;border-radius:9px}.cart-readings dt{color:#78847b;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}.cart-readings dd{margin:5px 0 0;font-weight:700;font-size:13px;overflow-wrap:anywhere}
+.qr-preview{display:flex;align-items:center;gap:14px;padding:12px;border:1px solid #e4ebe3;border-radius:12px;background:#fbfcfb}.qr-preview svg{flex:none}.qr-preview strong{font-size:13px}.qr-preview p{margin:5px 0 0;color:#738076;font-size:11px;line-height:1.5}
+.map-card{margin-top:18px;padding:16px}.simulated-map{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:15px 0}
+.map-zone{min-height:68px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;background:#eff4ed;border:1px dashed #a9bda9;border-radius:9px;color:#67756a;font-size:10px;text-align:center}
+.map-zone-active{border:1px solid #46a365;background:#e7f5e8;color:#24623b}.map-zone strong{font-size:9px;color:#fff;background:#2d794b;border-radius:99px;padding:4px 7px}
+.sim-controls{display:grid;grid-template-columns:minmax(180px,1fr) auto;gap:12px;align-items:end;margin-top:18px}
+.sim-controls .hardware-actions{margin:0}
+.event-card{grid-column:1/-1}.event-list{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:9px}
+.event-list li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 12px;border-radius:10px;background:#f7f9f7}
+.event-list strong,.event-list small{display:block}.event-list strong{font-size:13px}.event-list small{margin-top:4px;color:#78847b;font-size:11px}.event-list li>span{font-size:9px;font-weight:800;color:#3e7950;background:#e6f4e7;border-radius:99px;padding:6px 8px}
+.adapter-readiness{margin-top:16px;padding:13px 15px;border-radius:10px;background:#f2f5f1;color:#5e6e63;font-size:12px}
+@media(max-width:1000px){.hardware-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.hardware-dashboard-grid{grid-template-columns:1fr}.event-card{grid-column:auto}}
+@media(max-width:680px){.hardware-header{align-items:flex-start;flex-direction:column}.hardware-grid{grid-template-columns:1fr}.hardware-form-grid{grid-template-columns:1fr}.hardware-toolbar{grid-template-columns:1fr}.hardware-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.simulated-map{grid-template-columns:repeat(2,1fr)}.sim-controls{grid-template-columns:1fr}.sim-controls .hardware-actions{justify-content:flex-start}.cart-readings{grid-template-columns:1fr}.hardware-card{padding:17px}}

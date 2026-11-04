@@ -1,1 +1,2 @@
 export const CART_ID = "CART-2006";
+export const TROLLEY_QR_PAYLOAD = "GMR_TROLLEY_01_SECURE";

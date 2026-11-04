@@ -1,5 +1,5 @@
-# dependencies
-/node_modules
+# dependencies (root and all subprojects)
+node_modules/
 /.pnp
 .pnp.js
 
@@ -21,3 +21,10 @@ file.env
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# build artifacts
+build.zip
+*.zip
+
+# backend env
+backend/.env

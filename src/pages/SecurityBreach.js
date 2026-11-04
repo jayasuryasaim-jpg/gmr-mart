@@ -1,6 +1,6 @@
 import React from 'react';
 // Changed import to Login.css since it is already in your pages folder
-import './Login.css'; 
+import './Login.css';
 
 const SecurityBreach = () => {
   return (
@@ -11,24 +11,20 @@ const SecurityBreach = () => {
           ⚠️ SECURITY BREACH
         </h1>
         <div className="input-bar" style={{ backgroundColor: '#ff3e3e', height: '2px', margin: '20px 0' }}></div>
-        
+
         <p className="auth-subtitle" style={{ color: '#ff7070', textAlign: 'center', marginBottom: '20px' }}>
-          UNAUTHORIZED TERMINAL ACCESS DETECTED.
+          Demonstration screen only. This page does not detect, trace, or report security events.
         </p>
 
         <div className="error-terminal" style={{ color: '#fff', fontSize: '0.9rem', lineHeight: '2' }}>
-          <div><span className="txt-red">▶</span> TRACE_STATUS: <span className="txt-white">UPLINK_ESTABLISHED</span></div>
-          <div><span className="txt-red">▶</span> IP_LOGGED: <span className="txt-white">157.50.157.187 (REPORTED)</span></div>
-          <div><span className="txt-red">▶</span> ACTION: <span className="txt-white">PENDING_REPORT_TO_ISP</span></div>
+          <div><span className="txt-red">▶</span> INCIDENT_STATUS: <span className="txt-white">NOT_VERIFIED</span></div>
+          <div><span className="txt-red">▶</span> CLIENT_TRACE: <span className="txt-white">NOT_AVAILABLE</span></div>
+          <div><span className="txt-red">▶</span> REPORTING: <span className="txt-white">NOT_CONFIGURED</span></div>
         </div>
 
         <div className="auth-submit-btn" style={{ marginTop: '30px', backgroundColor: 'rgba(255, 62, 62, 0.2)', border: '1px solid #ff3e3e', color: '#ff3e3e', textAlign: 'center', cursor: 'default' }}>
-          SYSTEM LOCKDOWN ACTIVE
+          NO LOCKDOWN HAS BEEN APPLIED
         </div>
-        
-        <p className="security-tag" style={{ marginTop: '20px', textAlign: 'center', width: '100%' }}>
-          ID_REF: {Math.random().toString(36).toUpperCase().substring(2, 12)}
-        </p>
       </div>
     </div>
   );

@@ -1,38 +1,22 @@
-import React, { useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import QrScanner from "react-qr-scanner";
-import { handleScanSuccess } from "./scannerUtils";
+import { handleScanSuccess } from "../scannerUtils";
 
 export default function ScanCart() {
-  const navigate = useNavigate();
-  const fileRef = useRef(null); // Reference for the hidden file input
+  const [scanMessage, setScanMessage] = useState("Camera scanning depends on browser permission and HTTPS.");
 
   const onScan = (data) => {
     if (data) {
-      handleScanSuccess(data.text, navigate);
+      setScanMessage(handleScanSuccess(data.text));
     }
   };
 
   const onError = (err) => console.error(err);
 
-  // Handle image file selection
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Create a URL for the file to scan
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        // Here you would typically use a library like 'jsqr' 
-        // to decode the image data directly
-        console.log("File loaded for scanning:", event.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   return (
     <div style={{ padding: '20px', textAlign: 'center' }}>
       <h1>Scan Trolley QR</h1>
+      <p role="status" aria-live="polite">{scanMessage}</p>
       
       {/* Live Camera Scanner */}
       <QrScanner
@@ -41,24 +25,7 @@ export default function ScanCart() {
         onError={onError}
         onScan={onScan}
       />
-
-      <div style={{ marginTop: '20px' }}>
-        <p>OR</p>
-        {/* Hidden file input triggered by custom button */}
-        <input 
-          type="file" 
-          ref={fileRef} 
-          style={{ display: 'none' }} 
-          accept="image/*" 
-          onChange={handleFileChange} 
-        />
-        <button 
-          className="pro-btn" 
-          onClick={() => fileRef.current.click()}
-        >
-          CHOOSE FROM GALLERY
-        </button>
-      </div>
+      <p>Cart activation is unavailable until an authenticated trolley service is configured.</p>
     </div>
   );
 }
