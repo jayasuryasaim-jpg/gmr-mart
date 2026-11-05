@@ -1,0 +1,1010 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GMR Smart Mart &ndash; Grand Atrium</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{--g:#123C2C;--gold:#E6C46E;--cream:#F4EFE0;--dark:#07101f}
+html,body{height:100%;margin:0;background:var(--dark);color:var(--cream);font-family:Manrope,sans-serif;overflow:hidden}
+canvas.main-canvas{position:fixed;inset:0;width:100%!important;height:100%!important;display:block}
+.ui{position:fixed;inset:0;pointer-events:none;z-index:2}
+
+/* NAV */
+nav{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:16px 4vw;background:linear-gradient(#050d1aee,transparent);pointer-events:auto;z-index:10}
+.logo{font:700 22px 'Cormorant Garamond',serif;letter-spacing:.04em;color:var(--cream)}
+.logo span{color:var(--gold)}
+.nav-links{display:flex;gap:20px;font-size:13px;align-items:center;flex-wrap:wrap}
+.nav-links a{color:var(--cream);opacity:.85;cursor:pointer;text-decoration:none;transition:.2s}
+.nav-links a:hover{opacity:1;color:var(--gold)}
+#who{color:var(--gold);font-weight:700;font-size:13px}
+
+/* HERO */
+.scrim{position:absolute;inset:0;background:linear-gradient(90deg,#050d1af5 0%,#050d1acc 30%,#050d1a55 60%,transparent 80%);transition:opacity .8s}
+.hero{position:absolute;left:5vw;top:50%;transform:translateY(-50%);max-width:500px;transition:opacity .8s,transform .8s}
+.hero h1{font:700 clamp(42px,6vw,88px)/.9 'Cormorant Garamond',serif;margin:0 0 16px;color:var(--cream);text-shadow:0 2px 20px #000c}
+.hero p{font-size:16px;line-height:1.7;color:var(--cream);opacity:.9;margin:0 0 28px;text-shadow:0 1px 8px #0009}
+.hide{opacity:0!important;pointer-events:none!important}
+.hero.hide{transform:translateY(-50%) translateX(-30px)}
+
+/* BUTTONS */
+.btn{pointer-events:auto;cursor:pointer;border:0;padding:14px 28px;font:700 13px Manrope,sans-serif;background:var(--gold);color:var(--g);border-radius:3px;margin:0 10px 8px 0;letter-spacing:.05em;transition:.2s}
+.btn:hover{background:#f0d080}
+.btn.out{background:transparent;color:var(--cream);border:1.5px solid rgba(244,239,224,.6)}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+/* LOGIN */
+.login-wrap{position:absolute;left:50%;top:50%;transform:translate(-50%,-48%);width:min(360px,90vw);padding:32px 28px 26px;background:linear-gradient(150deg,rgba(255,255,255,.14),rgba(255,255,255,.04)),rgba(10,36,26,.7);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(230,196,110,.55);box-shadow:0 28px 80px rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity .7s,transform .7s;text-shadow:0 1px 4px #0009}
+.login-wrap.on{opacity:1;transform:translate(-50%,-50%);pointer-events:auto}
+.login-wrap h2{font:700 32px 'Cormorant Garamond',serif;margin:0 0 4px;color:var(--cream)}
+.login-wrap .sub{margin:0 0 20px;font-size:13px;color:rgba(244,239,224,.8)}
+.login-wrap label{display:block;font-size:12px;font-weight:600;color:var(--cream);margin-bottom:2px;letter-spacing:.04em}
+.login-wrap input[type=text],.login-wrap input[type=password]{width:100%;background:transparent;border:0;border-bottom:1.5px solid rgba(230,196,110,.7);color:#fff;padding:8px 0;margin-bottom:18px;font:15px Manrope,sans-serif}
+.login-wrap input::placeholder{color:rgba(244,239,224,.5)}
+.login-wrap .btn{width:100%;margin:8px 0 0;text-align:center}
+.chk-row{display:flex;gap:8px;align-items:center;margin:0 0 10px;font-size:13px;color:var(--cream)}
+.chk-row input{width:auto!important;margin:0!important;accent-color:var(--gold)}
+.login-link{font-size:12px;color:var(--gold);cursor:pointer;margin-top:10px;display:block;text-align:center}
+
+/* WELCOME SPLASH */
+.welcome-splash{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;opacity:0;transition:opacity .8s;pointer-events:none}
+.welcome-splash.on{opacity:1}
+.welcome-splash small{display:block;font-size:15px;color:var(--cream);margin-bottom:8px}
+.welcome-splash h2{font:700 clamp(44px,9vw,100px)/1 'Cormorant Garamond',serif;color:var(--gold);text-shadow:0 4px 40px #000}
+
+/* LOCATION MODAL */
+.modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s;z-index:20}
+.modal-overlay.on{opacity:1;pointer-events:auto}
+.modal-box{width:min(420px,92vw);padding:28px;background:linear-gradient(150deg,rgba(255,255,255,.12),rgba(255,255,255,.04)),rgba(7,26,19,.9);border:1px solid rgba(230,196,110,.6);box-shadow:0 24px 60px rgba(0,0,0,.7);text-align:center}
+.modal-box h3{font:700 28px 'Cormorant Garamond',serif;margin:0 0 8px;color:var(--gold)}
+.modal-box p{font-size:14px;color:rgba(244,239,224,.85);margin:0 0 20px;line-height:1.6}
+.modal-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* FLOOR NAV BAR */
+.floors{position:absolute;left:50%;bottom:24px;transform:translateX(-50%) translateY(30px);opacity:0;display:flex;gap:4px;padding:6px;background:rgba(10,36,26,.9);backdrop-filter:blur(12px);border:1px solid rgba(230,196,110,.4);transition:.7s;pointer-events:none;max-width:96vw;overflow-x:auto;z-index:5}
+.floors.on{opacity:1;transform:translateX(-50%);pointer-events:auto}
+.floors button{border:0;background:transparent;color:var(--cream);padding:10px 14px;font:600 13px Manrope,sans-serif;cursor:pointer;border-radius:2px;white-space:nowrap;transition:.2s}
+.floors button.a{background:var(--gold);color:var(--g)}
+.floors button:hover:not(.a){background:rgba(230,196,110,.15)}
+.rot-btn{border-left:1px solid rgba(230,196,110,.4)!important;color:var(--gold)!important}
+
+/* FLOOR LABEL TAG */
+.tag{position:absolute;left:4vw;bottom:90px;max-width:360px;opacity:0;transition:.7s;pointer-events:none}
+.tag.on{opacity:1}
+.tag h3{font:700 clamp(30px,4.5vw,54px)/1 'Cormorant Garamond',serif;margin:0 0 6px;color:var(--cream);text-shadow:0 2px 16px #000c}
+.tag p{margin:0;font-size:14px;color:rgba(244,239,224,.85);line-height:1.6;text-shadow:0 1px 8px #000a}
+
+/* SEARCH BAR */
+.sb{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:min(420px,38vw);z-index:6;opacity:0;pointer-events:none;transition:opacity .7s}
+.sb.on{opacity:1;pointer-events:auto}
+.sb input{width:100%;padding:12px 18px 12px 44px;border-radius:30px;border:1px solid rgba(230,196,110,.8);background:rgba(10,36,26,.94) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='17' height='17' viewBox='0 0 24 24' fill='none' stroke='%23E6C46E' stroke-width='2.5'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.4-4.4'/%3E%3C/svg%3E") no-repeat 15px center;color:#fff;font:500 14px Manrope,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.sb input::placeholder{color:rgba(244,239,224,.6)}
+.res{display:none;margin-top:6px;background:rgba(10,36,26,.97);border:1px solid rgba(230,196,110,.6);border-radius:12px;overflow:hidden}
+.res.on{display:block}
+.res button{display:block;width:100%;text-align:left;border:0;background:0;color:var(--cream);padding:10px 16px;cursor:pointer;font:14px Manrope,sans-serif}
+.res button:hover{background:var(--gold);color:var(--g)}
+.res button b{display:block;font-weight:700}
+.res button span{font-size:12px;opacity:.8}
+.res p{margin:0;padding:10px 16px;font-size:13px;color:rgba(244,239,224,.6)}
+
+/* ARIA AI */
+.ai{position:absolute;left:4vw;top:80px;width:min(320px,90vw);padding:14px 16px;background:rgba(7,26,19,.88);border:1px solid rgba(230,196,110,.5);box-shadow:0 12px 36px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .5s;z-index:6}
+.ai.on{opacity:1;pointer-events:auto}
+.ai-hdr{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.ai-av{width:36px;height:36px;flex:none;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff8e0,var(--gold) 50%,#9a7020);box-shadow:0 0 16px rgba(230,196,110,.6);animation:pulse 2.5s infinite}
+@keyframes pulse{50%{box-shadow:0 0 28px rgba(230,196,110,.9)}}
+.ai-name{font:700 14px Manrope,sans-serif;color:var(--cream)}
+.ai-name small{font-weight:400;opacity:.65;font-size:12px}
+.ai-msg{font-size:13px;line-height:1.55;color:var(--cream);margin:0 0 10px;min-height:3.5em}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.chips button{border:1px solid rgba(230,196,110,.6);background:transparent;color:var(--cream);padding:5px 10px;font:600 11px Manrope,sans-serif;border-radius:12px;cursor:pointer;pointer-events:auto;transition:.2s}
+.chips button:hover{background:var(--gold);color:var(--g)}
+.ai input{width:100%;background:rgba(14,42,32,.8);border:1px solid rgba(230,196,110,.4);color:#fff;padding:7px 10px;font:13px Manrope,sans-serif;border-radius:2px}
+
+/* SIDE PANEL */
+.sp{position:absolute;right:3vw;top:80px;bottom:80px;width:min(400px,92vw);display:flex;flex-direction:column;background:rgba(7,26,19,.97);border:1px solid rgba(230,196,110,.6);box-shadow:0 24px 60px rgba(0,0,0,.6);opacity:0;transform:translateX(24px);pointer-events:none;transition:.5s;z-index:8}
+.sp.on{opacity:1;transform:none;pointer-events:auto}
+.sp-hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid rgba(230,196,110,.25)}
+.sp-hdr h3{margin:0;font:700 24px 'Cormorant Garamond',serif;color:var(--cream)}
+.sp-body{flex:1;overflow:auto;padding:14px;font-size:13px;line-height:1.55}
+.sp input,.sp select{background:rgba(14,42,32,.9);color:var(--cream);border:1px solid rgba(230,196,110,.4);padding:8px 10px;font:13px Manrope,sans-serif;width:100%}
+.sp label{display:block;margin:8px 0;color:var(--cream);font-size:13px}
+.b2{border:1px solid rgba(230,196,110,.6);background:transparent;color:var(--cream);padding:7px 12px;font:700 12px Manrope,sans-serif;cursor:pointer;letter-spacing:.04em;transition:.2s}
+.b2:hover{background:rgba(230,196,110,.12)}
+.b2.p{background:var(--gold);color:var(--g)}
+.b2.p:hover{background:#f0d080}
+.sp h4{margin:14px 0 5px;font:700 18px 'Cormorant Garamond',serif;color:var(--gold)}
+.note{font-size:12px;color:rgba(244,239,224,.55);border-left:2px solid var(--gold);padding-left:8px;margin:10px 0}
+.row-item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(230,196,110,.12)}
+.pcard{border:1px solid rgba(230,196,110,.3);padding:10px;cursor:pointer;background:rgba(14,42,32,.6);transition:.2s}
+.pcard:hover{border-color:var(--gold);background:rgba(14,42,32,.9)}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pswatch{height:48px;border-radius:2px;margin-bottom:6px}
+.pv{height:200px;border:1px solid rgba(230,196,110,.3);background:radial-gradient(#1b4a39,#071a13)}
+.pv canvas{position:static!important;width:100%!important;height:100%!important}
+.sp ol{padding-left:18px;margin:6px 0}
+.sp ol li{margin-bottom:5px}
+
+/* STORE MAP DIALOG */
+.mp{position:absolute;left:50%;top:50%;transform:translate(-50%,-48%);width:min(1040px,95vw);height:min(640px,85vh);display:grid;grid-template-columns:.85fr 1.3fr;gap:20px;padding:22px;background:rgba(7,26,19,.96);backdrop-filter:blur(14px);border:1px solid rgba(230,196,110,.6);box-shadow:0 32px 100px rgba(0,0,0,.7);opacity:0;pointer-events:none;transition:.5s;z-index:12}
+.mp.on{opacity:1;transform:translate(-50%,-50%);pointer-events:auto}
+.mp-close{position:absolute;right:14px;top:12px;z-index:1}
+.ml h3{font:700 26px 'Cormorant Garamond',serif;margin:0 0 4px;color:var(--cream)}
+.ml p,.lg{font-size:12px;color:rgba(244,239,224,.6);margin:0 0 8px}
+.stk{position:relative;height:calc(100% - 60px);perspective:1100px;min-height:280px}
+.fp{position:absolute;left:58%;width:240px;height:168px;margin-left:-120px;transform:rotateX(58deg) rotateZ(-32deg);border:1px solid rgba(230,196,110,.6);cursor:pointer;background:#0e2a20;box-shadow:0 24px 28px rgba(0,0,0,.4);transition:.3s}
+.fp:hover,.fp.a{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold),0 24px 32px rgba(0,0,0,.5);filter:brightness(1.2)}
+.fp svg{pointer-events:none;width:100%;height:100%}
+.fl-lbl{position:absolute;left:0;width:115px;font-size:12px;color:var(--cream);font-weight:700;line-height:1.3}
+.fl-lbl small{display:block;font-weight:400;opacity:.75}
+.mr{display:flex;flex-direction:column;min-height:0}
+.map-tabs{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap;padding-right:80px}
+.map-tabs button{border:1px solid rgba(230,196,110,.4);background:transparent;color:var(--cream);padding:8px 12px;font:600 12px Manrope,sans-serif;cursor:pointer;transition:.2s}
+.map-tabs button.a{background:var(--gold);color:var(--g)}
+.pn{flex:1;min-height:0}
+.pn svg{width:100%;height:100%}
+.rk{cursor:pointer}
+.rk:hover{fill:var(--gold)!important}
+
+/* REDUCE MOTION */
+.mo{position:absolute;right:4vw;bottom:24px;font-size:12px;pointer-events:auto;color:rgba(244,239,224,.6);display:flex;gap:6px;align-items:center;z-index:5}
+
+@media(max-width:1100px){.sb{top:68px;width:min(500px,92vw)}.ai{top:126px}}
+@media(max-width:800px){.mp{grid-template-columns:1fr}.ml{display:none}}
+@media(max-width:700px){.nav-links a:not(#who):not(.si-btn){display:none}.mo{display:none}}
+</style>
+</head>
+<body>
+<div class="ui">
+  <!-- NAV -->
+  <nav>
+    <div class="logo">GMR <span>Smart Mart</span></div>
+    <div class="nav-links">
+      <a onclick="goTo('hero')">Home</a>
+      <a onclick="tryGo('atrium')">Atrium</a>
+      <a onclick="tryGo('ground')">Departments</a>
+      <a onclick="dirOpen()">Services</a>
+      <a onclick="mapToggle(1)">Store map</a>
+      <span id="who"></span>
+      <a class="si-btn" id="si-btn" onclick="sg()">Sign in</a>
+    </div>
+  </nav>
+
+  <div class="scrim" id="scrim"></div>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <h1>Fresh choices.<br>Better living.</h1>
+    <p>Step inside a three-storey smart supermarket. Browse every floor, find any product and fill your smart cart.</p>
+    <button class="btn" onclick="sg()">Enter the Mart</button>
+    <button class="btn out" onclick="skipIntro()">Skip Intro</button>
+  </section>
+
+  <!-- LOGIN -->
+  <form class="login-wrap" id="login" onsubmit="doLogin(event)">
+    <h2>Welcome</h2>
+    <p class="sub">Enter your name &ndash; the doors will open for you.</p>
+    <label for="nm">Your name</label>
+    <input type="text" id="nm" maxlength="24" placeholder="e.g. Priya" autocomplete="given-name" required>
+    <label for="pw">Password</label>
+    <input type="password" id="pw" placeholder="Any password (demo)" autocomplete="current-password">
+    <div class="chk-row">
+      <input type="checkbox" id="adm">
+      <label for="adm" style="margin:0">Admin access (demo)</label>
+    </div>
+    <button class="btn" type="submit">Sign In &amp; Enter</button>
+    <a class="login-link" id="regl" onclick="regToggle()">New customer? Create an account</a>
+  </form>
+
+  <!-- WELCOME SPLASH -->
+  <div class="welcome-splash" id="welcome">
+    <small>Good to see you</small>
+    <h2 id="wn"></h2>
+  </div>
+
+  <!-- LOCATION MODAL -->
+  <div class="modal-overlay" id="loc-modal">
+    <div class="modal-box">
+      <h3>Where are you right now?</h3>
+      <p>This helps us show the right features &mdash; the trolley scanner and live map are only available inside the store.</p>
+      <div class="modal-btns">
+        <button class="btn" onclick="setLocation('store')">I&rsquo;m in the Store</button>
+        <button class="btn out" onclick="setLocation('home')">I&rsquo;m at Home</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH BAR -->
+  <div class="sb" id="sb">
+    <input id="q" type="search" placeholder="Search: chocolates, shirts, toys, blankets..." autocomplete="off" aria-label="Search products">
+    <div class="res" id="res"></div>
+  </div>
+
+  <!-- FLOOR TAG -->
+  <div class="tag" id="tag"><h3 id="tt"></h3><p id="td"></p>
+    <button class="btn out" id="clr-btn" style="display:none;padding:8px 16px;margin-top:10px" onclick="clearRoute()">Clear Route</button>
+  </div>
+
+  <!-- FLOOR NAV -->
+  <div class="floors" id="floors">
+    <button data-k="atrium" class="a">Atrium</button>
+    <button data-k="ground">Ground Floor</button>
+    <button data-k="first">First Floor</button>
+    <button data-k="second">Second Floor</button>
+    <button data-k="map">Store Map</button>
+    <button data-k="svc">Services</button>
+    <button class="rot-btn" id="rotb" onclick="rotateView()">&#8635; Rotate</button>
+  </div>
+
+  <!-- STORE MAP -->
+  <div class="mp" id="mp" role="dialog" aria-label="Store layout">
+    <button class="btn out mp-close" onclick="mapToggle(0)">Close</button>
+    <div class="ml">
+      <h3>Store Layout</h3>
+      <p>Three floors, one glass lift and two staircases around the central atrium. Tap a floor to explore.</p>
+      <div class="stk" id="stk"></div>
+    </div>
+    <div class="mr">
+      <div class="map-tabs" id="map-tabs"></div>
+      <div class="pn" id="pn"></div>
+      <p class="lg">Tap any rack to fly there &bull; Gold = Lift &bull; Hatched = Stairs &bull; Dashed gold = Your route</p>
+    </div>
+  </div>
+
+  <!-- ARIA -->
+  <div class="ai" id="ai">
+    <div class="ai-hdr">
+      <div class="ai-av"></div>
+      <div><div class="ai-name">Aria <small>&bull; Your Mart Guide</small></div></div>
+    </div>
+    <p class="ai-msg" id="aim">Hello! I am loading the mart...</p>
+    <div class="chips" id="chips"></div>
+    <input id="aq" placeholder="Ask: where is chocolate? shirts? second floor?" autocomplete="off" aria-label="Ask Aria">
+  </div>
+
+  <!-- SIDE PANEL -->
+  <div class="sp" id="sp" role="dialog" aria-label="Mart panel">
+    <div class="sp-hdr">
+      <h3 id="spt"></h3>
+      <button class="b2" onclick="panelClose()">Close</button>
+    </div>
+    <div class="sp-body" id="spb"></div>
+  </div>
+
+  <!-- REDUCE MOTION -->
+  <label class="mo"><input type="checkbox" id="rm"> Reduce motion</label>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+var TH=THREE,W=40,D=28,VW=12,VD=14,FH=6;
+// --- HELPERS ---
+function el(i){return document.getElementById(i)}
+function cvs(w,h,fn,rep){var c=document.createElement('canvas');c.width=w;c.height=h;fn(c.getContext('2d'),w,h);var t=new TH.CanvasTexture(c);t.encoding=TH.sRGBEncoding;t.anisotropy=4;if(rep){t.wrapS=t.wrapT=TH.RepeatWrapping;t.repeat.set(rep[0],rep[1])}return t}
+function txt(g,s,x,y,sz,col,font){g.fillStyle=col;g.textAlign='center';g.textBaseline='middle';g.font=(font||'700')+ ' '+sz+'px Georgia,serif';s.split('\n').forEach(function(l,i,a){g.fillText(l,x,y+(i-(a.length-1)/2)*sz*1.15)})}
+function mStd(c,ro,me,ex){return new TH.MeshStandardMaterial(Object.assign({color:c,roughness:ro==null?.6:ro,metalness:me||0},ex||{}))}
+function bx(w,h,d,m,x,y,z,par,ns){var b=new TH.Mesh(new TH.BoxGeometry(w,h,d),m);b.position.set(x,y,z);b.castShadow=!ns;b.receiveShadow=true;(par||scene).add(b);return b}
+function wMat(rx){return mStd(0xffffff,.6,0,{map:cvs(128,128,function(g){var cs=['#4a2f1b','#573720','#40281a','#5f3c22'];for(var i=0;i<8;i++){g.fillStyle=cs[i%4];g.fillRect(i*16,0,16,128);g.fillStyle='#1e120a';g.fillRect(i*16,0,2,128)}},[rx,1])})}
+// --- SCENE ---
+var scene=new TH.Scene();
+scene.background=new TH.Color(0x0b1a33);
+scene.fog=new TH.Fog(0x16294a,85,300);
+var cam=new TH.PerspectiveCamera(48,innerWidth/innerHeight,.1,450);
+var renderer=new TH.WebGLRenderer({antialias:true,alpha:false});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth,innerHeight);
+renderer.shadowMap.enabled=true;
+renderer.outputEncoding=TH.sRGBEncoding;
+renderer.toneMapping=TH.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.18;
+renderer.domElement.className='main-canvas';
+document.body.insertBefore(renderer.domElement,document.body.firstChild);
+
+// materials
+var gMat=new TH.MeshPhysicalMaterial({color:0xa8d8ff,roughness:.03,transparent:true,opacity:.14,clearcoat:1,side:TH.DoubleSide,depthWrite:false});
+var dgMat=new TH.MeshPhysicalMaterial({color:0x8fcfe0,roughness:.03,transparent:true,opacity:.28,clearcoat:1,side:TH.DoubleSide,depthWrite:false});
+var tMat=mStd(0x6b4426,.55),brMat=mStd(0xC5A55A,.25,.85),grMat=mStd(0x0f3326,.45,.15),goMat=mStd(0xE6C46E,.3,.8),stMat=mStd(0x8a857a,.28,.1),emMat=mStd(0xffd68a,.4,0,{emissive:0xffc66a,emissiveIntensity:1.7}),balM=mStd(0x14493a,.35,.25,{emissive:0x0b2a20,emissiveIntensity:.3}),dkM=mStd(0x0f2a20,.5,.2),capM=mStd(0xc8cdd0,.3,.8);
+
+// --- LIGHTING ---
+var skyDome=new TH.Mesh(new TH.SphereGeometry(395,32,16),new TH.MeshBasicMaterial({fog:false,side:TH.BackSide,map:cvs(1024,512,function(g,w,h){var q=g.createLinearGradient(0,0,0,h);q.addColorStop(0,'#030a18');q.addColorStop(.28,'#091e45');q.addColorStop(.42,'#1e4a82');q.addColorStop(.48,'#c06040');q.addColorStop(.52,'#152030');q.addColorStop(1,'#080f1e');g.fillStyle=q;g.fillRect(0,0,w,h);for(var i=0;i<500;i++){g.globalAlpha=Math.random()*.9+.1;var r=Math.random()*1.8+.3;g.fillStyle='#fff';g.fillRect(Math.random()*w,Math.random()*h*.42,r,r)}g.globalAlpha=1})}));
+scene.add(skyDome);
+var moonSpr=new TH.Sprite(new TH.SpriteMaterial({map:cvs(256,256,function(g){var q=g.createRadialGradient(128,128,0,128,128,128);q.addColorStop(0,'#fffce8');q.addColorStop(.1,'#fff4c8');q.addColorStop(.13,'rgba(180,210,255,.3)');q.addColorStop(1,'rgba(100,140,230,0)');g.fillStyle=q;g.fillRect(0,0,256,256)}),transparent:true,fog:false,depthWrite:false,blending:TH.AdditiveBlending}));
+moonSpr.scale.set(76,76,1);moonSpr.position.set(-120,90,-245);scene.add(moonSpr);
+// skyline
+var skT=cvs(64,256,function(g,w,h){g.fillStyle='#0c1730';g.fillRect(0,0,w,h);for(var r=5;r<h-4;r+=9)for(var c=4;c<w-4;c+=9)if(Math.random()<.4){g.globalAlpha=.35+Math.random()*.6;g.fillStyle=Math.random()<.65?'#ffd070':'#aaceff';g.fillRect(c,r,4,5)}g.globalAlpha=1});
+for(var si=0;si<28;si++){var sbh=45+((si*53)%90),sbw=12+((si*29)%18);var sbm=new TH.Mesh(new TH.BoxGeometry(sbw,sbh,sbw),new TH.MeshBasicMaterial({map:skT,fog:false,color:0x8095b0}));sbm.position.set(-310+si*22+((si*17)%8),sbh/2-5,-325-((si*13)%28));scene.add(sbm)}
+scene.add(new TH.HemisphereLight(0x7090cf,0x1c2820,.6));
+scene.add(new TH.AmbientLight(0xffe2b0,.35));
+var sun=new TH.DirectionalLight(0x9ab8ff,.9);sun.position.set(-28,58,42);sun.castShadow=true;
+var mts=Math.min(4096,renderer.capabilities.maxTextureSize);sun.shadow.mapSize.set(mts,mts);
+var sc=sun.shadow.camera;sc.left=-52;sc.right=52;sc.top=52;sc.bottom=-52;sc.far=175;sun.shadow.bias=-.0005;scene.add(sun);
+function ptL(c,i,d,x,y,z){var p=new TH.PointLight(c,i,d);p.position.set(x,y,z);scene.add(p)}
+for(var fi=0;fi<3;fi++){ptL(0xffd9a0,1.1,28,-13,fi*FH+4.4,0);ptL(0xffd9a0,1.1,28,13,fi*FH+4.4,0);ptL(0xffd9a0,.9,26,0,fi*FH+4.4,-10)}
+ptL(0xffc680,1.5,36,0,3.2,D/2+5);
+var spMap=cvs(256,256,function(g){var q=g.createRadialGradient(128,128,0,128,128,128);q.addColorStop(0,'rgba(255,196,110,.5)');q.addColorStop(1,'rgba(255,190,100,0)');g.fillStyle=q;g.fillRect(0,0,256,256)});
+function pool(x,z,sx,sz,op){var m=new TH.Mesh(new TH.PlaneGeometry(sx,sz),new TH.MeshBasicMaterial({map:spMap,transparent:true,depthWrite:false,blending:TH.AdditiveBlending,opacity:op,fog:false}));m.rotation.x=-Math.PI/2;m.position.set(x,.09,z);scene.add(m)}
+pool(0,D/2+7,52,24,1);pool(-12,D/2+5,17,11,.7);pool(12,D/2+5,17,11,.7);
+// GROUND
+bx(700,.2,700,mStd(0x1e3a2c,.95),0,-.25,0,null,true);
+// trees (background only, no walking people)
+var tcone=new TH.InstancedMesh(new TH.ConeGeometry(2.1,7,8).translate(0,6.5,0),mStd(0x1e4d2e,.9),80),ttrunk=new TH.InstancedMesh(new TH.CylinderGeometry(.24,.34,3,6).translate(0,1.5,0),tMat,80),tObj=new TH.Object3D(),tCount=0;
+for(var ti=0;ti<80;ti++){var ta=ti*2.4,tr2=52+(ti*37%68),tx3=Math.cos(ta)*tr2*1.4,tz3=Math.sin(ta)*tr2;if(Math.abs(tx3)<34&&tz3>-26&&tz3<48)continue;tObj.position.set(tx3,0,tz3);tObj.scale.setScalar(.75+(ti%5)*.2);tObj.updateMatrix();tcone.setMatrixAt(tCount,tObj.matrix);ttrunk.setMatrixAt(tCount,tObj.matrix);tCount++}
+tcone.count=ttrunk.count=tCount;tcone.frustumCulled=ttrunk.frustumCulled=false;tcone.castShadow=true;scene.add(tcone,ttrunk);
+// hills
+[[-115,-205,88],[42,-225,108],[165,-195,78],[-195,-118,68]].forEach(function(h,hi){var hm=new TH.Mesh(new TH.SphereGeometry(h[2],24,12),mStd(hi%2?0x1a3326:0x1f3a2c,.95));hm.position.set(h[0],-h[2]*.6,h[1]);hm.scale.y=.78;scene.add(hm)});
+// PLAZA
+bx(W+32,.12,14,mStd(0xffffff,.35,.05,{map:cvs(128,128,function(g,w,h){g.fillStyle='#a29c86';g.fillRect(0,0,w,h);g.strokeStyle='#6a6656';g.lineWidth=3;g.strokeRect(0,0,w,h);g.fillStyle='rgba(255,255,255,.07)';g.fillRect(0,0,w/2,h/2);g.fillRect(w/2,h/2,w/2,h/2)},[(W+32)/2.5,5.8])}),0,-.02,D/2+7,null,true);
+bx(245,.2,.5,mStd(0x888b84,.6),0,.05,D/2+14.4,null,true);
+bx(265,.1,12,mStd(0x292f31,.85),0,-.03,D/2+21.5,null,true);
+for(var rd=-12;rd<=12;rd++)bx(2.4,.02,.2,mStd(0xE6C46E,.5),rd*5,.03,D/2+21.5,null,true);
+// bollard lamps
+for(var bl=-8;bl<=8;bl++){var blx2=bl*4.6;bx(.22,.85,.22,mStd(0x28201a,.4,.6),blx2,.45,D/2+11.4,null,true);bx(.28,.06,.28,emMat,blx2,.92,D/2+11.4,null,true);pool(blx2,D/2+11.5,5,5,.5)}
+// INTERIOR FLOOR
+var flT=cvs(256,256,function(g,w,h){g.fillStyle='#898078';g.fillRect(0,0,w,h);g.strokeStyle='rgba(200,170,80,.3)';g.lineWidth=2;g.strokeRect(0,0,w,h);g.fillStyle='rgba(255,255,255,.06)';g.fillRect(0,0,w/2,h/2);g.fillRect(w/2,h/2,w/2,h/2)},[W/2.5,D/2.5]);
+bx(W,.2,D,mStd(0xffffff,.2,.12,{map:flT}),0,-.05,0);
+bx(.18,.02,D,mStd(0x00A86B,.4,0,{emissive:0x00A86B,emissiveIntensity:.55}),0,.07,0,null,true);
+// SLABS + BALUSTRADES
+var T7=(D-VD)/2,S14=(W-VW)/2,F3=FH*3;
+function bal(y,z,gaps){var pts=[-VW/2].concat(gaps.reduce(function(a,b){return a.concat(b)},[]),[VW/2]);for(var bi=0;bi<pts.length;bi+=2){var ba=pts[bi],bb=pts[bi+1],bw=bb-ba;if(bw<.1)continue;var bm3=new TH.Mesh(new TH.BoxGeometry(bw,1.1,.07),balM);bm3.position.set((ba+bb)/2,y+.7,z);scene.add(bm3);bx(bw,.07,.1,brMat,(ba+bb)/2,y+1.27,z,null,true)}}
+[1,2].forEach(function(fv){var fy=fv*FH;
+  bx(W,.3,T7,stMat,0,fy,-(VD/2+T7/2));bx(W,.3,T7,stMat,0,fy,VD/2+T7/2);
+  bx(S14,.3,VD,stMat,-(VW/2+S14/2),fy,0);bx(S14,.3,VD,stMat,VW/2+S14/2,fy,0);
+  bal(fy,-VD/2,fv===1?[[-1.4,1.4],[3.3,5.9]]:[[-1.4,1.4],[-5.9,-3.3]]);
+  bal(fy,VD/2,fv===1?[[-5.9,-3.3]]:[]);
+  [-1,1].forEach(function(bs){var bsm=new TH.Mesh(new TH.BoxGeometry(.07,1.1,VD),balM);bsm.position.set(bs*VW/2,fy+.7,0);scene.add(bsm);bx(.1,.07,VD,brMat,bs*VW/2,fy+1.27,0,null,true)});
+  bx(W,.12,.12,brMat,0,fy+.15,D/2-.1,null,true)});
+for(var ev=0;ev<3;ev++)[-9.5,-14.5,9.5,14.5].forEach(function(ex){bx(.14,.05,13,emMat,ex,(ev+1)*FH-.25,0,null,true)});
+// WALLS
+bx(.4,F3,D,wMat(D/1.2),-W/2,F3/2,0);bx(.4,F3,D,wMat(D/1.2),W/2,F3/2,0);bx(W,F3,.4,wMat(W/1.2),0,F3/2,-D/2);
+// ROOF
+var rW=wMat(W/1.2),rY=F3+.2;
+bx(W+1,.4,T7,rW,0,rY,-(VD/2+T7/2),null,true);bx(W+1,.4,T7,rW,0,rY,VD/2+T7/2,null,true);
+bx(S14,.4,VD,rW,-(VW/2+S14/2),rY,0,null,true);bx(S14,.4,VD,rW,VW/2+S14/2,rY,0,null,true);
+var skyGlass=new TH.Mesh(new TH.BoxGeometry(VW,.1,VD),gMat);skyGlass.position.set(0,rY,0);scene.add(skyGlass);
+[-1,0,1].forEach(function(sv){bx(.12,.15,VD,brMat,sv*VW/2,rY+.05,0,null,true)});
+
+// ===== FACADE — clean separated panels, no text overlap =====
+function drawLeafShape(g,x,y,sz,rot,col){g.save();g.translate(x,y);g.rotate(rot);g.fillStyle=col;g.beginPath();g.ellipse(0,-sz*.5,sz*.28,sz*.5,0,0,6.3);g.fill();g.restore()}
+function drawEmblem(g,x,y,r){g.strokeStyle='#E6C46E';g.lineWidth=r*.08;g.beginPath();g.arc(x,y,r,0,6.3);g.stroke();g.lineWidth=r*.03;g.beginPath();g.arc(x,y,r*.86,0,6.3);g.stroke();drawLeafShape(g,x,y+r*.38,r*.9,-.5,'#E6C46E');drawLeafShape(g,x,y+r*.38,r*.75,.55,'#c9a240');txt(g,'GMR',x,y+r*.62,r*.28,'#E6C46E')}
+
+// LEFT panel — clean 3-level strip
+var facadeL=cvs(640,730,function(g,w,h){
+  var q=g.createLinearGradient(0,0,0,h);q.addColorStop(0,'#0a2a1e');q.addColorStop(1,'#163d2c');g.fillStyle=q;g.fillRect(0,0,w,h);
+  // diagonal lattice
+  g.strokeStyle='rgba(230,196,110,.1)';g.lineWidth=1.4;for(var di2=-h;di2<w+h;di2+=42){g.beginPath();g.moveTo(di2,0);g.lineTo(di2+h,h);g.stroke()}
+  // leaf motifs at regular positions
+  for(var ly2=60;ly2<h;ly2+=110)for(var lx2=80;lx2<w;lx2+=120)drawLeafShape(g,lx2,ly2,22,((lx2+ly2)%5-2)*.4,'rgba(230,196,110,.1)');
+  // 3 level bands with clear separation
+  var bands=[['LEVEL G','FRESH MARKET','rgba(31,110,73,.4)','#4adc9a'],['LEVEL 1','BEVERAGES & DAIRY','rgba(25,100,122,.4)','#6ac8e8'],['LEVEL 2','HOME & CARE','rgba(180,125,40,.4)','#E6C46E']];
+  bands.forEach(function(b,bi){var by=h*bi/3,bh2=h/3;
+    g.fillStyle=b[2];g.fillRect(0,by,w,bh2);
+    // horizontal divider
+    g.strokeStyle='rgba(230,196,110,.5)';g.lineWidth=3;g.beginPath();g.moveTo(0,by+bh2);g.lineTo(w,by+bh2);g.stroke();
+    // plaque box
+    g.fillStyle='rgba(10,30,20,.75)';g.fillRect(30,by+20,w-60,48);g.strokeStyle=b[3];g.lineWidth=2;g.strokeRect(30,by+20,w-60,48);
+    txt(g,b[0]+' \u00B7 '+b[1],w/2,by+45,20,b[3])});
+  // slogan top
+  txt(g,'FRESH CHOICES.',w/2,50,36,'#E6C46E')});
+
+// RIGHT panel
+var facadeR=cvs(640,730,function(g,w,h){
+  var q=g.createLinearGradient(0,0,0,h);q.addColorStop(0,'#0a2a1e');q.addColorStop(1,'#163d2c');g.fillStyle=q;g.fillRect(0,0,w,h);
+  g.strokeStyle='rgba(230,196,110,.1)';g.lineWidth=1.4;for(var di3=-h;di3<w+h;di3+=42){g.beginPath();g.moveTo(di3,0);g.lineTo(di3+h,h);g.stroke()}
+  for(var ly3=60;ly3<h;ly3+=110)for(var lx3=80;lx3<w;lx3+=120)drawLeafShape(g,lx3,ly3,22,((lx3+ly3)%5-2)*.4,'rgba(230,196,110,.1)');
+  var bands2=[['LEVEL G','FRESH MARKET','rgba(31,110,73,.4)','#4adc9a'],['LEVEL 1','BEVERAGES & DAIRY','rgba(25,100,122,.4)','#6ac8e8'],['LEVEL 2','HOME & CARE','rgba(180,125,40,.4)','#E6C46E']];
+  bands2.forEach(function(b2,bi2){var by2=h*bi2/3,bh3=h/3;
+    g.fillStyle=b2[2];g.fillRect(0,by2,w,bh3);
+    g.strokeStyle='rgba(230,196,110,.5)';g.lineWidth=3;g.beginPath();g.moveTo(0,by2+bh3);g.lineTo(w,by2+bh3);g.stroke();
+    g.fillStyle='rgba(10,30,20,.75)';g.fillRect(30,by2+20,w-60,48);g.strokeStyle=b2[3];g.lineWidth=2;g.strokeRect(30,by2+20,w-60,48);
+    txt(g,b2[0]+' \u00B7 '+b2[1],w/2,by2+45,20,b2[3])});
+  txt(g,'BETTER LIVING.',w/2,50,36,'#E6C46E')});
+
+// CENTER panel — emblem area only
+var facadeC=cvs(400,860,function(g,w,h){
+  var q=g.createLinearGradient(0,0,0,h);q.addColorStop(0,'#091f16');q.addColorStop(1,'#12301e');g.fillStyle=q;g.fillRect(0,0,w,h);
+  g.strokeStyle='rgba(230,196,110,.1)';g.lineWidth=1.4;for(var di4=-h;di4<w+h;di4+=42){g.beginPath();g.moveTo(di4,0);g.lineTo(di4+h,h);g.stroke()}
+  // emblem centered
+  drawEmblem(g,w/2,200,112);
+  // GMR large title
+  g.fillStyle='rgba(10,28,20,.8)';g.fillRect(20,340,w-40,58);g.strokeStyle='#E6C46E';g.lineWidth=2;g.strokeRect(20,340,w-40,58);
+  txt(g,'SMART MART',w/2,370,34,'#f4efe0');
+  // divider
+  g.strokeStyle='rgba(230,196,110,.4)';g.lineWidth=1.5;g.beginPath();g.moveTo(60,420);g.lineTo(w-60,420);g.stroke();
+  // door label
+  g.fillStyle='rgba(10,28,20,.8)';g.fillRect(40,720,w-80,50);g.strokeStyle='rgba(230,196,110,.6)';g.lineWidth=1.5;g.strokeRect(40,720,w-80,50);
+  txt(g,'WELCOME','200',745,22,'#E6C46E')});
+
+function bMat(t){return mStd(0xffffff,.45,.12,{map:t,emissive:0xffffff,emissiveMap:t,emissiveIntensity:.55})}
+var fML=new TH.Mesh(new TH.BoxGeometry(15.8,F3,.28),bMat(facadeL));fML.position.set(-10.9,F3/2,D/2);fML.castShadow=true;scene.add(fML);
+var fMR=new TH.Mesh(new TH.BoxGeometry(15.8,F3,.28),bMat(facadeR));fMR.position.set(10.9,F3/2,D/2);fMR.castShadow=true;scene.add(fMR);
+var fMC=new TH.Mesh(new TH.BoxGeometry(6.2,F3-4.8,.28),bMat(facadeC));fMC.position.set(0,4.8+(F3-4.8)/2,D/2);fMC.castShadow=true;scene.add(fMC);
+// columns, sill, header
+[-1,1].forEach(function(fs){bx(1.2,F3,.55,grMat,fs*19.4,F3/2,D/2);bx(.22,4.8,.26,brMat,fs*3.1,2.4,D/2)});
+bx(6.6,.22,.26,brMat,0,4.78,D/2);
+// horizontal floor bands on facade
+for(var fbi=0;fbi<4;fbi++){bx(W+.4,.4,.48,grMat,0,fbi*FH+(fbi?0:.1),D/2+.14);bx(W+.4,.05,.1,brMat,0,fbi*FH+.28,D/2+.38,null,true)}
+// roof parapet + sign board
+bx(12,1.9,.3,grMat,0,F3+1.4,D/2+.1);
+var roofSignMesh=new TH.Mesh(new TH.PlaneGeometry(11.2,1.6),new TH.MeshBasicMaterial({transparent:true,map:cvs(1024,145,function(g,w,h){g.fillStyle='rgba(10,28,20,.9)';g.fillRect(0,0,w,h);g.strokeStyle='#E6C46E';g.lineWidth=5;g.strokeRect(6,6,w-12,h-12);drawLeafShape(g,80,h/2,32,.4,'#E6C46E');txt(g,'GMR SMART MART',w/2+40,h/2,80,'#E6C46E')})}));
+roofSignMesh.position.set(0,F3+1.38,D/2+.27);scene.add(roofSignMesh);
+// LED ribbon top + sides
+bx(W+.7,.13,.13,emMat,0,F3+.34,D/2+.33,null,true);
+[-1,1].forEach(function(ls2){bx(.13,F3+.38,.13,emMat,ls2*(W/2+.18),(F3+.38)/2,D/2+.33,null,true)});
+// PYLONS
+[-1,1].forEach(function(ps){var pg=new TH.Group();pg.position.set(ps*25,0,D/2+9);pg.rotation.y=-ps*.32;scene.add(pg);
+  bx(1.7,6.8,.55,grMat,0,3.4,0,pg);bx(1.85,.11,.65,brMat,0,6.86,0,pg,true);bx(1.85,.11,.65,brMat,0,.05,0,pg,true);
+  var pylT=cvs(256,1024,function(g,w,h){g.fillStyle='#0c2618';g.fillRect(0,0,w,h);g.strokeStyle='#E6C46E';g.lineWidth=5;g.strokeRect(8,8,w-16,h-16);drawEmblem(g,w/2,260,85);txt(g,'GMR',w/2,465,58,'#E6C46E');txt(g,'SMART\nMART',w/2,575,35,'#f4efe0');txt(g,'FRESH\nCHOICES',w/2,800,24,'#E6C46E')});
+  var pylF=new TH.Mesh(new TH.PlaneGeometry(1.55,6.4),new TH.MeshBasicMaterial({map:pylT}));pylF.position.set(0,3.4,.29);pg.add(pylF);pool(ps*25,D/2+10,9,9,.75)});
+// plaza inlay
+var inlM=new TH.Mesh(new TH.PlaneGeometry(9,9),new TH.MeshBasicMaterial({transparent:true,depthWrite:false,fog:false,opacity:.85,map:cvs(512,512,function(g,w,h){drawEmblem(g,w/2,h/2-10,195);txt(g,'WELCOME TO GMR',w/2,h-50,30,'#E6C46E')})}));
+inlM.rotation.x=-Math.PI/2;inlM.position.set(0,.08,D/2+8);scene.add(inlM);
+// DOORS
+var doorMat2=bMat(cvs(256,512,function(g,w,h){g.fillStyle='#0d2e1e';g.fillRect(0,0,w,h);g.strokeStyle='rgba(230,196,110,.3)';g.lineWidth=1.5;for(var fx2=12;fx2<w;fx2+=15){g.beginPath();g.moveTo(fx2,18);g.lineTo(fx2,h-18);g.stroke()}g.strokeStyle='#E6C46E';g.lineWidth=5;g.strokeRect(7,7,w-14,h-14);g.fillStyle='rgba(10,30,20,.85)';g.fillRect(w/2-72,h/2-100,144,200);drawEmblem(g,w/2,h/2-8,58);txt(g,'WELCOME',w/2,h/2+80,24,'#E6C46E')}));
+var dL=new TH.Group(),dR=new TH.Group();dL.position.set(0,0,D/2+.1);dR.position.copy(dL.position);scene.add(dL,dR);
+function mkDoor(grp,side){var dp=new TH.Mesh(new TH.BoxGeometry(3,4.6,.07),doorMat2);dp.position.set(side*1.5,2.38,0);grp.add(dp);bx(3.04,.11,.09,brMat,side*1.5,4.72,0,grp,true);bx(3.04,.18,.09,brMat,side*1.5,.09,0,grp,true);bx(.06,4.6,.09,brMat,side*2.98,2.38,0,grp,true);bx(.06,4.6,.09,brMat,0,2.38,0,grp,true);bx(.04,1.3,.07,goMat,side*.28,2.18,.09,grp,true)}
+mkDoor(dL,-1);mkDoor(dR,1);bx(6.2,.04,.38,brMat,0,.03,D/2+.1,null,true);
+// plaza trees
+[-14,-8,8,14].forEach(function(ptx2){var pg2=new TH.Group();pg2.position.set(ptx2,0,D/2+5);scene.add(pg2);bx(1.2,.65,1.2,stMat,0,.33,0,pg2);var ptk=new TH.Mesh(new TH.CylinderGeometry(.09,.15,2.1,8),tMat);ptk.position.y=1.65;pg2.add(ptk);var ptcr=new TH.Mesh(new TH.SphereGeometry(1.55,14,10),mStd(0x225838,.9));ptcr.position.y=3.8;ptcr.castShadow=true;pg2.add(ptcr);bx(1.4,.04,1.4,emMat,0,.7,0,pg2,true)});
+[-26,-12,12,26].forEach(function(lpx2){bx(.13,5.2,.13,mStd(0x20201e,.4,.6),lpx2,2.6,D/2+13,null,true);var lpb=new TH.Mesh(new TH.SphereGeometry(.28,12,10),emMat);lpb.position.set(lpx2,5.45,D/2+13);scene.add(lpb);pool(lpx2,D/2+14.5,11,11,.8)});
+// CENTRAL PLANTER
+var planB=new TH.Mesh(new TH.CylinderGeometry(1.75,1.85,.48,28),stMat);planB.position.set(0,.28,0);planB.receiveShadow=true;scene.add(planB);
+var planR=new TH.Mesh(new TH.TorusGeometry(1.78,.04,8,40),brMat);planR.rotation.x=Math.PI/2;planR.position.set(0,.53,0);scene.add(planR);
+for(var pi3=0;pi3<10;pi3++){var pla=pi3/10*6.28;var plS=new TH.Mesh(new TH.SphereGeometry(.4,10,8),mStd(0x2d7a48,.9));plS.position.set(Math.cos(pla)*.95,.78,Math.sin(pla)*.95);scene.add(plS)}
+
+// ===== PRODUCTS — REVISED FLOOR ASSIGNMENTS =====
+// Ground: Chocolates + Household items + Fresh produce
+// First: Clothes + Fashion + Sportswear
+// Second: Blankets + Toys + Electronics + Home decor
+var PRODS2={};
+function rP(k,geo2,mat2){PRODS2[k]={g:geo2,m:mat2,l:[]}}
+function lGeo(pts,sc){var v2=pts.map(function(a){return new TH.Vector2(a[0],a[1])});var g=new TH.LatheGeometry(v2,18);g.scale(sc,sc,sc);g.rotateY(Math.PI);return g}
+var gBot2=lGeo([[0,0],[.17,0],[.2,.04],[.2,.15],[.2,.35],[.2,.55],[.2,.65],[.17,.74],[.075,.84],[.07,.96],[.085,.97],[.085,1.04],[0,1.04]],.28);
+var gJar2=lGeo([[0,0],[.36,0],[.4,.05],[.4,.2],[.4,.4],[.4,.6],[.37,.72],[.37,.74],[.4,.74],[.4,.95],[0,.95]],.16);
+var gCan2=new TH.CylinderGeometry(.042,.042,.12,16).translate(0,.06,0);
+var gBox2=new TH.BoxGeometry(.16,.26,.06).translate(0,.13,0);
+var gBox3=new TH.BoxGeometry(.18,.32,.06).translate(0,.16,0);
+var gCar2=new TH.BoxGeometry(.11,.19,.07).translate(0,.095,0);
+var gGab2=new TH.BoxGeometry(.1,.04,.044).translate(0,.21,0);
+// fabric/cloth geometry (folded rectangle)
+var gCloth=new TH.BoxGeometry(.22,.3,.04).translate(0,.15,0);
+// toy box geometry
+var gToy=new TH.BoxGeometry(.2,.2,.2).translate(0,.1,0);
+// blanket roll geometry
+var gBlank=new TH.CylinderGeometry(.06,.06,.26,12).translate(0,.13,0);
+
+function bTex(b){return cvs(128,256,function(g,w,h){g.fillStyle=b[1];g.fillRect(0,0,w,h);g.fillStyle=b[2];g.fillRect(0,0,w,h*.18);g.fillStyle='#ece6d0';g.fillRect(0,h*.42,w,h*.34);g.fillStyle=b[1];g.fillRect(0,h*.42,w,9);g.fillRect(0,h*.76-9,w,9);txt(g,b[0],w/2,h*.59,28,b[1])})}
+function jTex(b){return cvs(128,256,function(g,w,h){g.fillStyle=b[1];g.fillRect(0,0,w,h);g.fillStyle=b[2];g.fillRect(0,0,w,h*.15);g.fillStyle='#ece6d0';g.fillRect(0,h*.38,w,h*.36);txt(g,b[0],w/2,h*.56,24,b[2])})}
+function cTex(b){return cvs(256,128,function(g,w,h){g.fillStyle=b[1];g.fillRect(0,0,w,h);g.fillStyle=b[2];g.fillRect(0,0,w,11);g.fillRect(0,h-11,w,11);txt(g,b[0],w/2,h/2,34,b[2])})}
+function bxTex(b){return cvs(128,192,function(g,w,h){g.fillStyle=b[1];g.fillRect(0,0,w,h);g.fillStyle=b[2];g.fillRect(0,0,w,24);g.fillRect(0,h-14,w,14);txt(g,b[0],w/2,62,24,'#f4efe0');g.fillStyle='#f4efe0';g.beginPath();g.arc(w/2,128,28,0,6.3);g.fill();g.fillStyle=b[2];g.beginPath();g.arc(w/2,128,18,0,6.3);g.fill()})}
+function clothTex(b){return cvs(128,192,function(g,w,h){g.fillStyle=b[1];g.fillRect(0,0,w,h);// collar
+  g.strokeStyle=b[2];g.lineWidth=3;g.beginPath();g.moveTo(w/2,18);g.bezierCurveTo(w*.3,40,w*.25,60,w*.2,h*.5);g.stroke();g.beginPath();g.moveTo(w/2,18);g.bezierCurveTo(w*.7,40,w*.75,60,w*.8,h*.5);g.stroke();txt(g,b[0],w/2,h*.72,20,b[2])})}
+function toyTex(b){return cvs(128,128,function(g,w,h){g.fillStyle=b[1];g.fillRect(0,0,w,h);g.strokeStyle=b[2];g.lineWidth=3;g.strokeRect(10,10,w-20,h-20);g.fillStyle=b[2];g.beginPath();g.arc(w/2,h/2,22,0,6.3);g.fill();txt(g,b[0],w/2,h*.82,16,'#f4efe0')})}
+function blankTex(b){return cvs(128,128,function(g,w,h){g.fillStyle=b[1];g.fillRect(0,0,w,h);g.strokeStyle=b[2];g.lineWidth=5;for(var si2=0;si2<8;si2++){g.beginPath();g.moveTo(0,si2*16+8);g.lineTo(w,si2*16+8);g.stroke()}txt(g,b[0],w/2,h*.88,14,b[2])})}
+
+// GROUND: chocolates + household
+var CHOC=[['DARK\nBLISS','#2a1208','#f1c40f'],['MILK\nCHOC','#7a3c18','#f4efe0'],['WHITE\nJOY','#e8dfc8','#5b3a14'],['NUT\nCRUNCH','#4a2208','#E6C46E'],['MINT\nCRISP','#1e5c38','#f4efe0'],['BERRY\nBITE','#7a1f3a','#f4efe0']];
+var HOUSE=[['DISH\nSOAP','#1f78b4','#f4efe0'],['FLOOR\nMOP','#d98a1f','#2a1208'],['GLASS\nCLEAN','#2fa0c0','#f4efe0'],['TRASH\nBAGS','#333','#E6C46E'],['SPONGE\nPACK','#e8a020','#f4efe0'],['BROOM\nBRUSH','#8a5a2a','#f4efe0']];
+// FIRST: clothes + fashion
+var CLOTH=[['COTTON\nSHIRT','#2b6cb0','#f4efe0'],['FORMAL\nSHIRT','#1a1a2e','#E6C46E'],['CASUAL\nTEE','#c0392b','#f4efe0'],['FLORAL\nTOP','#d94f8a','#f4efe0'],['POLO\nSHIRT','#2c6e49','#f4efe0'],['LINEN\nKURT','#c9a46a','#1a1a2e']];
+var SPORT=[['TRACK\nPANT','#1a3a6a','#f4efe0'],['JOGGER\nPANT','#2a2a2a','#E6C46E'],['GYM\nSHORT','#c0392b','#f4efe0'],['LEGGING','#7a52a8','#f4efe0'],['SPORT\nSOCK','#f4efe0','#1a3a6a'],['JACKET\nSPORT','#1f8a78','#f4efe0']];
+// SECOND: blankets + toys + electronics
+var BLANK=[['WOOL\nBLANKET','#8a5a2a','#f4efe0'],['FLEECE\nBED','#2b6cb0','#f4efe0'],['COTTON\nTHROW','#e8dfc8','#5b3a14'],['KIDS\nBLANK','#d94f8a','#f4efe0']];
+var TOYS=[['LEGO\nBLOCKS','#e8a020','#1a1a2e'],['DOLL\nSET','#d94f8a','#f4efe0'],['CAR\nTOY','#c0392b','#f4efe0'],['BOARD\nGAME','#2c6e49','#f4efe0'],['PUZZLE\nSET','#7a52a8','#f4efe0'],['TEDDY\nBEAR','#8a5a2a','#f4efe0']];
+var ELEC=[['BT\nEARBUDS','#1a1a2e','#E6C46E'],['USB\nCHARGER','#333','#f4efe0'],['PHONE\nCASE','#2c6e49','#f4efe0'],['LED\nBULB','#e8dfc8','#5b3a14'],['POWER\nBANK','#1f8a78','#f4efe0'],['WIFI\nROUTER','#1a3a6a','#f4efe0']];
+
+CHOC.forEach(function(b,i){rP('ch'+i,gBox2,mStd(0xffffff,.65,0,{map:bxTex(b)}))});
+HOUSE.forEach(function(b,i){rP('hs'+i,gBot2,mStd(0xffffff,.25,.1,{map:bTex(b)}))});
+CLOTH.forEach(function(b,i){rP('cl'+i,gCloth,mStd(0xffffff,.6,0,{map:clothTex(b)}))});
+SPORT.forEach(function(b,i){rP('sp'+i,gCloth,mStd(0xffffff,.55,0,{map:clothTex(b)}))});
+BLANK.forEach(function(b,i){rP('bl'+i,gBlank,mStd(0xffffff,.5,0,{map:blankTex(b)}))});
+TOYS.forEach(function(b,i){rP('ty'+i,gToy,mStd(0xffffff,.6,0,{map:toyTex(b)}))});
+ELEC.forEach(function(b,i){rP('el'+i,gBox3,mStd(0xffffff,.45,.3,{map:bxTex(b)}))});
+
+// Grocery/fresh extras on ground
+var JR2=[['HONEY\nJAR','#d99b20','#4a2f1b'],['PEANUT\nBUT','#b9772e','#2a0a0a'],['MANGO\nJAM','#c0392b','#f1c40f'],['BERRY\nJAM','#7a1f4a','#f4efe0']];
+var BEV=[['COLA','#8e1b1b','#f1c40f'],['MANGO\nDRINK','#e8871e','#2a1208'],['LIME\nJUICE','#2f9e44','#f4efe0'],['WATER','#1f78b4','#d4ecf7']];
+JR2.forEach(function(b,i){rP('jr'+i,gJar2,mStd(0xffffff,.25,.1,{map:jTex(b)}))});
+BEV.forEach(function(b,i){rP('bv'+i,gCan2,[mStd(0xffffff,.35,.5,{map:cTex(b)}),capM,capM])});
+
+// FLOOR TYPE MAPPINGS
+// fl=0 (ground): chocolates, household, jars, beverages
+// fl=1 (first): clothes, sportswear
+// fl=2 (second): blankets, toys, electronics
+var FLOOR_TYPES=[
+  [{k:'ch',n:6,p:.14,c:'Chocolates & confectionery',L:CHOC},{k:'hs',n:6,p:.13,c:'Household cleaning',L:HOUSE},{k:'jr',n:4,p:.16,c:'Spreads & jams',L:JR2},{k:'bv',n:4,p:.1,c:'Beverages',L:BEV}],
+  [{k:'cl',n:6,p:.16,c:'Shirts & tops',L:CLOTH},{k:'sp',n:6,p:.16,c:'Sportswear',L:SPORT}],
+  [{k:'bl',n:4,p:.14,c:'Blankets & bedding',L:BLANK},{k:'ty',n:6,p:.18,c:'Toys & games',L:TOYS},{k:'el',n:6,p:.18,c:'Electronics & accessories',L:ELEC}]
+];
+var FL_IDX=[[0,1,2,3],[0,1],[0,1,2]];
+
+function tcTitle(s){return s.replace('\n',' ').toLowerCase().replace(/\b\w/g,function(c){return c.toUpperCase()})}
+var CAT_NAMES=['Chocolates, Household & Grocery','Clothing & Fashion','Blankets, Toys & Electronics'];
+var FL_NAMES=['Ground Floor','First Floor','Second Floor'];
+var RACKS2=[],IBUFS={t:[],d:[],b:[]},PIDX=[];
+function addIB(k,gm4,x,y,z,w2,h2,d2){IBUFS[k].push(gm4.clone().multiply(new TH.Matrix4().makeTranslation(x,y,z)).multiply(new TH.Matrix4().makeScale(w2,h2,d2)))}
+function mkGondola(fl3,cx,cz,rot2,seed,lbl2,zone2){
+  var y02=fl3?fl3*FH+.15:.05,gm5=new TH.Matrix4().compose(new TH.Vector3(cx,y02,cz),new TH.Quaternion().setFromAxisAngle(new TH.Vector3(0,1,0),rot2),new TH.Vector3(1,1,1));
+  addIB('d',gm5,0,.11,0,2.7,.22,1.05);addIB('d',gm5,0,1.1,0,2.6,2.1,.06);
+  [-1,1].forEach(function(es){addIB('t',gm5,es*1.31,1.05,0,.08,2.1,1.05)});addIB('t',gm5,0,2.14,0,2.7,.06,1.08);
+  var rk2={f:fl3,x:cx,z:cz,y0:y02,rot:rot2,w:2.7,d:1.05,lbl:lbl2,zn:zone2,items:[[],[]]};
+  [0,1].forEach(function(face){var fz3=face?-1:1;
+    [.34,.82,1.3,1.78].forEach(function(ry2,ti2){addIB('t',gm5,0,ry2-.02,fz3*.27,2.54,.04,.5);addIB('b',gm5,0,ry2+.01,fz3*.52,2.54,.03,.03);
+      var FT=FLOOR_TYPES[fl3],ftIdx=FL_IDX[fl3][(seed+ti2+face)%FL_IDX[fl3].length];
+      var Ty2=FT[ftIdx],seen4={};
+      for(var px4=-1.15,pci2=0;px4<=1.18;px4+=Ty2.p,pci2++){var pd2=(seed*3+ti2+face*2+Math.floor(pci2/4))%Ty2.n;
+        var pm4=gm5.clone().multiply(new TH.Matrix4().makeTranslation(px4*fz3,ry2,fz3*.27)).multiply(new TH.Matrix4().makeRotationY(face?Math.PI:0));
+        PRODS2[Ty2.k+pd2].l.push(pm4);
+        if(!seen4[pd2]){seen4[pd2]=1;rk2.items[face].push({n:tcTitle(Ty2.L[pd2][0]),c:Ty2.c,k:Ty2.k+pd2})}}})});
+  RACKS2.push(rk2)}
+function mkSpecialRack(x2,z2,w3,items2,lbl3){RACKS2.push({f:0,x:x2,z:z2,y0:.05,rot:0,w:w3,d:1.3,lbl:lbl3,zn:'P',items:[items2.map(function(n){return{n:n,c:'Fresh produce & bakery'}}),[]]})}
+var RZS=[-5.6,-2.8,0,2.8,5.6];
+// place gondolas on all 3 floors
+for(var gfi=0;gfi<3;gfi++){var gfy=gfi?gfi*FH+.15:.05;
+  [9.5,14.5].forEach(function(gcx2,gcxi){RZS.forEach(function(gcz,gczi){mkGondola(gfi,-gcx2,gcz,Math.PI/2,gfi*7+gcxi*2+gczi,'W'+(gcxi+1)+'-'+(gczi+1),'W');mkGondola(gfi,gcx2,gcz,Math.PI/2,gfi*7+gcxi*3+gczi+1,'E'+(gcxi+1)+'-'+(gczi+1),'E')})});
+  if(gfi)[-16.8,-14,-11.2,-8.4,-5.6,5.6,8.4,11.2,14,16.8].forEach(function(gncx,gnci){mkGondola(gfi,gncx,-10.4,0,gfi*5+gnci,'N'+(gnci+1),'N')});
+  var catTx=cvs(1024,170,function(g4,w4,h4){g4.fillStyle='#0d2618';g4.fillRect(0,0,w4,h4);g4.strokeStyle='#E6C46E';g4.lineWidth=6;g4.strokeRect(8,8,w4-16,h4-16);txt(g4,CAT_NAMES[gfi].toUpperCase(),w4/2,h4/2,58,'#E6C46E')});
+  var gfi2=gfi;
+  [-1,1].forEach(function(cs2){[-.38,.38].forEach(function(co2){var cm2=new TH.Mesh(new TH.PlaneGeometry(3.7,.62),new TH.MeshBasicMaterial({map:catTx}));cm2.position.set(cs2*8+co2,gfy+4.5,0);cm2.rotation.y=co2>0?Math.PI/2:-Math.PI/2;scene.add(cm2)})});
+  if(gfi){[-1,1].forEach(function(cs3){[7.5,13.5].forEach(function(gcx3){var gX3=cs3*gcx3;bx(2.4,.5,.95,mStd(0x1d5a45,.8),gX3,gfy+.3,11.3);bx(2.4,.6,.2,mStd(0x1d5a45,.8),gX3,gfy+.8,10.85);var caf=new TH.Mesh(new TH.CylinderGeometry(.55,.55,.4,16),tMat);caf.position.set(gX3,gfy+.25,12.6);scene.add(caf)})})}}
+
+// fresh produce + bakery counters
+var fArr=[],FC2=[0xc0392b,0xee8a1e,0xf1c40f,0x5aa845,0xd63a2f,0x8bc34a];
+var FN2=['Apples','Oranges','Lemons','Limes','Tomatoes','Green Apples'];
+var fcI=0;
+[-13.5,-8.5,8.5,13.5].forEach(function(ftx2){bx(4.5,.9,1.3,mStd(0x3a2414,.6),ftx2,.5,-9.6);var fnms2=[];
+  for(var fc3=0;fc3<3;fc3++){var fcx2=ftx2-1.5+fc3*1.5;bx(1.3,.05,.95,tMat,fcx2,.93,-9.6);var fcol2=FC2[fcI%6];fnms2.push(FN2[fcI%6]);fcI++;
+    for(var fl4=0;fl4<2;fl4++)for(var fa=0;fa<8-fl4;fa++)for(var fb=0;fb<5-fl4;fb++)fArr.push({x:fcx2-.44+fa*.13+fl4*.065,y:.97+.07+fl4*.08,z:-9.6-.27+fb*.15+fl4*.075,c:fcol2,sy:fcol2===0xf1c40f?.85:1})}
+  mkSpecialRack(ftx2,-9.6,4.5,fnms2,'Produce '+(ftx2<0?'W':'E')+(Math.abs(ftx2)>10?2:1))});
+bx(8,.9,1.3,mStd(0x3a2414,.5),0,.45,-12.4);
+var bkCvr=new TH.Mesh(new TH.BoxGeometry(8,.52,1.18),gMat);bkCvr.position.set(0,1.16,-12.4);scene.add(bkCvr);
+bx(8,.04,1.3,brMat,0,.91,-12.4,null,true);mkSpecialRack(0,-12.4,8,['Fresh Bread','Cakes','Croissants','Cookies'],'Bakery');
+// fruit instances
+var fMesh=new TH.InstancedMesh(new TH.SphereGeometry(.053,12,9),mStd(0xffffff,.4),fArr.length+20);fMesh.frustumCulled=false;fMesh.castShadow=true;
+var fObj2=new TH.Object3D(),fCol2=new TH.Color();
+fArr.forEach(function(fq,fi2){fObj2.position.set(fq.x,fq.y,fq.z);fObj2.scale.set(1,fq.sy,1);fObj2.updateMatrix();fMesh.setMatrixAt(fi2,fObj2.matrix);fMesh.setColorAt(fi2,fCol2.setHex(fq.c).offsetHSL((Math.random()-.5)*.02,0,(Math.random()-.5)*.08))});
+for(var fri=0;fri<20;fri++){var frk=fArr.length+fri;fObj2.position.set(-3+fri*.32,1.04,-12.4);fObj2.scale.set(2.4,1.1,1.4);fObj2.updateMatrix();fMesh.setMatrixAt(frk,fObj2.matrix);fMesh.setColorAt(frk,fCol2.setHex(0xb5651d))}
+scene.add(fMesh);
+// flat aisle signs
+function flatSign(t3,sw2,sx2,sy2,sz2,ry3){var sm2=new TH.Mesh(new TH.PlaneGeometry(sw2,.65),new TH.MeshBasicMaterial({map:cvs(1024,Math.round(1024*.65/sw2),function(g5,a,b){g5.fillStyle='#0d2618';g5.fillRect(0,0,a,b);g5.strokeStyle='#E6C46E';g5.lineWidth=5;g5.strokeRect(6,6,a-12,b-12);txt(g5,t3,a/2,b/2,b*.48,'#E6C46E')})}));sm2.position.set(sx2,sy2,sz2);sm2.rotation.y=ry3||0;scene.add(sm2)}
+flatSign('FRESH BAKERY',5,0,3.3,-13.6);flatSign('FRESH PRODUCE',5,-11,3.3,-13.6);flatSign('FRESH PRODUCE',5,11,3.3,-13.6);
+// SMART CHECKOUTS
+[-1,1].forEach(function(cs4){[7.5,10.5,13.5,16.5].forEach(function(cox){var coX=cs4*cox;bx(1.5,.95,.75,mStd(0x1f3d31,.5,.2),coX,.5,11.4);bx(2.1,.06,.5,mStd(0x141414,.6),coX+cs4*.1,1.0,11.4,null,true);var coS=bx(.48,.33,.05,mStd(0x00A86B,.3,0,{emissive:0x00A86B,emissiveIntensity:.9}),coX,1.53,11.1,null,true);coS.rotation.x=-.28});flatSign('SMART CHECKOUT',5,cs4*12,4.5,12.6,Math.PI)});
+// cart prop
+var cartP=new TH.Group();cartP.position.set(-4.4,.08,12.6);scene.add(cartP);
+var cartBody=new TH.Mesh(new TH.BoxGeometry(.68,.44,.44),mStd(0xaaaaaa,.4,.35,{wireframe:true}));cartBody.position.y=.64;cartP.add(cartBody);
+bx(.68,.04,.44,capM,0,.39,0,cartP,true);bx(.54,.04,.04,mStd(0x00A86B,.3,.4),0,1.04,-.24,cartP,true);
+// flush all product instances
+Object.keys(PRODS2).forEach(function(pk){var po=PRODS2[pk];if(!po.l.length)return;var pim=new TH.InstancedMesh(po.g,po.m,po.l.length);pim.frustumCulled=false;po.l.forEach(function(pm5,pii){pim.setMatrixAt(pii,pm5)});scene.add(pim)});
+var IBUF_MATS2={t:tMat,d:dkM,b:brMat};
+['t','d','b'].forEach(function(ibk){var ibim=new TH.InstancedMesh(new TH.BoxGeometry(1,1,1),IBUF_MATS2[ibk],IBUFS[ibk].length);ibim.castShadow=ibk!=='b';ibim.receiveShadow=true;ibim.frustumCulled=false;IBUFS[ibk].forEach(function(ibm,ibi){ibim.setMatrixAt(ibi,ibm)});scene.add(ibim)});
+RACKS2.forEach(function(rk3){rk3.items.forEach(function(fa3,face3){fa3.forEach(function(it3){PIDX.push({n:it3.n,c:it3.c,k:it3.k,rk:rk3,face:face3})})})});
+
+// ===== LIFT (moves only when called) =====
+var LZ=-5.85,SHH=F3+.8;
+[-1.3,1.3].forEach(function(lx2){[-7,-4.7].forEach(function(lz2){bx(.15,SHH,.15,brMat,lx2,SHH/2,lz2,null,true)})});
+var liftFG=new TH.Mesh(new TH.BoxGeometry(2.6,SHH,.04),gMat);liftFG.position.set(0,SHH/2,-4.7);scene.add(liftFG);
+[-1,1].forEach(function(ls3){var lsg2=new TH.Mesh(new TH.BoxGeometry(.04,SHH,2.3),gMat);lsg2.position.set(ls3*1.3,SHH/2,LZ);scene.add(lsg2)});
+bx(2.9,.28,2.6,grMat,0,SHH+.1,LZ);
+var liftSignT=cvs(512,155,function(g6,w6,h6){g6.fillStyle='#0d2618';g6.fillRect(0,0,w6,h6);g6.strokeStyle='#E6C46E';g6.lineWidth=5;g6.strokeRect(6,6,w6-12,h6-12);txt(g6,'LIFT',w6/2-28,h6/2,72,'#E6C46E');txt(g6,'\u25b2\u25bc',w6-80,h6/2,50,'#E6C46E')});
+for(var lfi2=0;lfi2<3;lfi2++){var lfy3=lfi2?lfi2*FH+.15:.05;bx(2.62,.11,.09,brMat,0,lfy3+3.48,-4.7,null,true);var lfsm2=new TH.Mesh(new TH.PlaneGeometry(1.65,.52),new TH.MeshBasicMaterial({map:liftSignT}));lfsm2.position.set(0,lfy3+4.08,-4.66);scene.add(lfsm2)}
+// lift cabin
+var liftCab=new TH.Group();liftCab.position.set(0,.05,LZ);scene.add(liftCab);
+bx(2.28,.1,1.98,stMat,0,.05,0,liftCab);bx(2.28,.08,1.98,dkM,0,2.68,0,liftCab,true);bx(1.58,.03,1.38,emMat,0,2.62,0,liftCab,true);
+[-1,1].forEach(function(lcx){[-1,1].forEach(function(lcz2){bx(.07,2.68,.07,brMat,lcx*1.12,1.34,lcz2*.97,liftCab,true)});var lcsg2=new TH.Mesh(new TH.BoxGeometry(.03,2.5,1.88),gMat);lcsg2.position.set(lcx*1.13,1.28,0);liftCab.add(lcsg2);bx(.05,.05,1.88,brMat,lcx*1.11,.98,0,liftCab,true)});
+var lcbF=new TH.Mesh(new TH.BoxGeometry(2.18,2.5,.03),gMat);lcbF.position.set(0,1.28,.98);liftCab.add(lcbF);
+var liftDL=new TH.Mesh(new TH.BoxGeometry(1.09,2.5,.04),dkM),liftDR=liftDL.clone();
+liftDL.position.set(-.56,1.28,-.98);liftDR.position.set(.56,1.28,-.98);liftCab.add(liftDL,liftDR);
+// LIFT animation state — ONLY moves when user requests floor change
+var liftTarget=0,liftCurrent=0,liftMoving=false,liftTween=0;
+var LIFT_STOPS=[.05,FH+.15,2*FH+.15];
+function requestLift(floor){if(liftCurrent===floor)return;liftTarget=floor;liftMoving=true;liftTween=0}
+function updateLift(delta){
+  if(!liftMoving)return;
+  liftTween=Math.min(1,liftTween+delta/3.5);
+  var e3=liftTween<.5?4*liftTween*liftTween*liftTween:1-Math.pow(-2*liftTween+2,3)/2;
+  liftCab.position.y=LIFT_STOPS[liftCurrent]+(LIFT_STOPS[liftTarget]-LIFT_STOPS[liftCurrent])*e3;
+  // door open at start and end
+  var doorOpen=0;
+  if(liftTween<.2)doorOpen=liftTween/.2;
+  else if(liftTween>.8)doorOpen=(1-liftTween)/.2;
+  liftDL.position.x=-.56-doorOpen*.52;liftDR.position.x=.56+doorOpen*.52;
+  if(liftTween>=1){liftCurrent=liftTarget;liftMoving=false;liftDL.position.x=-.56;liftDR.position.x=.56}}
+
+// ===== STAIRS =====
+function buildStair(sx3,zS,yS,zE,yE){var ns2=36,rH2=(yE-yS)/ns2,rD2=(zE-zS)/ns2,sw3=2.18;
+  for(var si4=0;si4<ns2;si4++){bx(sw3,.07,Math.abs(rD2)+.02,tMat,sx3,yS+rH2*(si4+1)-.034,zS+rD2*(si4+.5));bx(sw3,rH2,.03,dkM,sx3,yS+rH2*(si4+.5),zS+rD2*si4)}}
+buildStair(4.6,7,.05,-7,FH+.15);buildStair(-4.6,7,FH+.15,-7,2*FH+.15);
+
+// ===== KIOSKS =====
+function mkKiosk(kx2,kz2,kr2,t1,t2){var kg2=new TH.Group();kg2.position.set(kx2,.05,kz2);kg2.rotation.y=kr2;scene.add(kg2);
+  bx(1.08,.94,.48,grMat,0,.48,0,kg2);bx(1.14,.05,.54,brMat,0,.96,0,kg2,true);bx(1.14,.05,.54,brMat,0,.03,0,kg2,true);
+  var ks=new TH.Mesh(new TH.PlaneGeometry(1,.6),new TH.MeshBasicMaterial({map:cvs(512,308,function(c2,w2,h2){c2.fillStyle='#0d2618';c2.fillRect(0,0,w2,h2);c2.strokeStyle='#E6C46E';c2.lineWidth=7;c2.strokeRect(9,9,w2-18,h2-18);txt(c2,t1,w2/2,h2*.38,36,'#E6C46E');txt(c2,t2,w2/2,h2*.7,22,'#f4efe0')})}));ks.position.set(0,1.27,.13);ks.rotation.x=-.48;kg2.add(ks);
+  var ks2b=new TH.Mesh(new TH.PlaneGeometry(1.65,.4),new TH.MeshBasicMaterial({side:TH.DoubleSide,map:cvs(660,160,function(c3,w3,h3){c3.fillStyle='#0d2618';c3.fillRect(0,0,w3,h3);c3.strokeStyle='#E6C46E';c3.lineWidth=5;c3.strokeRect(5,5,w3-10,h3-10);txt(c3,t1.toUpperCase(),w3/2,h3/2,36,'#E6C46E')})}));ks2b.position.set(0,2.32,0);kg2.add(ks2b);
+  [-.78,.78].forEach(function(kp2){bx(.04,1.38,.04,brMat,kp2,1.63,0,kg2,true)});
+  var kgp2=new TH.Mesh(new TH.CylinderGeometry(.72,.72,.02,28),new TH.MeshBasicMaterial({color:0xE6C46E,transparent:true,opacity:.2,depthWrite:false}));kgp2.position.set(0,.02,.53);kg2.add(kgp2)}
+mkKiosk(-2.6,3.6,0,'Eco Welcome','Store \u00B7 Trolley \u00B7 Eco Rewards');
+mkKiosk(2.95,3.6,0,'Shop & Find','Browse \u00B7 Search \u00B7 Track Products');
+mkKiosk(2.95,-1.2,0,'Store Guide','Floor Maps \u00B7 Stock Levels');
+mkKiosk(-2.6,-1.2,0,'My List','Shopping Reminders & Cart');
+mkKiosk(-4.4,10.4,Math.PI,'Trolley Bay','Scan \u00B7 Control \u00B7 Rules');
+mkKiosk(10.5,9.4,Math.PI,'Smart Checkout','Cart \u00B7 Orders \u00B7 Payment');
+
+// ===== ADMIN OFFICES (2nd floor) =====
+var OFF={};
+function writeScreen(key2,title2,lines2){var os=OFF[key2];if(!os)return;var g7=os.c.getContext('2d');g7.fillStyle='#0a1c14';g7.fillRect(0,0,512,320);g7.fillStyle='#E6C46E';g7.fillRect(0,0,512,44);g7.fillStyle='#0c1e14';g7.font='700 22px Georgia,serif';g7.textAlign='left';g7.textBaseline='middle';g7.fillText(title2,14,23);g7.fillStyle='#f4efe0';g7.font='500 18px Arial,sans-serif';lines2.slice(0,9).forEach(function(ln,li){g7.fillText(ln,16,72+li*28)});os.t.needsUpdate=true}
+function mkOffice(key3,ox2,offTitle2){var oy2=2*FH+.15,og2=new TH.Group();og2.position.set(ox2,oy2,-11);scene.add(og2);
+  bx(3.7,.06,5.2,mStd(0x213428,.9),0,.03,0,og2,true);
+  [[3.7,2.9,.04,0,1.5,2.6],[.04,2.9,5.2,-1.85,1.5,0],[.04,2.9,5.2,1.85,1.5,0]].forEach(function(gp2){var gpm2=new TH.Mesh(new TH.BoxGeometry(gp2[0],gp2[1],gp2[2]),gMat);gpm2.position.set(gp2[3],gp2[4],gp2[5]);og2.add(gpm2)});
+  bx(3.78,.07,.07,brMat,0,2.94,2.6,og2,true);bx(3.78,.07,.07,brMat,0,.05,2.6,og2,true);
+  [-1.85,0,1.85].forEach(function(gpx2){bx(.07,2.94,.07,brMat,gpx2,1.47,2.6,og2,true)});
+  bx(2.18,.06,.78,tMat,0,.77,-1.98,og2);[-1,1].forEach(function(ds2){bx(.06,.74,.68,tMat,ds2*1.04,.37,-1.98,og2)});
+  bx(.68,.024,.44,mStd(0xb8bdc0,.3,.8),0,.81,-1.93,og2,true);
+  var oc=document.createElement('canvas');oc.width=512;oc.height=320;var ot=new TH.CanvasTexture(oc);ot.encoding=TH.sRGBEncoding;OFF[key3]={c:oc,t:ot};
+  var oLid=bx(.7,.44,.02,mStd(0x1e1e1e,.4,.6),0,1.03,-2.19,og2,true);oLid.rotation.x=-.28;
+  var oScr=new TH.Mesh(new TH.PlaneGeometry(.66,.41),new TH.MeshBasicMaterial({map:ot}));oScr.position.set(0,1.03,-2.17);oScr.rotation.x=-.28;og2.add(oScr);
+  var oSgn=new TH.Mesh(new TH.PlaneGeometry(3.1,.48),new TH.MeshBasicMaterial({map:cvs(620,96,function(q2,w5,h5){q2.fillStyle='#0d2618';q2.fillRect(0,0,w5,h5);q2.strokeStyle='#E6C46E';q2.lineWidth=4;q2.strokeRect(4,4,w5-8,h5-8);txt(q2,offTitle2,w5/2,h5/2,36,'#E6C46E')})}));oSgn.position.set(0,3.22,2.6);og2.add(oSgn);
+  ptL(0xfff0d8,.9,9,ox2,oy2+2.6,-11)}
+mkOffice('store',-2,'STORE ROOM \u00B7 ADMIN');mkOffice('dept',2,'DEPARTMENT OFFICE \u00B7 ADMIN');
+function refreshOffice(){var isAdm=userRole==='admin';writeScreen('store','STORE ROOM',isAdm?['Signed in as Admin','Open from Services to view hardware settings.']:['LOCKED','Admin access required.','Sign in with Admin Access.']);writeScreen('dept','DEPARTMENT OFFICE',isAdm?['Signed in as Admin','Open from Services to run cart simulator.']:['LOCKED','Admin access required.','Sign in with Admin Access.'])}
+
+// ===== HIGHLIGHT + ROUTE =====
+var hlGrp=new TH.Group();hlGrp.visible=false;scene.add(hlGrp);
+var hlBox2=new TH.Mesh(new TH.BoxGeometry(3,2.4,1.4),new TH.MeshBasicMaterial({color:0x30e8a0,transparent:true,opacity:.15,depthWrite:false,blending:TH.AdditiveBlending}));hlBox2.position.y=1.2;hlGrp.add(hlBox2);
+var hlEdge2=new TH.LineSegments(new TH.EdgesGeometry(hlBox2.geometry),new TH.LineBasicMaterial({color:0xE6C46E,linewidth:2}));hlEdge2.position.y=1.2;hlGrp.add(hlEdge2);
+var hlBeam2=new TH.Mesh(new TH.CylinderGeometry(.13,.13,8,12,1,true),new TH.MeshBasicMaterial({color:0xE6C46E,transparent:true,opacity:.45,blending:TH.AdditiveBlending,depthWrite:false,side:TH.DoubleSide}));hlBeam2.position.y=6.4;hlGrp.add(hlBeam2);
+var lblCvs=document.createElement('canvas');lblCvs.width=512;lblCvs.height=128;var lblTex=new TH.CanvasTexture(lblCvs);
+var lblSpr=new TH.Sprite(new TH.SpriteMaterial({map:lblTex,transparent:true,depthTest:false}));lblSpr.scale.set(5,1.25,1);lblSpr.position.y=3.8;lblSpr.renderOrder=9;hlGrp.add(lblSpr);
+function setLabel(t4){var lg2=lblCvs.getContext('2d');lg2.clearRect(0,0,512,128);lg2.fillStyle='rgba(13,38,24,.9)';lg2.fillRect(0,18,512,92);lg2.strokeStyle='#E6C46E';lg2.lineWidth=3;lg2.strokeRect(2,20,508,88);lg2.fillStyle='#E6C46E';lg2.font='700 40px Georgia,serif';lg2.textAlign='center';lg2.textBaseline='middle';lg2.fillText(t4.length>22?t4.slice(0,21)+'\u2026':t4,256,66);lblTex.needsUpdate=true}
+var rtGrp=new TH.Group();scene.add(rtGrp);var RPTS=[],RDISTS=[],RLEN=0,RSEGS=[],SEL=null;
+var routeDot=new TH.Mesh(new TH.SphereGeometry(.2,14,10),new TH.MeshBasicMaterial({color:0xfff0a0}));routeDot.visible=false;scene.add(routeDot);
+function clearRoute(){while(rtGrp.children.length)rtGrp.remove(rtGrp.children[0]);RPTS=[];RSEGS=[];routeDot.visible=false;el('clr-btn').style.display='none'}
+function setHL(entry){var rk4=entry.rk;SEL=entry;hlGrp.visible=true;hlGrp.position.set(rk4.x,rk4.y0,rk4.z);hlGrp.rotation.y=rk4.rot;hlBox2.scale.set((rk4.w+.3)/3,1,(rk4.d+.35)/1.4);hlEdge2.scale.copy(hlBox2.scale);setLabel(entry.n)}
+function buildRoute(entry2,fromDir){clearRoute();var rk5=entry2.rk,fl5=rk5.f,ra3=rk5.rot+(entry2.face?Math.PI:0),rsx=rk5.x+Math.sin(ra3)*1.9,rsz=rk5.z+Math.cos(ra3)*1.9,ryf=rk5.y0+.06,rpts=[];
+  function addPt(rx,ry3,rz){rpts.push(new TH.Vector3(rx,ry3,rz))}
+  var fromLift=fromDir==='lift'&&fl5>0;
+  if(!fromLift){addPt(0,.11,13.4);addPt(0,.11,8.2)}
+  if(fl5===0){if(rk5.zn==='P'){addPt(2.35,.11,8.2);addPt(2.35,.11,rsz);addPt(rsx,.11,rsz)}else{addPt(rsx,.11,8.2);addPt(rsx,.11,rsz)}}
+  else{if(!fromLift){addPt(2.35,.11,8.2);addPt(2.35,.11,-8.3);addPt(0,.11,-8.3);addPt(0,.11,LZ)}
+    addPt(0,ryf,LZ);addPt(0,ryf,-8.3);
+    if(rk5.zn==='N'&&rsz<-10.5){var sg3=rsx<0?-1:1;addPt(sg3*18.4,ryf,-8.3);addPt(sg3*18.4,ryf,rsz);addPt(rsx,ryf,rsz)}
+    else{addPt(rsx,ryf,-8.3);addPt(rsx,ryf,rsz)}}
+  RPTS=rpts;RDISTS=[0];var curSeg=null;
+  for(var ri2=1;ri2<rpts.length;ri2++){var rp3=rpts[ri2-1],rq3=rpts[ri2],rlen=rp3.distanceTo(rq3);RDISTS.push(RDISTS[ri2-1]+rlen);
+    if(Math.abs(rp3.y-rq3.y)<.01&&rlen>.01){var rsm2=new TH.Mesh(new TH.BoxGeometry(.26,.03,rlen+.26),new TH.MeshBasicMaterial({color:0xE6C46E,transparent:true,opacity:.85}));rsm2.position.copy(rp3).add(rq3).multiplyScalar(.5);rsm2.lookAt(rq3);rtGrp.add(rsm2);
+      var rfi2=rp3.y>FH*2?2:rp3.y>FH?1:0;if(!curSeg||curSeg.f!==rfi2||curSeg.end!==ri2-1){curSeg={f:rfi2,pts:[[rp3.x,rp3.z]],end:0};RSEGS.push(curSeg)}curSeg.pts.push([rq3.x,rq3.z]);curSeg.end=ri2}else curSeg=null}
+  RLEN=RDISTS[RDISTS.length-1];routeDot.visible=true;el('clr-btn').style.display='inline-block'}
+
+// ===== CAMERA WAYPOINTS =====
+var WP={hero:{p:[32,9,72],l:[-12,9,0],v:42},door:{p:[0,2.5,D/2+10],l:[0,3,D/2],v:50},lobby:{p:[0,2.6,8],l:[0,3.2,-6],v:56},atrium:{p:[0,10,8],l:[0,8,-8],v:60},rack:{p:[0,5,0],l:[0,1,-4],v:50},st:{p:[0,5,0],l:[0,2,0],v:48}};
+function setFV(fl6,ang5){var fy6=[0,FH,2*FH][fl6];var VS=[{p:[0,fy6+2.6,7],l:[0,fy6+2,-8]},{p:[18,fy6+3.5,3],l:[-6,fy6+1.8,-2]},{p:[0,fy6+4.4,-12],l:[0,fy6+1.4,9]},{p:[-18,fy6+3.5,3],l:[6,fy6+1.8,-2]}][ang5];VS.v=ang5?58:55;WP[['ground','first','second'][fl6]]=VS}
+[0,1,2].forEach(function(fi4){setFV(fi4,0)});
+var FINFO={atrium:['The Atrium','Three floors, one lift, two staircases. Search products above or open Services.'],ground:['Ground Floor','Chocolates, household items, fresh produce, bakery and smart checkout.'],first:['First Floor','Clothing, shirts, sportswear and fashion accessories.'],second:['Second Floor','Blankets, bedding, toys, games and electronics.'],rack:['',''],st:['','']};
+var camCur=new TH.Vector3(45,35,108),camLook=new TH.Vector3(-8,7,0);
+var camFrom=camCur.clone(),camLookFrom=camLook.clone();
+var camTo=camCur.clone(),camLookTo=camLook.clone();
+var camT2=1,camKey='hero',camFovA=48,camFovB=42,camDur2=2.8,introPhase=true;
+var camShown=false,curFloor=-1,viewAngle=0,doorOpen=.4,doorTarget=.4;
+var authed=false,userName='',userRole='customer',inStore=true;
+var rmEl=el('rm'),clock2=new TH.Clock(),mX=0,mY=0;
+var CART=[],ORDERS=[],MYLIST=[],RULES_OK=0,regMode=false;
+var SEL_ENTRY=null,FROM_DIR='door',PVR2=null,catFilter={q:'',fl:'-1',c:'',o:0,s:'n'},catList=[];
+var SIM_ST={on:0,cart:'Cart 01',sc:'Normal Shopping',n:0},SIM_EV=[],SIM_TM=0;
+var HW2={esp:1,rfid:1,qr:1,wt:1,mot:1,id:'TRL-01',poll:5};
+rmEl.checked=matchMedia('(prefers-reduced-motion:reduce)').matches;
+try{MYLIST=JSON.parse(localStorage.getItem('gmrList')||'[]')}catch(e){}
+function saveList2(){try{localStorage.setItem('gmrList',JSON.stringify(MYLIST))}catch(e){}}
+function ease2(x){return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2}
+function rupees2(n){return '\u20B9'+n}
+function hashN(q3){var h=7;for(var i=0;i<q3.length;i++)h=(h*31+q3.charCodeAt(i))%9973;return h}
+function pInfo(n){var h=hashN(n),price=25+h%38*12;return{p:price,was:Math.round(price*1.18),st:h%7===0?0:3+h%88,o:h%4===0}}
+function pCol(k2,n){if(!k2)return'#'+('00000'+(0x2c8a5a).toString(16)).slice(-6);var PL={ch:CHOC,hs:HOUSE,cl:CLOTH,sp:SPORT,bl:BLANK,ty:TOYS,el:ELEC,jr:JR2,bv:BEV};var arr=PL[k2.slice(0,-1)];return arr&&arr[+k2.slice(-1)]?arr[+k2.slice(-1)][1]:'#3a8a5c'}
+function findEntry2(n2){for(var ei=0;ei<PIDX.length;ei++)if(PIDX[ei].n===n2)return PIDX[ei]}
+function rColor(rk6){return'#7a5028'}
+var SEARCH_RES=[];
+
+// ===== CAMERA NAVIGATION =====
+function goTo(key){
+  if(!authed&&key!=='hero')key='door';
+  camKey=key;camShown=false;
+  camFrom.copy(camCur);camLookFrom.copy(camLook);camFovA=cam.fov;
+  camFovB=WP[key]?WP[key].v:55;
+  camTo.fromArray(WP[key]?WP[key].p:[0,5,20]);
+  camLookTo.fromArray(WP[key]?WP[key].l:[0,2,0]);
+  camDur2=introPhase?5.8:2.4;introPhase=false;
+  camT2=rmEl.checked?1:0;
+  var fi7=['ground','first','second'].indexOf(key);
+  if(fi7>-1)curFloor=fi7;else if(key!=='rack'&&key!=='st')curFloor=-1;
+  el('hero').classList.toggle('hide',key!=='hero');el('scrim').classList.toggle('hide',key!=='hero');el('login').classList.remove('on');
+  doorTarget=key==='hero'?(authed?1:.4):(key==='door'?0:1);
+  var showInfo=authed&&FINFO[key]&&(key!=='rack'||FINFO[key][0]);
+  el('floors').classList.toggle('on',showInfo);el('tag').classList.toggle('on',showInfo);
+  el('sb').classList.toggle('on',authed&&key!=='hero'&&key!=='door'&&key!=='lobby');
+  if(FINFO[key]){el('tt').textContent=key==='atrium'&&userName?'Welcome, '+userName:FINFO[key][0];el('td').textContent=FINFO[key][1]}
+  [].forEach.call(document.querySelectorAll('#floors button[data-k]'),function(fb){fb.classList.toggle('a',fb.dataset.k===key)});
+  ariaOnNav(key)}
+function tryGo(k){authed?goTo(k):goTo('door')}
+function signOut(){authed=false;userRole='customer';refreshOffice();panelClose();hlGrp.visible=false;clearRoute();userName='';setWho();goTo('hero')}
+window.goTo=goTo;window.tryGo=tryGo;
+window.sg=function(){authed?signOut():goTo('door')};
+window.skipIntro=function(){authed=true;userName='Guest';userRole='customer';inStore=true;refreshOffice();setWho();goTo('lobby');setTimeout(function(){goTo('atrium')},rmEl.checked?100:5800);setTimeout(function(){el('ai').classList.add('on');ariaWelcome()},rmEl.checked?200:6200)};
+window.doLogin=function(ev){ev.preventDefault();var n=el('nm').value.trim();if(!n)return;userName=n.replace(/\b\w/g,function(c){return c.toUpperCase()});authed=true;userRole=el('adm').checked?'admin':'customer';refreshOffice();el('login').classList.remove('on');el('wn').textContent='Welcome, '+userName;el('welcome').classList.add('on');setWho();setTimeout(function(){el('welcome').classList.remove('on')},2800);setTimeout(function(){el('loc-modal').classList.add('on')},2200)};
+window.setLocation=function(loc){inStore=loc==='store';el('loc-modal').classList.remove('on');doorTarget=1;goTo('lobby');setTimeout(function(){goTo('atrium')},rmEl.checked?100:5600);setTimeout(function(){el('ai').classList.add('on');ariaWelcome()},rmEl.checked?200:6000)};
+window.regToggle=function(){regMode=!regMode;el('login').querySelector('h2').textContent=regMode?'Create Account':'Welcome';el('login').querySelector('button.btn').textContent=regMode?'Register':'Sign In & Enter';el('regl').textContent=regMode?'Already have an account? Sign In':'New customer? Create an account'};
+function setWho(){el('who').textContent=authed?userName+(userRole==='admin'?' (Admin)':''):'';el('si-btn').textContent=authed?'Sign Out':'Sign In'}
+
+// floor view rotation
+var VIEW_NAMES=['Front','Right','Back','Left'];
+window.rotateView=function(){if(curFloor<0)return;viewAngle=(viewAngle+1)%4;setFV(curFloor,viewAngle);el('rotb').textContent='\u21BB '+VIEW_NAMES[viewAngle];goTo(['ground','first','second'][curFloor])};
+el('floors').addEventListener('click',function(fev2){var fk=fev2.target.dataset.k;if(!fk)return;if(fk==='map'){mapToggle(1);return}if(fk==='svc'){dirOpen();return}viewAngle=0;el('rotb').textContent='\u21BB Rotate';[0,1,2].forEach(function(fi5){setFV(fi5,0)});goTo(fk)});
+
+// fly to a rack
+function flyToRack(entry3){if(!authed)return;var rk7=entry3.rk,ra4=rk7.rot+(entry3.face?Math.PI:0),dx=Math.sin(ra4),dz=Math.cos(ra4);
+  WP.rack={p:[rk7.x+dx*4.4,rk7.y0+3.8,rk7.z+dz*4.4],l:[rk7.x,rk7.y0+1.2,rk7.z],v:50};
+  var fd=curFloor===rk7.f&&rk7.f>0?'lift':'door';
+  setHL(entry3);buildRoute(entry3,fd);
+  FINFO.rack=[entry3.n,FL_NAMES[rk7.f]+' \u00B7 '+CAT_NAMES[rk7.f]+' \u00B7 Rack '+rk7.lbl];
+  el('res').classList.remove('on');
+  if(rk7.f>0)requestLift(rk7.f);
+  if(curFloor!==rk7.f){goTo(['ground','first','second'][rk7.f]);setTimeout(function(){goTo('rack')},rmEl.checked?100:2400)}else goTo('rack')}
+
+window.clearRoute=function(){hlGrp.visible=false;clearRoute();SEL=SEL_ENTRY=null;goTo(['ground','first','second'][curFloor]||'atrium')};
+
+// ===== SEARCH =====
+var qEl=el('q'),resEl=el('res');
+qEl.addEventListener('input',function(){var sq=qEl.value.trim().toLowerCase(),sout=[],sseen={};
+  if(sq)PIDX.forEach(function(se){var sk=se.n+'|'+se.rk.f;if(sseen[sk])return;if((se.n+' '+se.c+' '+CAT_NAMES[se.rk.f]).toLowerCase().indexOf(sq)>-1){sseen[sk]=1;sout.push(se)}});
+  SEARCH_RES=sout.slice(0,8);
+  resEl.innerHTML=SEARCH_RES.map(function(se,si5){return'<button data-i="'+si5+'"><b>'+se.n+'</b><span>'+FL_NAMES[se.rk.f]+' \u00B7 '+CAT_NAMES[se.rk.f]+'</span></button>'}).join('')||(sq?'<p>No match. Try: chocolate, shirt, blanket, toy, charger...</p>':'');
+  resEl.classList.toggle('on',!!sq)});
+resEl.addEventListener('click',function(sev){var sb3=sev.target.closest('button');if(sb3)flyToRack(SEARCH_RES[+sb3.dataset.i])});
+qEl.addEventListener('keydown',function(kev){if(kev.key==='Enter'&&SEARCH_RES[0])flyToRack(SEARCH_RES[0])});
+
+// ===== ARIA GUIDE =====
+var ariaTimer=0;
+function ariaSay(t5,chips2){var ap=el('aim');clearInterval(ariaTimer);var ai3=0;
+  if(rmEl.checked){ap.textContent=t5}else{ap.textContent='';ariaTimer=setInterval(function(){ai3+=3;ap.textContent=t5.slice(0,ai3);if(ai3>=t5.length)clearInterval(ariaTimer)},20)}
+  var ac=el('chips');ac.innerHTML='';(chips2||[]).forEach(function(chip2){var cb=document.createElement('button');cb.textContent=chip2[0];cb.onclick=chip2[1];ac.appendChild(cb)})}
+function ariaWelcome(){ariaSay('Welcome, '+userName+'! I am Aria, your personal mart guide.\n\nHere is what we have across 3 floors:\n\u2022 Ground Floor: Chocolates, household items, fresh produce & bakery\n\u2022 First Floor: Clothing, shirts, sportswear & fashion\n\u2022 Second Floor: Blankets, toys, games & electronics\n\nSearch any product above, or ask me below!',[['Ground Floor',function(){goTo('ground')}],['First Floor',function(){goTo('first')}],['Second Floor',function(){goTo('second')}],['Services',dirOpen]])}
+function ariaOnNav(key4){var fi8=['ground','first','second'].indexOf(key4);
+  el('ai').classList.toggle('on',authed&&key4!=='hero'&&key4!=='door');
+  if(key4==='lobby'||key4==='atrium'){if(authed)ariaWelcome();return}
+  if(fi8>-1&&curFloor!==fi8){
+    var flDesc=['Chocolates, Household items, Fresh produce, Bakery & Checkout are here.','Clothing, Shirts, Sportswear and Fashion accessories are on this floor.','Blankets, Bedding, Toys, Games and Electronics are on this floor.'];
+    ariaSay('You are on the '+FL_NAMES[fi8]+'. '+flDesc[fi8],[['Find Product',function(){panelShop()}],['Services',dirOpen],['Rotate View',window.rotateView]])}
+}
+el('aq').addEventListener('keydown',function(aev){if(aev.key==='Enter'&&this.value.trim()){if(!authed){goTo('door');return}ariaAsk(this.value);this.value=''}});
+function ariaAsk(q4){var ql=q4.toLowerCase();
+  var KW={checkout:'checkout',cart:'checkout',order:'checkout',payment:'checkout',trolley:'trolley',rules:'trolley',scan:'trolley',list:'list',reminder:'list',map:'guide',guide:'guide','store room':'store',hardware:'store',simulator:'dept',office:'dept',welcome:'welcome',shop:'shop',find:'shop',search:'shop'};
+  for(var kk2 in KW)if(ql.indexOf(kk2)>-1){stGo(KW[kk2]);return}
+  var fn2=['ground','first','second'];for(var fi9=0;fi9<3;fi9++)if(ql.indexOf(fn2[fi9])>-1){goTo(fn2[fi9]);return}
+  var tk3=ql.replace(/[^a-z ]/g,' ').split(' ').filter(function(w){return w.length>2&&['where','find','the','show','can','get','how','buy','for','are','you','take','please','want'].indexOf(w)<0});
+  for(var tj=0;tj<tk3.length;tj++){for(var tn3=0;tn3<PIDX.length;tn3++)if(PIDX[tn3].n.toLowerCase().indexOf(tk3[tj])>-1){flyToRack(PIDX[tn3]);return}}
+  ariaSay('I can find any product or take you to any counter. Try: "where is chocolate?", "shirts", "toys", "checkout" or "second floor".',[['Services',dirOpen]])}
+
+// ===== PANELS =====
+function stopPV(){if(PVR2){PVR2.dead=1;cancelAnimationFrame(PVR2.id);PVR2.r.dispose();var pc=PVR2.r.domElement;if(pc.parentNode)pc.parentNode.removeChild(pc);PVR2=null}}
+function panelOpen(title3,html){stopPV();el('spt').textContent=title3;el('spb').innerHTML=html;el('spb').scrollTop=0;el('sp').classList.add('on')}
+window.panelClose=function(){el('sp').classList.remove('on');stopPV()};
+
+// STATIONS DIRECTORY
+var STATIONS=[
+  {id:'welcome',f:0,r:0,x:-2.6,z:3.6,t:'Eco Welcome Board',d:'Store occupancy, trolley status and eco rewards.',a:'The eco welcome board shows store occupancy and trolley status. Bring a reusable bag to earn eco rewards.'},
+  {id:'shop',f:0,r:0,x:2.95,z:3.6,t:'Shop & Find',d:'Browse all products by floor, category, search and offers.',a:'Shop & Find: browse, search and filter products across all floors. Pick any item for directions.'},
+  {id:'guide',f:0,r:0,x:2.95,z:-1.2,t:'Store Guide',d:'Floor maps with stock overlay and emergency preview.',a:'Opening the store guide with floor maps and stock overlay.'},
+  {id:'list',f:0,r:0,x:-2.6,z:-1.2,t:'My List',d:'Shopping reminder list with quantities and estimated total.',a:'Your reminder list with quantities and an estimated total.'},
+  {id:'trolley',f:0,r:Math.PI,x:-4.4,z:10.4,t:'Trolley Bay',d:'Scan trolley QR, cart control and rules.',a:'This is the trolley bay. Scan a QR code to start, read the rules, then use cart control.'},
+  {id:'checkout',f:0,r:Math.PI,x:10.5,z:9.4,t:'Smart Checkout',d:'Your cart, order history and payment.',a:'Smart checkout: view your cart, order history and make payment.'},
+  {id:'store',f:2,r:0,x:-2,z:-13,t:'Store Room',d:'Admin: hardware settings for the smart trolley system.',a:'Store room: the laptop shows hardware settings for the trolley system.'},
+  {id:'dept',f:2,r:0,x:2,z:-13,t:'Department Office',d:'Admin: cart simulator and scenarios.',a:'Department office: the laptop runs the cart simulator.'}];
+
+function dirOpen(){if(!authed){goTo('door');return}
+  var dh='<p class="note">Choose any counter and Aria will take you there. Admin offices require admin login.</p>';
+  [0,1,2].forEach(function(df){dh+='<h4>'+FL_NAMES[df]+'</h4>';
+    var dsts=STATIONS.filter(function(dq){return dq.f===df});
+    dsts.forEach(function(dst){var dad=dst.id==='store'||dst.id==='dept';
+      dh+='<div class="row-item"><div><b>'+dst.t+(dad?' \uD83D\uDD12':'')+'</b><br><small>'+dst.d+'</small></div><button class="b2 p" onclick="stGo(\''+dst.id+'\')">Go &rarr;</button></div>'})});
+  panelOpen('Mart Directory',dh);ariaSay('Everything in the mart is listed here. Where would you like to go?')}
+window.dirOpen=dirOpen;window.stGo=stGo;
+function stGo(id){if(!authed){goTo('door');return}
+  var stn=STATIONS.filter(function(sq){return sq.id===id})[0];
+  var isAdm=id==='store'||id==='dept';
+  if(isAdm&&userRole!=='admin'){panelOpen('Admin Only','<p>The '+stn.t+' is for admin accounts only.</p><p>Sign out and sign in again with <b>Admin access</b> checked.</p>');ariaSay('That area is locked. Sign in with Admin access to enter.',[['Services',dirOpen]]);return}
+  panelClose();hlGrp.visible=false;
+  if(isAdm){var srk={f:2,x:stn.x,z:-10.6,y0:2*FH+.15,rot:0,zn:'O',lbl:stn.t,w:2,d:1,items:[[],[]]};buildRoute({n:stn.t,rk:srk,face:0},curFloor===2?'lift':'door')}else clearRoute();
+  var dl2=rmEl.checked?100:2500;
+  function runNav(){curFloor=stn.f;
+    if(isAdm){var sxs2=stn.x<0?-1:1,sy02=2*FH+.15;WP.st={p:[stn.x+sxs2*5.4,sy02+2.8,-5.8],l:[stn.x,sy02+1.2,-12],v:46};goTo('st');setTimeout(function(){WP.st={p:[stn.x+sxs2*.4,sy02+1.5,-9.5],l:[stn.x,sy02+.95,-13.1],v:32};goTo('st');setTimeout(function(){stPanel(id)},dl2)},dl2)}
+    else{WP.st={p:[stn.x+Math.sin(stn.r)*4.3,2,stn.z+Math.cos(stn.r)*4.3],l:[stn.x,1.3,stn.z],v:46};goTo('st');setTimeout(function(){stPanel(id)},rmEl.checked?100:2300)}}
+  if(curFloor!==stn.f){if(stn.f>0)requestLift(stn.f);goTo(['ground','first','second'][stn.f]);setTimeout(runNav,rmEl.checked?100:2500)}else runNav()}
+function stPanel(id2){var stn2=STATIONS.filter(function(sq2){return sq2.id===id2})[0];ariaSay(stn2.a);
+  if(id2==='welcome')pWelcome();else if(id2==='shop')panelShop();else if(id2==='guide'){panelClose();mapToggle(1)}else if(id2==='list')pList();else if(id2==='trolley')pTrolley('s');else if(id2==='checkout')pCheckout('c');else if(id2==='store')pHW();else if(id2==='dept')pSim('s')}
+
+// WELCOME
+function pWelcome(){panelOpen('Eco Welcome Board','<div class="pgrid"><div class="pcard" style="cursor:default"><b>Store Occupancy</b><br><small>Not available (demo)</small></div><div class="pcard" style="cursor:default"><b>Smart Trolley</b><br><small>Device not connected</small></div></div><h4>Eco Shopping</h4><p>Bring a reusable bag and earn eco reward points at checkout.</p><p class="note">All values shown are demo data.</p><button class="b2 p" onclick="stGo(\'trolley\')">Start Trolley Session</button> <button class="b2" onclick="panelShop()">Browse Products</button>')}
+
+// PRODUCT CATALOGUE
+function panelShop(){var cats={};PIDX.forEach(function(e){cats[e.c]=1});var co='<option value="">All categories</option>';Object.keys(cats).forEach(function(c3){co+='<option value="'+c3+'"'+(catFilter.c===c3?' selected':'')+'>'+c3+'</option>'});
+  panelOpen('Shop & Find','<input id="cq" placeholder="Search products..." value="'+catFilter.q+'" oninput="shopUpd()"><div class="pgrid" style="margin:8px 0"><select id="cf" onchange="shopUpd()"><option value="-1">All Floors</option><option value="0">Ground</option><option value="1">First</option><option value="2">Second</option></select><select id="cc" onchange="shopUpd()">'+co+'</select></div><div class="pgrid"><select id="cs" onchange="shopUpd()"><option value="n">Sort: Name</option><option value="l">Price: Low</option><option value="h">Price: High</option></select><label style="display:flex;gap:6px;align-items:center;font-size:12px"><input type="checkbox" id="co2" style="width:auto" onchange="shopUpd()"> Offers only</label></div><p class="note">Prices are demo values. No live stock data connected.</p><div class="pgrid" id="cg"></div>');
+  el('cf').value=catFilter.fl;el('cs').value=catFilter.s;el('co2').checked=!!catFilter.o;shopGrid2()}
+window.shopO=panelShop;
+window.shopUpd=function(){catFilter.q=el('cq').value;catFilter.fl=el('cf').value;catFilter.c=el('cc').value;catFilter.s=el('cs').value;catFilter.o=el('co2').checked?1:0;shopGrid2()};
+function shopGrid2(){var sq2=catFilter.q.trim().toLowerCase(),seen5={},out=[];
+  PIDX.forEach(function(e2){var sk4=e2.n+'|'+e2.rk.f;if(seen5[sk4])return;seen5[sk4]=1;if(catFilter.fl!=='-1'&&e2.rk.f!==+catFilter.fl)return;if(catFilter.c&&e2.c!==catFilter.c)return;if(sq2&&(e2.n+' '+e2.c).toLowerCase().indexOf(sq2)<0)return;if(catFilter.o&&!pInfo(e2.n).o)return;out.push(e2)});
+  out.sort(function(a,b){return catFilter.s==='n'?(a.n<b.n?-1:1):catFilter.s==='l'?pInfo(a.n).p-pInfo(b.n).p:pInfo(b.n).p-pInfo(a.n).p});
+  catList=out.slice(0,60);
+  var cg=el('cg');if(!cg)return;
+  cg.innerHTML=catList.map(function(e3,ci4){var pi4=pInfo(e3.n);return'<div class="pcard" onclick="pickP('+ci4+')"><div class="pswatch" style="background:'+pCol(e3.k,e3.n)+'"></div><b>'+e3.n+'</b><br>'+(pi4.o?'<s style="opacity:.5">'+rupees2(pi4.was)+'</s> ':'')+'<b style="color:var(--gold)">'+rupees2(pi4.p)+'</b><br><small>'+(pi4.st?pi4.st+' in stock':'Out of stock')+' \u00B7 '+['G','F1','F2'][e3.rk.f]+'</small></div>'}).join('')||'<p>No products found.</p>'}
+window.pickP=function(i){showProductSpec(catList[i])};
+
+// PRODUCT SPEC PANEL (shows spec first, then offers Navigate)
+function showProductSpec(entry4){SEL_ENTRY=entry4;setHL(entry4);var pi5=pInfo(entry4.n),rk8=entry4.rk;
+  var h='<div class="pv" id="pv"></div>';
+  h+='<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:12px">';
+  h+='<div><b style="font-size:20px">'+entry4.n+'</b><br><small style="color:rgba(244,239,224,.7)">'+entry4.c+'</small></div>';
+  h+='<div style="text-align:right">'+(pi5.o?'<s style="opacity:.5">'+rupees2(pi5.was)+'</s><br>':'');
+  h+='<b style="font-size:22px;color:var(--gold)">'+rupees2(pi5.p)+'</b></div></div>';
+  h+='<div class="row-item"><span>Floor</span><b>'+FL_NAMES[rk8.f]+'</b></div>';
+  h+='<div class="row-item"><span>Section</span><b>'+CAT_NAMES[rk8.f]+'</b></div>';
+  h+='<div class="row-item"><span>Rack</span><b>'+rk8.lbl+' ('+(entry4.face?'Back':'Front')+')</b></div>';
+  h+='<div class="row-item"><span>Stock (demo)</span><b>'+(pi5.st?pi5.st+' units':'Out of stock')+'</b></div>';
+  h+='<div class="row-item"><span>Brand</span><b>GMR Essentials (demo)</b></div>';
+  h+='<div class="row-item"><span>Category</span><b>'+entry4.c+'</b></div>';
+  h+='<h4>What would you like to do?</h4>';
+  h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">';
+  h+='<button class="b2 p" onclick="navigateToProduct()">Navigate to Product &rarr;</button>';
+  h+='<button class="b2" onclick="addToCart2(\''+entry4.n+'\')">Add to Cart</button>';
+  h+='<button class="b2" onclick="addToList2(\''+entry4.n+'\')">Add to List</button>';
+  h+='<button class="b2" onclick="panelShop()">Back to Catalogue</button></div>';
+  h+='<p class="note">Specifications shown are demo data. No live inventory connected.</p>';
+  panelOpen('Product Details',h);startPV(entry4.k,entry4.n);
+  ariaSay('Here are the details for '+entry4.n+'. Click "Navigate to Product" and I will draw the route and highlight it on the rack!',[['Navigate',function(){navigateToProduct()}],['Add to Cart',function(){addToCart2(entry4.n)}]])}
+window.navigateToProduct=function(){if(!SEL_ENTRY)return;flyToRack(SEL_ENTRY);FROM_DIR=SEL_ENTRY.rk.f>0?'door':'door';openProductRoute(SEL_ENTRY)};
+function openProductRoute(entry5){var rk9=entry5.rk,pi6=pInfo(entry5.n);
+  var h2='<div class="pv" id="pv"></div>';
+  h2+='<b style="font-size:18px">'+entry5.n+'</b> &mdash; <span style="color:var(--gold)">'+rupees2(pi6.p)+'</span>';
+  h2+='<h4>Route from Entrance</h4><ol>';
+  if(rk9.f===0){h2+='<li>Enter the store through the main doors</li><li>Walk along the main aisle</li><li>Turn to Rack '+rk9.lbl+' &mdash; it is highlighted in the 3D view</li>'}
+  else{h2+='<li>Enter through the main doors</li><li>Walk to the glass lift at the back of the atrium</li><li>Take the lift to '+FL_NAMES[rk9.f]+'</li><li>Follow the gold route line to Rack '+rk9.lbl+'</li>'}
+  h2+='</ol>';
+  h2+='<h4>Floor Map</h4>'+buildMap2D(rk9.f)+buildMap2D(rk9.f>0?0:-1);
+  h2+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">';
+  h2+='<button class="b2 p" onclick="addToCart2(\''+entry5.n+'\')">Add to Cart</button>';
+  h2+='<button class="b2" onclick="addToList2(\''+entry5.n+'\')">Add to List</button>';
+  h2+='<button class="b2" onclick="panelShop()">Back to Catalogue</button></div>';
+  h2+='<p class="note">Route is based on rack position. No live indoor positioning connected.</p>';
+  panelOpen('Navigate: '+entry5.n,h2);startPV(entry5.k,entry5.n)}
+function startPV(pk,pn){var pvEl=el('pv');if(!pvEl)return;var pvW=pvEl.clientWidth||360,pvH=200;
+  var pvr=new TH.WebGLRenderer({antialias:true,alpha:true});pvr.setPixelRatio(Math.min(devicePixelRatio,2));pvr.setSize(pvW,pvH);pvr.outputEncoding=TH.sRGBEncoding;pvr.toneMapping=TH.ACESFilmicToneMapping;pvEl.appendChild(pvr.domElement);
+  var pvs=new TH.Scene(),pvc=new TH.PerspectiveCamera(30,pvW/pvH,.05,50),pvg=new TH.Group(),pvp=PRODS2[pk];
+  pvc.position.set(0,.62,2.1);pvc.lookAt(0,.4,0);
+  pvs.add(new TH.HemisphereLight(0xffffff,0x334444,1.1));var pvd1=new TH.DirectionalLight(0xfff0d0,2.2);pvd1.position.set(2,3,3);pvs.add(pvd1);var pvd2=new TH.DirectionalLight(0x88aaff,.7);pvd2.position.set(-3,1,-2);pvs.add(pvd2);
+  if(pvp){pvp.g.computeBoundingBox();var pvBB=pvp.g.boundingBox,pvsc=.76/(pvBB.max.y-pvBB.min.y);pvg.add(new TH.Mesh(pvp.g,pvp.m));pvg.scale.setScalar(pvsc);pvg.position.y=-pvBB.min.y*pvsc+.02}
+  else{var pvsp=new TH.Mesh(new TH.SphereGeometry(.34,24,18),mStd(pCol(pk,pn),.45));pvsp.position.y=.38;pvg.add(pvsp)}
+  pvs.add(pvg);var pvr2=new TH.Mesh(new TH.CylinderGeometry(.52,.58,.03,40),mStd(0xC5A55A,.85,.82));pvr2.position.y=-.005;pvs.add(pvr2);
+  PVR2={r:pvr,id:0,dead:0};(function pvLp(){if(!PVR2||PVR2.dead)return;PVR2.id=requestAnimationFrame(pvLp);pvg.rotation.y+=.016;pvr.render(pvs,pvc)}())}
+
+// LIST & CART
+function iLoc(n3){var e=findEntry2(n3);return e?FL_NAMES[e.rk.f]+' \u00B7 '+e.rk.lbl:'Unknown'}
+function tot(arr){return arr.reduce(function(a,x){return a+pInfo(x.n).p*x.q},0)}
+function iRows(arr2,kind){return arr2.map(function(x,xi){return'<div class="row-item"><div><b>'+x.n+'</b><br><small>'+iLoc(x.n)+' \u00B7 '+rupees2(pInfo(x.n).p)+'</small></div><div style="white-space:nowrap">'+(kind==='l'?'<button class="b2" onclick="findItem2(\''+x.n+'\')">Find</button> ':'')+'<button class="b2" onclick="qtyChg(\''+kind+'\','+xi+',-1)">\u2212</button> '+x.q+' <button class="b2" onclick="qtyChg(\''+kind+'\','+xi+',1)">\u002b</button> <button class="b2" onclick="qtyChg(\''+kind+'\','+xi+',0)">Remove</button></div></div>'}).join('')}
+window.findItem2=function(n4){var e=findEntry2(n4);if(e)flyToRack(e)};
+window.qtyChg=function(kind,idx,delta){var arr3=kind==='l'?MYLIST:CART;if(delta===0)arr3.splice(idx,1);else{arr3[idx].q+=delta;if(arr3[idx].q<1)arr3.splice(idx,1)}if(kind==='l'){saveList2();pList()}else pCheckout('c')};
+window.addToList2=function(n5){var f=MYLIST.filter(function(x){return x.n===n5})[0];if(f)f.q++;else MYLIST.push({n:n5,q:1});saveList2();ariaSay(n5+' added to your list ('+MYLIST.length+' item'+(MYLIST.length>1?'s':'')+').',[['My List',function(){stGo('list')}]])};
+window.addToCart2=function(n6){var f=CART.filter(function(x){return x.n===n6})[0];if(f)f.q++;else CART.push({n:n6,q:1});ariaSay(n6+' added to cart ('+CART.length+' item'+(CART.length>1?'s':'')+').',[['Checkout',function(){stGo('checkout')}]])};
+function pList(){panelOpen('My List',(MYLIST.length?iRows(MYLIST,'l')+'<div class="row-item"><b>Estimated Total</b><b style="color:var(--gold)">'+rupees2(tot(MYLIST))+'</b></div>':'<p>Your list is empty. Add products from Shop & Find.</p>')+'<p class="note">Saved locally in this browser only.</p>')}
+function tbHtml(arr4,cur2,fn2){return'<div style="display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap">'+arr4.map(function(x2){return'<button class="b2'+(cur2===x2[0]?' p':'')+'" onclick="'+fn2+'(\''+x2[0]+'\')">'+x2[1]+'</button>'}).join('')+'</div>'}
+function pCheckout(tab){var h3=tbHtml([['c','Cart'],['o','Orders'],['p','Payment']],tab,'pCheckout');
+  if(tab==='c')h3+=(CART.length?iRows(CART,'c')+'<div class="row-item"><b>Total</b><b style="color:var(--gold)">'+rupees2(tot(CART))+'</b></div><button class="b2 p" style="margin-top:10px" onclick="placeOrder2()">Place Order</button>':'<p>Cart is empty. Add products from Shop & Find.</p>')+'<p class="note">Demo cart held in session only. No server connected.</p>';
+  else if(tab==='o')h3+=(ORDERS.length?ORDERS.map(function(o2,oi){return'<div class="pcard" style="cursor:default;margin-bottom:8px"><b>'+o2.id+'</b> &bull; '+o2.status+' &bull; '+rupees2(o2.total)+'<br><small>'+o2.items+'</small>'+(o2.status==='Pending'?'<br><button class="b2 p" style="margin-top:6px" onclick="pCheckout(\'p\')">Pay Now</button> <button class="b2" onclick="cancelOrd('+oi+')">Cancel</button>':'')+'</div>'}).join(''):'<p>No orders yet.</p>');
+  else h3+='<h4>Payment Unavailable</h4><p class="note">Payment is not configured in this demo. Orders count as paid only after server-side verification.</p>';
+  panelOpen('Smart Checkout',h3)}
+window.pCheckout=pCheckout;
+window.placeOrder2=function(){if(!CART.length)return;ORDERS.unshift({id:'GM'+(1001+ORDERS.length),items:CART.map(function(x){return x.n+' x'+x.q}).join(', '),total:tot(CART),status:'Pending'});CART=[];pCheckout('o');ariaSay('Order placed! Payment is not configured in this demo.')};
+window.cancelOrd=function(i){ORDERS[i].status='Cancelled';pCheckout('o')};
+
+// TROLLEY
+var TRULES=['Use one trolley at a time and keep it with you at all times.','Do not overload the trolley or place children in it.','Scan all products at the trolley or at the checkout counter.','Use the lift, not the stairs, when moving between floors with a trolley.','Return the trolley to the trolley bay after checkout.','Follow all staff instructions during emergencies.'];
+function pTrolley(tab){var th2=tbHtml([['s','Scan'],['c','Control'],['r','Rules']],tab,'pTrolley');
+  if(tab==='s'){if(!inStore){th2+='<p><b>You are at home.</b> The trolley scanner is only available inside the store.</p><p class="note">Visit the store to use the smart trolley system.</p>';panelOpen('Trolley Bay',th2);return}th2+='<div style="border:1px solid rgba(230,196,110,.3);height:140px;display:grid;place-items:center;text-align:center;padding:12px;font-size:13px">Camera scan area<br><small>Trolley device service is not connected (demo)</small></div><input id="tq" placeholder="Or type trolley code e.g. TRL-01" style="margin-top:10px"><button class="b2 p" style="margin-top:8px;width:100%" onclick="tryScan2()">Activate Trolley</button><p class="note" id="tmsg" style="display:none"></p>'}
+  else if(tab==='c')th2+=(RULES_OK?'<h4>Your Smart Cart</h4><p class="note">Cart service unavailable: trolley device not connected (demo).</p>'+(CART.length?iRows(CART,'c')+'<div class="row-item"><b>Total</b><b>'+rupees2(tot(CART))+'</b></div>':'<p>No items in cart yet.</p>')+'<button class="b2 p" style="margin-top:10px" onclick="stGo(\'checkout\')">Go to Checkout</button>':'<p>Please read and accept the trolley rules first.</p><button class="b2 p" onclick="pTrolley(\'r\')">Read Rules</button>');
+  else th2+='<ol style="max-height:200px;overflow:auto;border:1px solid rgba(230,196,110,.2);padding:10px 10px 10px 26px;margin:0 0 10px">'+TRULES.map(function(r2){return'<li style="margin-bottom:7px">'+r2+'</li>'}).join('')+'</ol><label class="chk-row"><input type="checkbox" id="rac" '+(RULES_OK?'checked':'')+'> I have read and agree to the trolley rules</label><button class="b2 p" style="width:100%;margin-top:8px" onclick="accRules()">Accept &amp; Continue</button>';
+  panelOpen('Trolley Bay',th2)}
+window.pTrolley=pTrolley;window.tryScan2=function(){var tm=el('tmsg');if(tm){tm.style.display='block';tm.textContent='Trolley activation unavailable: device service not connected (demo).'}};
+window.accRules=function(){if(!el('rac').checked){ariaSay('Please tick the box to agree to the rules.');return}RULES_OK=1;ariaSay('Rules accepted. Cart control is now available.');pTrolley('c')};
+
+// HARDWARE
+var HW_DEVS=[['esp','ESP32 Controller'],['rfid','RFID Reader'],['qr','QR Scanner'],['wt','Weight Sensor'],['mot','Motor Driver']];
+function hwScreen(){writeScreen('store','HARDWARE SETTINGS',['Controller: '+HW2.id,'Poll interval: '+HW2.poll+' s'].concat(HW_DEVS.map(function(hd){return hd[1]+': '+(HW2[hd[0]]?'ON':'OFF')}),['Device service: not connected']))}
+function pHW(){panelOpen('Hardware Settings','<p class="note">Device service not connected. Settings are stored in this browser only.</p><label>Controller ID<input id="hid" value="'+HW2.id+'"></label><label>Poll Interval (seconds)<input id="hpl" type="number" min="1" max="60" value="'+HW2.poll+'"></label>'+HW_DEVS.map(function(hd2){return'<label class="chk-row"><input type="checkbox" id="h_'+hd2[0]+'" '+(HW2[hd2[0]]?'checked':'')+'>'+hd2[1]+'</label>'}).join('')+'<button class="b2 p" style="margin-top:10px;width:100%" onclick="saveHW()">Save Settings</button><p class="note" id="hm" style="display:none"></p>');hwScreen()}
+window.saveHW=function(){HW2.id=el('hid').value;HW2.poll=+el('hpl').value||5;HW_DEVS.forEach(function(hd3){HW2[hd3[0]]=el('h_'+hd3[0]).checked?1:0});hwScreen();var hm2=el('hm');hm2.style.display='block';hm2.textContent='Saved in this browser only (demo).'};
+
+// SIMULATOR
+var SIM_SC2={'Normal Shopping':['Item scanned','Added to cart','Moved to next aisle','Weight check OK'],'Low Battery':['Battery 18%','Speed reduced','Return to bay'],'Scan Error':['RFID read failed','Retry scan','Not recognised'],'Emergency':['E-stop pressed','Motor locked','Staff alerted']};
+function simScr(){writeScreen('dept','CART SIMULATOR',[SIM_ST.cart+' \u00B7 '+SIM_ST.sc,'Status: '+(SIM_ST.on?'RUNNING':'Idle')].concat(SIM_EV.slice(0,5),['Adapter: demo, not connected']))}
+function simTick2(){var SE2=SIM_SC2[SIM_ST.sc];SIM_EV.unshift(SIM_ST.cart+': '+SE2[SIM_ST.n++%SE2.length]+' (demo)');SIM_EV=SIM_EV.slice(0,20);cartP.position.x=-4.4+Math.sin(SIM_ST.n)*1.3;var sv=el('sevt2');if(sv)sv.innerHTML=SIM_EV.slice(0,8).map(function(s){return'<div class="row-item">'+s+'</div>'}).join('');simScr()}
+function pSim(tab){var sh=tbHtml([['s','Simulator'],['t','Terminal']],tab,'pSim');
+  if(tab==='t')sh+='<h4>Admin Terminal Unavailable</h4><p>This frontend does not include an admin terminal console.</p>';
+  else{sh+='<label>Cart<select id="sc1" onchange="simUpd()">'+['Cart 01','Cart 02','Cart 03','Cart 04'].map(function(sc4){return'<option'+(SIM_ST.cart===sc4?' selected':'')+'>'+sc4+'</option>'}).join('')+'</select></label><label>Scenario<select id="sc2" onchange="simUpd()">'+Object.keys(SIM_SC2).map(function(ss){return'<option'+(SIM_ST.sc===ss?' selected':'')+'>'+ss+'</option>'}).join('')+'</select></label><div style="display:flex;gap:6px;margin:10px 0"><button class="b2 p" onclick="simAct(\'s\')">Start</button><button class="b2" onclick="simAct(\'p\')">Pause</button><button class="b2" onclick="simAct(\'r\')">Reset</button></div><p class="note">Status: '+(SIM_ST.on?'Running':'Idle')+'. API: demo only.</p><h4>Recent Events</h4><div id="sevt2">'+SIM_EV.slice(0,8).map(function(sv2){return'<div class="row-item">'+sv2+'</div>'}).join('')+'</div>'}
+  panelOpen('Cart Simulator',sh);simScr()}
+window.pSim=pSim;window.simUpd=function(){SIM_ST.cart=el('sc1').value;SIM_ST.sc=el('sc2').value;simScr()};
+window.simAct=function(act){if(act==='s'&&!SIM_ST.on){SIM_ST.on=1;SIM_EV.unshift('Started: '+SIM_ST.cart);clearInterval(SIM_TM);SIM_TM=setInterval(simTick2,1800)}else if(act==='p'){SIM_ST.on=0;clearInterval(SIM_TM);SIM_EV.unshift('Paused')}else if(act==='r'){SIM_ST.on=0;clearInterval(SIM_TM);SIM_EV=[];SIM_ST.n=0;cartP.position.x=-4.4}pSim('s')};
+
+// ===== STORE MAP =====
+var MZ2=[[[-19.6,-7,-6.2,7,'#2c8a5a','Chocolates & Grocery'],[6.2,-7,19.6,7,'#2c8a5a','Household & Grocery'],[-19.6,-11.6,-6.2,-7.3,'#d98a1f','Fresh Produce'],[6.2,-11.6,19.6,-7.3,'#d98a1f','Fresh Produce'],[-4,-13.8,4,-11.4,'#b5651d','Bakery'],[-19.6,9.6,-5.5,13.6,'#2b6cb0','Smart Checkout'],[5.5,9.6,19.6,13.6,'#2b6cb0','Smart Checkout']],[[-19.6,-13.8,-6,7,'#c0392b','Shirts & Tops'],[6,-13.8,19.6,7,'#c0392b','Shirts & Tops'],[-6,-13.8,6,-7.2,'#c0392b',''],[-19.6,7.4,19.6,13.8,'#8a5a2b','Fashion & Sportswear']],[[-19.6,-13.8,-6,7,'#7a52a8','Blankets & Bedding'],[6,-13.8,19.6,7,'#2c6e49','Toys & Games'],[-6,-13.8,6,-7.2,'#1f78b4','Electronics'],[-19.6,7.4,19.6,13.8,'#8a5a2b','Lounge & Decor']]];
+var mapFloor=0,heatMode=0;
+function guessFloor2(){return Math.max(0,Math.min(2,Math.floor((cam.position.y+.5)/FH)))}
+function buildMap2D(fl8){if(fl8<0||fl8>2)return'';
+  var MX2=function(x){return(x+20)*10},MZ3=function(z){return(z+14)*10};
+  var svg='<svg viewBox="-5 -5 410 290" xmlns="http://www.w3.org/2000/svg" style="width:100%;border:1px solid rgba(230,196,110,.3)"><defs><pattern id="ht2" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="6" fill="rgba(230,196,110,.6)"/></pattern></defs><rect width="400" height="280" fill="#0c2218" stroke="#E6C46E" stroke-width="2"/>';
+  var tl='';
+  MZ2[fl8].forEach(function(mz2){svg+='<rect x="'+MX2(mz2[0])+'" y="'+MZ3(mz2[1])+'" width="'+(mz2[2]-mz2[0])*10+'" height="'+(mz2[3]-mz2[1])*10+'" fill="'+mz2[4]+'" fill-opacity=".35"/>';if(mz2[5])tl+='<text x="'+MX2((mz2[0]+mz2[2])/2)+'" y="'+(MZ3(mz2[3])-5)+'" fill="#f4efe0" font-size="9" text-anchor="middle" opacity=".85">'+mz2[5]+'</text>'});
+  svg+='<rect x="140" y="70" width="120" height="140" fill="#07120e" stroke="#E6C46E" stroke-dasharray="5 3"/>';
+  [3.4,-5.8].forEach(function(sx){svg+='<rect x="'+MX2(sx)+'" y="70" width="24" height="140" fill="url(#ht2)" stroke="#E6C46E"/>'});
+  svg+='<rect x="188" y="70" width="24" height="22" fill="#E6C46E"/>';
+  RACKS2.forEach(function(mrk2,mi2){if(mrk2.f!==fl8)return;var mw2=(mrk2.rot?mrk2.d:mrk2.w)*10,mh3=(mrk2.rot?mrk2.w:mrk2.d)*10;svg+='<rect class="rk" onclick="pickRack2('+mi2+')" x="'+(MX2(mrk2.x)-mw2/2)+'" y="'+(MZ3(mrk2.z)-mh3/2)+'" width="'+mw2+'" height="'+mh3+'" fill="'+(SEL&&SEL.rk===mrk2?'#35e0a0':rColor(mrk2))+'" stroke="#0c2218" stroke-width=".5"/>'});
+  RSEGS.forEach(function(rseg){if(rseg.f===fl8)svg+='<polyline points="'+rseg.pts.map(function(rp4){return MX2(rp4[0])+','+MZ3(rp4[1])}).join(' ')+'" fill="none" stroke="#E6C46E" stroke-width="3" stroke-dasharray="8 4" stroke-linecap="round"/>'});
+  if(SEL&&SEL.rk.f===fl8)svg+='<circle cx="'+MX2(SEL.rk.x)+'" cy="'+MZ3(SEL.rk.z)+'" r="8" fill="#35e0a0" stroke="#0c2218" stroke-width="2"/>';
+  tl+='<text x="200" y="138" fill="#f4efe0" font-size="10" text-anchor="middle" opacity=".7">Atrium</text>';
+  tl+='<text x="200" y="84" fill="#0a1e14" font-size="9" text-anchor="middle" font-weight="700">Lift</text>';
+  tl+='<text x="200" y="272" fill="#E6C46E" font-size="10" text-anchor="middle" font-weight="700">ENTRANCE</text>';
+  if(authed&&guessFloor2()===fl8)tl+='<circle cx="'+MX2(cam.position.x)+'" cy="'+MZ3(Math.max(-14,Math.min(14,cam.position.z)))+'" r="6" fill="#ff6b4a" stroke="#fff" stroke-width="2"/>';
+  return svg+tl+'</svg>'}
+function rebuildMapUI(){var stHtml='',tbHtml2='',tops=[225,118,10];
+  [2,1,0].forEach(function(mf){stHtml+='<div class="fp'+(mf===mapFloor?' a':'')+'" style="top:'+tops[mf]+'px" onclick="setMapF('+mf+')">'+buildMap2D(mf)+'</div><div class="fl-lbl" style="top:'+(tops[mf]+30)+'px">'+FL_NAMES[mf]+'<small>'+CAT_NAMES[mf].split(',')[0]+'</small></div>'});
+  el('stk').innerHTML=stHtml;
+  [0,1,2].forEach(function(mf2){tbHtml2+='<button class="'+(mf2===mapFloor?'a':'')+'" onclick="setMapF('+mf2+')">'+FL_NAMES[mf2]+'</button>'});
+  tbHtml2+='<button class="'+(heatMode===1?'a':'')+'" onclick="hmT(1)">Stock Heat</button>';
+  tbHtml2+='<button class="'+(heatMode===2?'a':'')+'" onclick="hmT(2)">Emergency</button>';
+  el('map-tabs').innerHTML=tbHtml2;el('pn').innerHTML=buildMap2D(mapFloor)}
+window.setMapF=function(f){mapFloor=f;rebuildMapUI()};
+window.hmT=function(m){heatMode=heatMode===m?0:m;rebuildMapUI()};
+window.mapToggle=mapToggle;
+function mapToggle(on){if(on&&!authed){goTo('door');return}if(on){mapFloor=guessFloor2();rebuildMapUI()}el('mp').classList.toggle('on',!!on)}
+window.pickRack2=function(idx){mapToggle(0);var it=RACKS2[idx].items[0][0]||{};showProductSpec({n:it.n||'Rack '+RACKS2[idx].lbl,c:it.c||'',k:it.k||'',rk:RACKS2[idx],face:0})};
+
+// ===== EVENTS =====
+addEventListener('keydown',function(kev3){if(kev3.key==='Escape'){mapToggle(0);panelClose()}});
+addEventListener('pointermove',function(pev){mX=pev.clientX/innerWidth-.5;mY=pev.clientY/innerHeight-.5});
+addEventListener('resize',function(){cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+
+// ===== MAIN RENDER LOOP =====
+function mainLoop(){requestAnimationFrame(mainLoop);
+  var delta=Math.min(clock2.getDelta(),.05),T=clock2.elapsedTime;
+  // camera tween
+  if(camT2<1)camT2=Math.min(1,camT2+delta/camDur2);
+  var e=ease2(camT2);
+  camCur.lerpVectors(camFrom,camTo,e);camLook.lerpVectors(camLookFrom,camLookTo,e);
+  cam.fov=camFovA+(camFovB-camFovA)*e;cam.updateProjectionMatrix();
+  cam.position.copy(camCur);
+  // gentle drift
+  if(!rmEl.checked&&camKey!=='door'){
+    cam.position.x+=mX*.55;cam.position.y-=mY*.32;
+    if(camKey==='hero'){cam.position.x+=Math.sin(T*.14)*3.8;cam.position.y+=Math.sin(T*.2)*.85}
+    else if(camKey==='atrium'){cam.position.x+=Math.sin(T*.28)*4.2;cam.position.y+=Math.sin(T*.18)*.65}
+    else if(curFloor>-1&&camKey!=='rack'&&camKey!=='lobby'){if(viewAngle%2)cam.position.z+=Math.sin(T*.24)*1.3;else cam.position.x+=Math.sin(T*.24)*1.3}}
+  cam.lookAt(camLook);
+  // show login when reaching door
+  if(camKey==='door'&&!authed&&camT2>=1&&!camShown&&doorOpen<.05){camShown=true;el('login').classList.add('on');setTimeout(function(){el('nm').focus({preventScroll:true})},800)}
+  // door tween
+  doorOpen+=(doorTarget-doorOpen)*(rmEl.checked?1:.048);
+  dL.position.x=-doorOpen*3.08;dR.position.x=doorOpen*3.08;
+  // lift moves only when requested
+  updateLift(delta);
+  // highlight pulse
+  if(hlGrp.visible){hlBeam2.material.opacity=.35+.2*Math.sin(T*3.2);hlBox2.material.opacity=.12+.06*Math.sin(T*3.2)}
+  // route dot
+  if(RPTS.length>1){var dd=(T*4.2)%RLEN,rdi=1;while(rdi<RDISTS.length-1&&RDISTS[rdi]<dd)rdi++;var ru=(dd-RDISTS[rdi-1])/Math.max(.001,RDISTS[rdi]-RDISTS[rdi-1]);routeDot.position.lerpVectors(RPTS[rdi-1],RPTS[rdi],ru);routeDot.position.y+=.22;routeDot.scale.setScalar(1+.28*Math.sin(T*8))}
+  // cart bob
+  cartP.position.y=.08+Math.sin(T)*.01;
+  renderer.render(scene,cam)}
+
+// ===== INIT =====
+refreshOffice();setWho();goTo('hero');mainLoop();
+})();
+</script>
+</body>
+</html>
