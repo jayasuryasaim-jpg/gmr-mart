@@ -280,7 +280,6 @@ nav{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-be
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){
-try{
 'use strict';
 var TH=THREE,W=40,D=28,VW=12,VD=14,FH=6;
 // --- HELPERS ---
@@ -731,15 +730,9 @@ function tryGo(k){authed?goTo(k):goTo('door')}
 function signOut(){authed=false;userRole='customer';refreshOffice();panelClose();hlGrp.visible=false;clearRoute();userName='';setWho();goTo('hero')}
 window.goTo=goTo;window.tryGo=tryGo;
 window.sg=function(){authed?signOut():goTo('door')};
-window.skipIntro=function(){authed=true;userName='Guest';userRole='customer';inStore=true;refreshOffice();setWho();goTo('lobby');setTimeout(function(){
-try{goTo('atrium')},rmEl.checked?100:5800);setTimeout(function(){
-try{el('ai').classList.add('on');ariaWelcome()},rmEl.checked?200:6200)};
-window.doLogin=function(ev){ev.preventDefault();var n=el('nm').value.trim();if(!n)return;userName=n.replace(/\b\w/g,function(c){return c.toUpperCase()});authed=true;userRole=el('adm').checked?'admin':'customer';refreshOffice();el('login').classList.remove('on');el('wn').textContent='Welcome, '+userName;el('welcome').classList.add('on');setWho();setTimeout(function(){
-try{el('welcome').classList.remove('on')},2800);setTimeout(function(){
-try{el('loc-modal').classList.add('on')},2200)};
-window.setLocation=function(loc){inStore=loc==='store';el('loc-modal').classList.remove('on');doorTarget=1;goTo('lobby');setTimeout(function(){
-try{goTo('atrium')},rmEl.checked?100:5600);setTimeout(function(){
-try{el('ai').classList.add('on');ariaWelcome()},rmEl.checked?200:6000)};
+window.skipIntro=function(){authed=true;userName='Guest';userRole='customer';inStore=true;refreshOffice();setWho();goTo('lobby');setTimeout(function(){goTo('atrium')},rmEl.checked?100:5800);setTimeout(function(){el('ai').classList.add('on');ariaWelcome()},rmEl.checked?200:6200)};
+window.doLogin=function(ev){ev.preventDefault();var n=el('nm').value.trim();if(!n)return;userName=n.replace(/\b\w/g,function(c){return c.toUpperCase()});authed=true;userRole=el('adm').checked?'admin':'customer';refreshOffice();el('login').classList.remove('on');el('wn').textContent='Welcome, '+userName;el('welcome').classList.add('on');setWho();setTimeout(function(){el('welcome').classList.remove('on')},2800);setTimeout(function(){el('loc-modal').classList.add('on')},2200)};
+window.setLocation=function(loc){inStore=loc==='store';el('loc-modal').classList.remove('on');doorTarget=1;goTo('lobby');setTimeout(function(){goTo('atrium')},rmEl.checked?100:5600);setTimeout(function(){el('ai').classList.add('on');ariaWelcome()},rmEl.checked?200:6000)};
 window.regToggle=function(){regMode=!regMode;el('login').querySelector('h2').textContent=regMode?'Create Account':'Welcome';el('login').querySelector('button.btn').textContent=regMode?'Register':'Sign In & Enter';el('regl').textContent=regMode?'Already have an account? Sign In':'New customer? Create an account'};
 function setWho(){el('who').textContent=authed?userName+(userRole==='admin'?' (Admin)':''):'';el('si-btn').textContent=authed?'Sign Out':'Sign In'}
 
@@ -756,8 +749,7 @@ function flyToRack(entry3){if(!authed)return;var rk7=entry3.rk,ra4=rk7.rot+(entr
   FINFO.rack=[entry3.n,FL_NAMES[rk7.f]+' \u00B7 '+CAT_NAMES[rk7.f]+' \u00B7 Rack '+rk7.lbl];
   el('res').classList.remove('on');
   if(rk7.f>0)requestLift(rk7.f);
-  if(curFloor!==rk7.f){goTo(['ground','first','second'][rk7.f]);setTimeout(function(){
-try{goTo('rack')},rmEl.checked?100:2400)}else goTo('rack')}
+  if(curFloor!==rk7.f){goTo(['ground','first','second'][rk7.f]);setTimeout(function(){goTo('rack')},rmEl.checked?100:2400)}else goTo('rack')}
 
 window.clearRoute=function(){hlGrp.visible=false;clearRoute();SEL=SEL_ENTRY=null;goTo(['ground','first','second'][curFloor]||'atrium')};
 
@@ -774,8 +766,7 @@ qEl.addEventListener('keydown',function(kev){if(kev.key==='Enter'&&SEARCH_RES[0]
 // ===== ARIA GUIDE =====
 var ariaTimer=0;
 function ariaSay(t5,chips2){var ap=el('aim');clearInterval(ariaTimer);var ai3=0;
-  if(rmEl.checked){ap.textContent=t5}else{ap.textContent='';ariaTimer=setInterval(function(){
-try{ai3+=3;ap.textContent=t5.slice(0,ai3);if(ai3>=t5.length)clearInterval(ariaTimer)},20)}
+  if(rmEl.checked){ap.textContent=t5}else{ap.textContent='';ariaTimer=setInterval(function(){ai3+=3;ap.textContent=t5.slice(0,ai3);if(ai3>=t5.length)clearInterval(ariaTimer)},20)}
   var ac=el('chips');ac.innerHTML='';(chips2||[]).forEach(function(chip2){var cb=document.createElement('button');cb.textContent=chip2[0];cb.onclick=chip2[1];ac.appendChild(cb)})}
 function ariaWelcome(){ariaSay('Welcome, '+userName+'! I am Aria, your personal mart guide.\n\nHere is what we have across 3 floors:\n\u2022 Ground Floor: Chocolates, household items, fresh produce & bakery\n\u2022 First Floor: Clothing, shirts, sportswear & fashion\n\u2022 Second Floor: Blankets, toys, games & electronics\n\nSearch any product above, or ask me below!',[['Ground Floor',function(){goTo('ground')}],['First Floor',function(){goTo('first')}],['Second Floor',function(){goTo('second')}],['Services',dirOpen]])}
 function ariaOnNav(key4){var fi8=['ground','first','second'].indexOf(key4);
@@ -826,11 +817,8 @@ function stGo(id){if(!authed){goTo('door');return}
   if(isAdm){var srk={f:2,x:stn.x,z:-10.6,y0:2*FH+.15,rot:0,zn:'O',lbl:stn.t,w:2,d:1,items:[[],[]]};buildRoute({n:stn.t,rk:srk,face:0},curFloor===2?'lift':'door')}else clearRoute();
   var dl2=rmEl.checked?100:2500;
   function runNav(){curFloor=stn.f;
-    if(isAdm){var sxs2=stn.x<0?-1:1,sy02=2*FH+.15;WP.st={p:[stn.x+sxs2*5.4,sy02+2.8,-5.8],l:[stn.x,sy02+1.2,-12],v:46};goTo('st');setTimeout(function(){
-try{WP.st={p:[stn.x+sxs2*.4,sy02+1.5,-9.5],l:[stn.x,sy02+.95,-13.1],v:32};goTo('st');setTimeout(function(){
-try{stPanel(id)},dl2)},dl2)}
-    else{WP.st={p:[stn.x+Math.sin(stn.r)*4.3,2,stn.z+Math.cos(stn.r)*4.3],l:[stn.x,1.3,stn.z],v:46};goTo('st');setTimeout(function(){
-try{stPanel(id)},rmEl.checked?100:2300)}}
+    if(isAdm){var sxs2=stn.x<0?-1:1,sy02=2*FH+.15;WP.st={p:[stn.x+sxs2*5.4,sy02+2.8,-5.8],l:[stn.x,sy02+1.2,-12],v:46};goTo('st');setTimeout(function(){WP.st={p:[stn.x+sxs2*.4,sy02+1.5,-9.5],l:[stn.x,sy02+.95,-13.1],v:32};goTo('st');setTimeout(function(){stPanel(id)},dl2)},dl2)}
+    else{WP.st={p:[stn.x+Math.sin(stn.r)*4.3,2,stn.z+Math.cos(stn.r)*4.3],l:[stn.x,1.3,stn.z],v:46};goTo('st');setTimeout(function(){stPanel(id)},rmEl.checked?100:2300)}}
   if(curFloor!==stn.f){if(stn.f>0)requestLift(stn.f);goTo(['ground','first','second'][stn.f]);setTimeout(runNav,rmEl.checked?100:2500)}else runNav()}
 function stPanel(id2){var stn2=STATIONS.filter(function(sq2){return sq2.id===id2})[0];ariaSay(stn2.a);
   if(id2==='welcome')pWelcome();else if(id2==='shop')panelShop();else if(id2==='guide'){panelClose();mapToggle(1)}else if(id2==='list')pList();else if(id2==='trolley')pTrolley('s');else if(id2==='checkout')pCheckout('c');else if(id2==='store')pHW();else if(id2==='dept')pSim('s')}
@@ -1000,8 +988,7 @@ function mainLoop(){requestAnimationFrame(mainLoop);
     else if(curFloor>-1&&camKey!=='rack'&&camKey!=='lobby'){if(viewAngle%2)cam.position.z+=Math.sin(T*.24)*1.3;else cam.position.x+=Math.sin(T*.24)*1.3}}
   cam.lookAt(camLook);
   // show login when reaching door
-  if(camKey==='door'&&!authed&&camT2>=1&&!camShown&&doorOpen<.05){camShown=true;el('login').classList.add('on');setTimeout(function(){
-try{el('nm').focus({preventScroll:true})},800)}
+  if(camKey==='door'&&!authed&&camT2>=1&&!camShown&&doorOpen<.05){camShown=true;el('login').classList.add('on');setTimeout(function(){el('nm').focus({preventScroll:true})},800)}
   // door tween
   doorOpen+=(doorTarget-doorOpen)*(rmEl.checked?1:.048);
   dL.position.x=-doorOpen*3.08;dR.position.x=doorOpen*3.08;
@@ -1017,13 +1004,6 @@ try{el('nm').focus({preventScroll:true})},800)}
 
 // ===== INIT =====
 refreshOffice();setWho();goTo('hero');mainLoop();
-}catch(err){
-  var eb=document.createElement('div');
-  eb.style.cssText='position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#07101f;color:#E6C46E;font-family:Manrope,sans-serif;z-index:9999;padding:32px;text-align:center';
-  eb.innerHTML='<h2 style="font-family:Cormorant Garamond,serif;font-size:2rem;margin:0 0 16px">3D Scene Error</h2><p style="font-size:13px;color:#f4efe0;max-width:500px;line-height:1.6">'+err.message+'</p><pre style="font-size:11px;color:#e6c46e88;margin-top:12px;max-width:600px;overflow:auto;text-align:left">'+err.stack+'</pre>';
-  document.body.appendChild(eb);
-  console.error('[GMR 3D]',err);
-}
 })();
 </script>
 </body>
