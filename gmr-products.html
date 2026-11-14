@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Products · GMR Smart Mart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --bg:   #f1f5fc;
+  --sf:   #ffffff;
+  --ink:  #0b1f4f;
+  --mut:  #5b6b91;
+  --ln:   #dbe3f3;
+  --ac:   #2563e0;
+  --grn:  #14532d;
+  --nav:  #0a1a45;
+  --s1:   #e4e9f5;
+  --s2:   #aab5cf;
+  --btn:  #0b1f4f;
+  --bi:   #ffffff;
+  --ts:   70%;
+  --t1:   97%;
+  --t2:   90%;
+  --se:   'Playfair Display', Georgia, serif;
+  --sn:   'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: light;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:  #060d22; --sf:  #0e1a3b; --ink: #eaf0ff; --mut: #8fa0cc;
+    --ln:  #1e2f5c; --ac:  #6aa0ff; --grn: #4ade80; --nav: #030816;
+    --s1:  #2f3f6e; --s2:  #1a2750; --btn: #6aa0ff; --bi:  #04112e;
+    --ts: 35%; --t1: 22%; --t2: 15%; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:  #060d22; --sf:  #0e1a3b; --ink: #eaf0ff; --mut: #8fa0cc;
+  --ln:  #1e2f5c; --ac:  #6aa0ff; --grn: #4ade80; --nav: #030816;
+  --s1:  #2f3f6e; --s2:  #1a2750; --btn: #6aa0ff; --bi:  #04112e;
+  --ts: 35%; --t1: 22%; --t2: 15%; color-scheme: dark;
+}
+
+html { scroll-padding-top: calc(env(safe-area-inset-top,0px) + 150px); scroll-behavior: smooth; }
+*, *::before, *::after { box-sizing: inherit; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 15px/1.5 var(--sn);
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px); background: var(--sf); z-index: 80;
+}
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--ac); outline-offset: 3px; }
+.i {
+  width: 1.2em; height: 1.2em; stroke: currentColor; fill: none;
+  stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none;
+}
+
+::view-transition-group(hero) { animation-duration: .7s; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .4s; }
+
+/* ═══════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════ */
+.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 40;
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  align-items: center; gap: 16px; height: 72px;
+  padding: 0 clamp(16px, 3vw, 44px);
+  background: color-mix(in srgb, var(--sf) 88%, transparent);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--ln);
+}
+.brand {
+  display: flex; align-items: center; gap: 12px;
+  text-decoration: none; color: var(--ink);
+  font: 500 24px/1 var(--se);
+}
+.brand-icon {
+  display: grid; place-items: center;
+  width: 44px; height: 44px; border-radius: 13px;
+  background: linear-gradient(145deg, #166534, #0c3b24);
+  color: #fff; box-shadow: 0 0 0 2px var(--sf), 0 0 0 3px #166534;
+}
+.brand em { font-weight: 600; color: var(--grn); }
+
+.nav {
+  display: flex; gap: 3px; padding: 5px;
+  border-radius: 99px; background: var(--sf); border: 1px solid var(--ln);
+}
+.nav a, .nav button {
+  display: flex; align-items: center; gap: 8px;
+  height: 38px; padding: 0 16px;
+  border: 0; border-radius: 99px; background: none;
+  color: var(--mut); font: 500 14px/1 var(--sn);
+  text-decoration: none; white-space: nowrap;
+  transition: background .3s, color .3s;
+}
+.nav a:hover, .nav button:hover { background: var(--bg); color: var(--ink); }
+.nav .on {
+  background: #14532d; color: #fff; font-weight: 600;
+}
+.nav .on:hover { background: #14532d; color: #fff; }
+.badge {
+  min-width: 19px; height: 19px; padding: 0 5px;
+  border-radius: 99px; background: var(--ac);
+  color: #fff; font: 700 11px/19px var(--sn);
+  text-align: center; display: none;
+}
+.badge.show { display: block; }
+.sign-in {
+  justify-self: end; height: 42px; padding: 0 22px;
+  display: grid; place-items: center;
+  border: 1.5px solid var(--grn); border-radius: 99px;
+  color: var(--grn); font: 600 14px/1 var(--sn);
+  text-decoration: none; transition: background .3s, color .3s;
+}
+.sign-in:hover { background: var(--grn); color: var(--sf); }
+
+/* ── Ticker strip ── */
+.ticker {
+  display: flex; justify-content: center; gap: clamp(14px, 3vw, 46px);
+  flex-wrap: wrap; padding: 13px 16px;
+  background: var(--nav); color: #dfe8ff;
+  font: 600 12px/1 var(--sn); letter-spacing: .2em; text-transform: uppercase;
+}
+.ticker span::before {
+  content: "◆"; margin-right: clamp(14px, 3vw, 46px);
+  color: #5c8cf0; font-size: 8px; vertical-align: 2px;
+}
+.ticker span:first-child::before { display: none; }
+
+/* ═══════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════ */
+.hero {
+  position: relative; overflow: hidden;
+  padding: 64px 20px 54px; text-align: center; isolation: isolate;
+}
+.hero-bg {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  z-index: -1; color: var(--ac); opacity: .16;
+  -webkit-mask-image: linear-gradient(#000 40%, transparent);
+  mask-image: linear-gradient(#000 40%, transparent);
+}
+.hero h1 {
+  margin: 0 auto; max-width: 15ch;
+  font: 800 clamp(42px, 6.6vw, 92px)/.98 var(--se);
+  letter-spacing: -.025em;
+}
+.hero h1 em {
+  display: block; font-weight: 700;
+  position: relative; width: max-content; margin: 0 auto;
+}
+.hero h1 em svg {
+  position: absolute; left: 0; right: 0; bottom: -14px;
+  width: 100%; height: 16px; color: var(--ac);
+}
+.hero p {
+  margin: 30px auto 28px; max-width: 52ch;
+  color: var(--mut); font-size: 17px;
+}
+
+/* search bar */
+.search-bar {
+  display: flex; align-items: center; gap: 12px;
+  max-width: 620px; height: 58px;
+  margin: 0 auto; padding: 0 12px 0 22px;
+  border-radius: 99px; background: var(--sf);
+  border: 1.5px solid var(--ln);
+  box-shadow: 0 24px 40px -28px rgba(37,99,224,.5);
+  transition: border-color .3s, box-shadow .3s;
+}
+.search-bar:focus-within {
+  border-color: var(--ac);
+  box-shadow: 0 0 0 5px rgba(37,99,224,.15), 0 24px 40px -28px rgba(37,99,224,.5);
+}
+.search-bar .i { color: var(--ac); }
+.search-bar input {
+  flex: 1; min-width: 0; border: 0; outline: 0;
+  background: none; font-size: 16px;
+}
+.search-clear {
+  display: none; width: 38px; height: 38px; place-items: center;
+  border: 0; border-radius: 50%; background: var(--bg); color: var(--mut);
+}
+.search-bar.has-query .search-clear { display: grid; }
+
+/* ═══════════════════════════════════════════
+   FILTER BAR
+═══════════════════════════════════════════ */
+.filter-bar {
+  position: sticky;
+  top: calc(env(safe-area-inset-top, 0px) + 72px);
+  z-index: 30;
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-block: 1px solid var(--ln);
+}
+.filter-inner {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px;
+  max-width: 1360px; margin: 0 auto;
+  padding: 12px clamp(16px, 3vw, 40px);
+}
+.seg {
+  display: flex; padding: 4px; gap: 2px;
+  border-radius: 99px; background: var(--sf); border: 1px solid var(--ln);
+}
+.seg button {
+  height: 34px; padding: 0 16px; border: 0; border-radius: 99px;
+  background: none; font: 500 13.5px/1 var(--sn); color: var(--mut);
+  transition: all .3s;
+}
+.seg button[aria-pressed="true"] { background: var(--btn); color: var(--bi); font-weight: 600; }
+.cats {
+  display: flex; gap: 6px; flex: 1 1 300px;
+  overflow-x: auto; scrollbar-width: none; min-width: 0;
+}
+.cats::-webkit-scrollbar { display: none; }
+.cats button {
+  flex: none; height: 34px; padding: 0 14px;
+  border: 1px solid var(--ln); border-radius: 99px;
+  background: var(--sf); font: 500 13px/1 var(--sn); color: var(--mut);
+  transition: all .25s;
+}
+.cats button:hover { border-color: var(--ac); color: var(--ink); }
+.cats button[aria-pressed="true"] {
+  border-color: var(--ac); color: var(--ac); font-weight: 600;
+  background: color-mix(in srgb, var(--ac) 10%, var(--sf));
+}
+.sort-sel {
+  height: 38px; padding: 0 14px;
+  border: 1px solid var(--ln); border-radius: 99px;
+  background: var(--sf); font: 500 13.5px/1 var(--sn);
+}
+.offers-btn {
+  display: flex; align-items: center; gap: 7px;
+  height: 38px; padding: 0 14px;
+  border: 1px solid var(--ln); border-radius: 99px;
+  background: var(--sf); font: 500 13.5px/1 var(--sn);
+}
+.offers-btn[aria-pressed="true"] {
+  background: var(--ac); border-color: var(--ac);
+  color: #fff; font-weight: 600;
+}
+
+/* result count */
+.result-count {
+  width: 100%; max-width: 1360px; margin: 0 auto;
+  padding: 22px clamp(16px, 3vw, 40px) 0;
+  color: var(--mut); font-size: 13.5px;
+}
+
+/* ═══════════════════════════════════════════
+   GRID  (blueprint bg)
+═══════════════════════════════════════════ */
+.main { position: relative; isolation: isolate; }
+.main::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background-image:
+    linear-gradient(var(--ln) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ln) 1px, transparent 1px);
+  background-size: 76px 76px; opacity: .5;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 0, #000, transparent 80%);
+  mask-image: radial-gradient(ellipse at 50% 0, #000, transparent 80%);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(236px, 1fr));
+  gap: 28px 22px; max-width: 1360px; margin: 0 auto;
+  padding: 18px clamp(16px, 3vw, 40px) 100px;
+}
+
+/* ═══════════════════════════════════════════
+   PRICE-TAG CARD
+═══════════════════════════════════════════ */
+.card-wrap {
+  filter:
+    drop-shadow(0 1px 0 var(--ln))
+    drop-shadow(0 16px 18px rgba(11,31,79,.1));
+  transition: transform .5s cubic-bezier(.2,.7,.2,1), filter .5s;
+}
+.card-wrap:hover, .card-wrap:focus-within {
+  transform: translateY(-7px);
+  filter:
+    drop-shadow(0 1px 0 var(--ac))
+    drop-shadow(0 26px 28px rgba(37,99,224,.25));
+}
+.fresh .card-wrap { animation: card-rise .7s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--k) * 35ms); }
+@keyframes card-rise { from { opacity: 0; transform: translateY(22px); } }
+
+.card {
+  --cut: 214px;
+  position: relative; display: flex; flex-direction: column;
+  border-radius: 20px; background: var(--sf); cursor: pointer;
+  -webkit-mask:
+    radial-gradient(circle 10px at 0 var(--cut), #0000 97%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle 10px at 100% var(--cut), #0000 97%, #000) right / 51% 100% no-repeat;
+  mask:
+    radial-gradient(circle 10px at 0 var(--cut), #0000 97%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle 10px at 100% var(--cut), #0000 97%, #000) right / 51% 100% no-repeat;
+}
+
+/* product stage */
+.stage {
+  --h: 210;
+  position: relative; height: 192px;
+  margin: 10px 10px 0; border-radius: 12px 12px 8px 8px;
+  overflow: hidden; display: grid; place-items: center;
+  background: radial-gradient(
+    circle at 50% 36%,
+    hsl(var(--h) var(--ts) calc(var(--t1) + 1%)),
+    hsl(var(--h) calc(var(--ts) - 15%) var(--t2))
+  );
+}
+.stage::before {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(circle, hsl(var(--h) 40% 50% / .28) 1.2px, transparent 1.7px) 0 0 / 16px 16px;
+  -webkit-mask-image: linear-gradient(#000, transparent 88%);
+  mask-image: linear-gradient(#000, transparent 88%);
+}
+.shelf-line {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 16px;
+  background: linear-gradient(var(--s1), var(--s2));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6);
+}
+.emoji {
+  position: relative; margin-bottom: 16px;
+  font-size: 86px; line-height: 1;
+  filter: drop-shadow(0 14px 8px rgba(11,31,79,.28));
+  transition: transform .55s cubic-bezier(.2,.7,.2,1);
+}
+.card-wrap:hover .emoji, .card-wrap:focus-within .emoji {
+  transform: translateY(-8px) rotate(-5deg) scale(1.07);
+}
+
+/* ribbons / buttons */
+.rib {
+  position: absolute; top: 10px; left: 10px; z-index: 2;
+  padding: 6px 10px; border-radius: 7px;
+  background: var(--ac); color: #fff; font: 700 11.5px/1 var(--sn);
+}
+.heart-btn {
+  position: absolute; top: 8px; right: 8px; z-index: 2;
+  width: 34px; height: 34px; display: grid; place-items: center;
+  border: 0; border-radius: 50%;
+  background: var(--sf); color: var(--mut);
+  box-shadow: 0 4px 10px -4px rgba(11,31,79,.4);
+  transition: transform .3s, color .3s;
+}
+.heart-btn:hover { transform: scale(1.12); color: #d6336c; }
+.heart-btn.saved { color: #d6336c; }
+.heart-btn.saved .i { fill: currentColor; }
+
+/* tag area (below tear line) */
+.tag {
+  margin-top: 12px; padding: 15px 16px 16px;
+  border-top: 1.5px dashed var(--ln);
+  display: flex; flex-direction: column; flex: 1;
+}
+.tag small { font: 700 12px/1 var(--sn); color: var(--ac); }
+.tag h3 {
+  margin: 6px 0 10px; min-height: 2.6em;
+  font: 600 15px/1.3 var(--sn);
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+.price { display: flex; align-items: baseline; gap: 9px; }
+.price b { font: 700 30px/1 var(--se); }
+.price s { color: var(--mut); font-size: 13px; }
+
+.tag-foot {
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 8px; margin-top: 14px;
+}
+.barcode { height: 26px; width: auto; color: var(--ink); opacity: .78; }
+.aisle-pill {
+  padding: 5px 10px; border-radius: 99px;
+  background: var(--bg); font: 600 11.5px/1 var(--sn);
+  color: var(--mut); white-space: nowrap;
+}
+
+/* empty state */
+.empty {
+  grid-column: 1 / -1; padding: 80px 10px;
+  text-align: center; color: var(--mut);
+}
+.empty b { display: block; font: 700 34px/1.1 var(--se); color: var(--ink); margin-bottom: 8px; }
+.empty button {
+  margin-top: 16px; height: 44px; padding: 0 24px; border: 0;
+  border-radius: 99px; background: var(--btn); color: var(--bi); font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════
+   DETAIL OVERLAY
+═══════════════════════════════════════════ */
+.detail-overlay {
+  position: fixed; inset: 0; z-index: 60;
+  overflow: auto; overscroll-behavior: contain;
+  background: var(--bg);
+  padding-top: env(safe-area-inset-top, 0px);
+  display: none;
+}
+.detail-overlay.open { display: block; }
+
+.detail-toolbar {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px clamp(16px, 3vw, 44px);
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.back-btn {
+  display: flex; align-items: center; gap: 8px;
+  height: 42px; padding: 0 18px 0 12px;
+  border: 1px solid var(--ln); border-radius: 99px;
+  background: var(--sf); font-weight: 600; font-size: 14px;
+}
+.back-btn:hover { border-color: var(--ac); }
+.pager {
+  margin-left: auto; display: flex; align-items: center;
+  gap: 10px; color: var(--mut); font-size: 13.5px;
+}
+.pager button {
+  width: 42px; height: 42px; display: grid; place-items: center;
+  border: 1px solid var(--ln); border-radius: 50%; background: var(--sf);
+}
+.pager button:hover { border-color: var(--ac); color: var(--ac); }
+
+.detail-grid {
+  display: grid; grid-template-columns: minmax(0,1.05fr) minmax(0,1fr);
+  gap: clamp(24px, 4vw, 64px); max-width: 1280px; margin: 0 auto;
+  padding: 10px clamp(16px, 3vw, 44px) 90px;
+}
+.detail-stage {
+  --h: 210;
+  position: sticky; top: 84px; align-self: start;
+  height: min(74vh, 620px); border-radius: 28px; overflow: hidden;
+  display: grid; place-items: center;
+  background: radial-gradient(
+    circle at 50% 36%,
+    hsl(var(--h) var(--ts) calc(var(--t1) + 1%)),
+    hsl(var(--h) calc(var(--ts) - 15%) var(--t2))
+  );
+  box-shadow: 0 40px 70px -40px rgba(11,31,79,.45);
+}
+.detail-stage::before {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(circle, hsl(var(--h) 40% 50% / .28) 1.6px, transparent 2.2px) 0 0 / 26px 26px;
+  -webkit-mask-image: linear-gradient(#000, transparent 85%);
+  mask-image: linear-gradient(#000, transparent 85%);
+}
+.detail-stage .shelf-line { height: 30px; }
+.detail-stage .emoji {
+  font-size: clamp(150px, 20vw, 260px); margin-bottom: 30px;
+  animation: float 5s ease-in-out infinite;
+}
+.detail-stage:hover .emoji { transform: none; }
+@keyframes float { 50% { transform: translateY(-10px) rotate(-2deg); } }
+.detail-stage .rib { top: 20px; left: 20px; font-size: 14px; padding: 9px 14px; border-radius: 9px; }
+.location-chip {
+  position: absolute; left: 20px; bottom: 46px;
+  padding: 9px 14px; border-radius: 12px;
+  background: var(--sf); box-shadow: 0 10px 20px -10px rgba(11,31,79,.5);
+  font: 600 13px/1.2 var(--sn);
+}
+.location-chip small { display: block; color: var(--mut); font-weight: 500; font-size: 11.5px; }
+
+/* detail info */
+.rv { animation: card-rise .7s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--d) * 70ms + 200ms); }
+.crumb { display: flex; align-items: center; gap: 6px; color: var(--mut); font-size: 13.5px; }
+.crumb .i { width: 14px; height: 14px; }
+.detail-brand { margin: 18px 0 4px; color: var(--ac); font: 700 14px/1 var(--sn); }
+.detail-h1 { margin: 0; font: 800 clamp(32px,4vw,50px)/1.05 var(--se); letter-spacing: -.02em; }
+.detail-price { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin: 20px 0 4px; }
+.detail-price b { font: 700 52px/1 var(--se); }
+.detail-price s { color: var(--mut); font-size: 17px; }
+.savings-pill {
+  font: 600 13px/1 var(--sn); font-style: normal;
+  padding: 7px 12px; border-radius: 99px;
+  background: color-mix(in srgb, var(--ac) 14%, var(--sf));
+  color: var(--ac);
+}
+.detail-desc { margin: 14px 0 0; color: var(--mut); max-width: 52ch; }
+
+/* stock meter */
+.stock-wrap { margin: 26px 0 0; }
+.stock-label { display: flex; justify-content: space-between; font-size: 13.5px; margin-bottom: 9px; }
+.stock-label span { color: var(--mut); }
+.stock-label b { font-weight: 600; }
+.seg10 { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+.seg10 i { height: 8px; border-radius: 4px; background: var(--ln); }
+.seg10 i.f { background: var(--ac); }
+.seg10.low i.f { background: #e5484d; }
+
+/* specs */
+.specs { margin: 26px 0 0; border-top: 1px solid var(--ln); }
+.specs div { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--ln); font-size: 14px; }
+.specs dt { color: var(--mut); }
+.specs dd { margin: 0; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* action buttons */
+.acts { display: flex; gap: 10px; margin-top: 26px; flex-wrap: wrap; }
+.act-btn {
+  flex: 1 1 180px; height: 54px;
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  border: 1.5px solid var(--ink); border-radius: 99px;
+  background: none; font: 600 15px/1 var(--sn); color: var(--ink);
+  transition: transform .3s, box-shadow .3s, background .3s;
+}
+.act-btn:hover { transform: translateY(-2px); box-shadow: 0 16px 24px -14px rgba(11,31,79,.6); }
+.act-btn.primary { background: var(--btn); border-color: var(--btn); color: var(--bi); }
+.act-btn.saved { background: color-mix(in srgb, var(--ac) 14%, var(--sf)); border-color: var(--ac); color: var(--ac); }
+
+/* map card */
+.map-card { margin-top: 34px; padding: 22px; border-radius: 24px; background: var(--sf); border: 1px solid var(--ln); }
+.map-card h2 { margin: 0 0 4px; font: 700 22px/1.2 var(--se); }
+.map-card > p { margin: 0 0 14px; color: var(--mut); font-size: 13.5px; }
+.map-card svg { display: block; width: 100%; height: auto; border-radius: 14px; background: var(--bg); }
+.map-card .cell { fill: var(--sf); stroke: var(--ln); }
+.map-card .cell.h { fill: color-mix(in srgb, var(--ac) 12%, var(--sf)); stroke: color-mix(in srgb, var(--ac) 40%, var(--ln)); }
+.map-card .cell.target { fill: var(--ac); stroke: var(--ac); }
+.map-card text { font: 600 9px var(--sn); fill: var(--mut); text-anchor: middle; }
+.map-card .cell.target + text { fill: #fff; }
+.route-line {
+  fill: none; stroke: var(--ink); stroke-width: 2.5;
+  stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 1; stroke-dashoffset: 1;
+  animation: draw-route 1.6s .5s cubic-bezier(.5,0,.2,1) forwards;
+}
+@keyframes draw-route { to { stroke-dashoffset: 0; } }
+.pulse { fill: var(--ac); animation: pulse-anim 1.8s infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes pulse-anim { 0% { opacity: .6; transform: scale(.4); } 100% { opacity: 0; transform: scale(2.6); } }
+.steps { margin: 16px 0 0; padding: 0; list-style: none; counter-reset: step; display: grid; gap: 10px; font-size: 14.5px; }
+.steps li { counter-increment: step; display: flex; align-items: center; gap: 12px; }
+.steps li::before {
+  content: counter(step); flex: none;
+  width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--btn); color: var(--bi); font: 600 12px/1 var(--sn);
+}
+
+/* related */
+.related { margin-top: 30px; }
+.related h3 { margin: 0 0 12px; font: 700 20px/1 var(--se); }
+.related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 10px; }
+.rel-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px 8px 8px; border: 1px solid var(--ln);
+  border-radius: 16px; background: var(--sf); text-align: left;
+  transition: border-color .3s, transform .3s;
+}
+.rel-btn:hover { border-color: var(--ac); transform: translateY(-2px); }
+.rel-thumb {
+  width: 44px; height: 44px; display: grid; place-items: center;
+  border-radius: 11px; font-size: 26px; background: var(--bg);
+}
+.rel-btn b { display: block; font: 600 13px/1.25 var(--sn); display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.rel-btn small { color: var(--mut); font-size: 12.5px; }
+
+/* ═══════════════════════════════════════════
+   LIST DRAWER
+═══════════════════════════════════════════ */
+.scrim {
+  position: fixed; inset: 0; z-index: 70;
+  background: rgba(3,8,22,.55); opacity: 0; pointer-events: none;
+  transition: opacity .35s;
+}
+.scrim.open { opacity: 1; pointer-events: auto; }
+.drawer {
+  position: fixed; z-index: 75; top: 0; right: 0; bottom: 0;
+  width: min(440px, 100vw);
+  padding: calc(env(safe-area-inset-top,0px) + 26px) 26px calc(env(safe-area-inset-bottom,0px) + 26px);
+  overflow: auto; background: var(--sf);
+  transform: translateX(104%); visibility: hidden;
+  transition: transform .5s cubic-bezier(.2,.7,.2,1), visibility 0s .5s;
+}
+.drawer.open { transform: none; visibility: visible; transition-delay: 0s; }
+.drawer h2 { margin: 0; font: 800 34px/1 var(--se); }
+.drawer .sub { margin: 6px 0 12px; color: var(--mut); font-size: 14px; }
+.list-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--ln); }
+.list-item .li-thumb { width: 50px; height: 50px; display: grid; place-items: center; border-radius: 12px; font-size: 28px; background: var(--bg); }
+.list-item > div { flex: 1; min-width: 0; font-size: 14px; }
+.list-item b { display: block; font-weight: 600; }
+.list-item small { color: var(--mut); }
+.list-item > button { width: 34px; height: 34px; display: grid; place-items: center; border: 0; border-radius: 50%; background: none; color: var(--mut); }
+.list-item > button:hover { background: var(--bg); color: #e5484d; }
+.list-total { display: flex; justify-content: space-between; align-items: baseline; margin: 20px 0 4px; }
+.list-total b { font: 700 38px/1 var(--se); }
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+.toast {
+  position: fixed; z-index: 90; left: 50%;
+  bottom: calc(env(safe-area-inset-bottom,0px) + 24px);
+  transform: translate(-50%, 30px); opacity: 0;
+  padding: 13px 22px; border-radius: 99px;
+  background: var(--ink); color: var(--bg);
+  font: 500 14px/1 var(--sn);
+  transition: all .4s cubic-bezier(.2,.7,.2,1); pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 980px) {
+  .top { grid-template-columns: auto 1fr auto; }
+  .nav { justify-self: center; }
+  .nav a span, .nav button .nav-label { display: none; }
+  .nav .on span { display: inline; }
+  .detail-grid { grid-template-columns: 1fr; }
+  .detail-stage { position: relative; top: 0; height: min(52vh, 420px); }
+}
+@media (max-width: 560px) {
+  .brand { font-size: 20px; }
+  .brand-icon { width: 38px; height: 38px; }
+  .sign-in { display: none; }
+  .top { grid-template-columns: 1fr auto; }
+  .ticker { letter-spacing: .12em; font-size: 10.5px; }
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 20px 12px; }
+  .card { --cut: 182px; }
+  .stage { height: 160px; }
+  .emoji { font-size: 68px; }
+  .tag { padding: 13px 12px 14px; }
+  .price b { font-size: 25px; }
+  .barcode { display: none; }
+  .hero { padding-top: 44px; }
+  .back-btn span { display: none; }
+  .back-btn { padding: 0 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .route-line { stroke-dashoffset: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ ICONS ═══ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="ico-layers" viewBox="0 0 24 24"><path d="M12 3 3 8l9 5 9-5zM3 13l9 5 9-5M3 17.5l9 5 9-5"/></symbol>
+  <symbol id="ico-list"   viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+  <symbol id="ico-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="ico-heart"  viewBox="0 0 24 24"><path d="M12 21s-8-4.9-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6.1-8 11-8 11z"/></symbol>
+  <symbol id="ico-x"      viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="ico-left"   viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol>
+  <symbol id="ico-right"  viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+  <symbol id="ico-nav"    viewBox="0 0 24 24"><path d="m3 11 18-8-8 18-2-8z"/></symbol>
+  <symbol id="ico-tag"    viewBox="0 0 24 24"><path d="m20.6 13.4-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8zM7.5 7.5h.01"/></symbol>
+</defs></svg>
+
+<!-- ═══ HEADER ═══ -->
+<header class="top">
+  <a class="brand" href="#">
+    <span class="brand-icon"><svg class="i"><use href="#ico-layers"/></svg></span>
+    <span>GMR <em>Smart Mart</em></span>
+  </a>
+
+  <nav class="nav" aria-label="Main navigation">
+    <a href="#">
+      <span>Home</span>
+    </a>
+    <a href="#">
+      <span>3D Mart</span>
+    </a>
+    <a href="#">
+      <span>Store Map</span>
+    </a>
+    <a class="on" href="#" aria-current="page">
+      <span>Products</span>
+    </a>
+    <button type="button" id="list-btn">
+      <svg class="i"><use href="#ico-list"/></svg>
+      <span class="nav-label">My List</span>
+      <span class="badge" id="list-badge">0</span>
+    </button>
+  </nav>
+
+  <a class="sign-in" href="#">Sign In</a>
+</header>
+
+<!-- ticker -->
+<div class="ticker">
+  <span>Three shopping floors</span>
+  <span>Scan · shop · go</span>
+  <span>Real-time store map</span>
+  <span>Live inventory</span>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <svg class="hero-bg" aria-hidden="true" preserveAspectRatio="xMidYMax slice">
+    <defs>
+      <pattern id="shelf-bg" width="440" height="190" patternUnits="userSpaceOnUse">
+        <g fill="currentColor">
+          <rect x="6"   y="104" width="30" height="76" rx="4"/>
+          <rect x="42"  y="124" width="22" height="56" rx="3"/>
+          <rect x="70"  y="92"  width="34" height="88" rx="5"/>
+          <rect x="82"  y="80"  width="10" height="12" rx="2"/>
+          <rect x="112" y="116" width="40" height="64" rx="4"/>
+          <rect x="160" y="100" width="26" height="80" rx="13"/>
+          <rect x="194" y="128" width="36" height="52" rx="4"/>
+          <rect x="238" y="88"  width="30" height="92" rx="5"/>
+          <rect x="276" y="120" width="44" height="60" rx="6"/>
+          <rect x="328" y="104" width="24" height="76" rx="4"/>
+          <rect x="360" y="132" width="34" height="48" rx="4"/>
+          <rect x="402" y="96"  width="28" height="84" rx="5"/>
+        </g>
+        <rect x="0" y="180" width="440" height="6" fill="currentColor"/>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#shelf-bg)"/>
+  </svg>
+
+  <h1>Find anything in
+    <em>the store
+      <svg viewBox="0 0 300 16" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+        <path d="M3 11C60 4 120 4 180 8s90 2 117-2"/>
+      </svg>
+    </em>
+  </h1>
+  <p>Every product comes with its aisle, live stock and a route from the entrance. Search, save to your list and walk straight to it.</p>
+
+  <label class="search-bar" id="search-bar">
+    <svg class="i"><use href="#ico-search"/></svg>
+    <input id="search-input" type="search" placeholder="Search products, brands or aisles" autocomplete="off" aria-label="Search products">
+    <button type="button" id="search-clear" class="search-clear" aria-label="Clear search">
+      <svg class="i"><use href="#ico-x"/></svg>
+    </button>
+  </label>
+</section>
+
+<!-- ═══ FILTER BAR ═══ -->
+<div class="filter-bar">
+  <div class="filter-inner">
+    <div class="seg" id="floor-seg" role="group" aria-label="Filter by floor"></div>
+    <div class="cats" id="cats-row" role="group" aria-label="Filter by category"></div>
+    <select class="sort-sel" id="sort-sel" aria-label="Sort products">
+      <option value="def">Featured</option>
+      <option value="asc">Price: low to high</option>
+      <option value="desc">Price: high to low</option>
+      <option value="az">Name: A to Z</option>
+      <option value="off">Biggest discount</option>
+    </select>
+    <button class="offers-btn" id="offers-btn" type="button" aria-pressed="false">
+      <svg class="i"><use href="#ico-tag"/></svg>Offers only
+    </button>
+  </div>
+</div>
+
+<!-- ═══ GRID ═══ -->
+<main class="main">
+  <p class="result-count" id="result-count"></p>
+  <div class="grid fresh" id="product-grid" aria-live="polite"></div>
+</main>
+
+<!-- ═══ DETAIL ═══ -->
+<div class="detail-overlay" id="detail-overlay" role="dialog" aria-label="Product details">
+  <div id="detail-body"></div>
+</div>
+
+<!-- ═══ DRAWER ═══ -->
+<div class="scrim"  id="drawer-scrim"></div>
+<aside class="drawer" id="list-drawer" aria-label="My List">
+  <div id="drawer-body"></div>
+</aside>
+
+<!-- ═══ TOAST ═══ -->
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(()=>{
+/* ─── utils ─── */
+const $  = (s,c=document) => c.querySelector(s);
+const $$ = (s,c=document) => [...c.querySelectorAll(s)];
+const ic = n => `<svg class="i"><use href="#ico-${n}"/></svg>`;
+const rs = n => '₹' + n.toLocaleString('en-IN');
+const es = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const norm = s => s.toLowerCase().replace(/[\u2019']/g,"'");
+const vt = fn => {
+  if (document.startViewTransition && !matchMedia('(prefers-reduced-motion:reduce)').matches)
+    return document.startViewTransition(fn);
+  fn(); return null;
+};
+
+/* ─── data ─── */
+const FL = { G:['Ground floor','Ground'], F:['First floor','First'], S:['Second floor','Second'] };
+const HUE = {
+  'Dairy':205,'Snacks':32,'Soft Drinks':8,'Personal Care':285,
+  'Men':222,'Women':335,'Footwear':160,'Accessories':45,
+  'Kitchen':18,'Home Essentials':175,'Toys':268,'Furniture':28
+};
+
+const P = [
+  ['Amul',           'Amul Full Cream Milk 500ml',           'Dairy',          32,  35,   'G-A1','🥛'],
+  ['Mother Dairy',   'Mother Dairy Curd 400g',               'Dairy',          45,  50,   'G-A2','🫙'],
+  ['Amul',           'Amul Butter 500g',                     'Dairy',         220, 240,   'G-A1','🧈'],
+  ["Lay's",          "Lay's Classic Salted 55g",             'Snacks',         20,   0,   'G-B1','🍟'],
+  ['Parle',          'Parle-G Biscuits 800g',                'Snacks',         52,  60,   'G-B2','🍪'],
+  ['Haldiram',       'Haldiram Bhujia 400g',                 'Snacks',        115, 130,   'G-B3','🍜'],
+  ['Parle',          'Hide & Seek Choco Biscuits 300g',      'Snacks',         85,  95,   'G-B2','🍫'],
+  ['Coca-Cola',      'Coca-Cola 2L Pet Bottle',              'Soft Drinks',    85,  95,   'G-C1','🥤'],
+  ['Pepsi',          'Pepsi 2L Pet Bottle',                  'Soft Drinks',    82,  95,   'G-C1','🥤'],
+  ['Coca-Cola',      'Minute Maid Pulpy Orange 1L',          'Soft Drinks',    65,  75,   'G-C2','🍊'],
+  ['Dabur',          'Real Fruit Juice Mango 1L',            'Soft Drinks',   110, 125,   'G-C2','🥭'],
+  ['H&S',            'Head & Shoulders Shampoo 340ml',       'Personal Care', 245, 285,   'G-D1','🧴'],
+  ['Dove',           'Dove Moisturising Bar 100g',           'Personal Care',  58,  68,   'G-D2','🧼'],
+  ['Colgate',        'Colgate MaxFresh Toothpaste 150g',     'Personal Care',  95, 105,   'G-D3','🪥'],
+  ["Levi's",         "Levi's 511 Slim Jeans",                'Men',          2499,3999,   'F-A1','👖'],
+  ['Arrow',          'Arrow Formal Shirt XL',                'Men',          1299,1799,   'F-A2','👔'],
+  ['W',              'W Women Kurta Set M',                  'Women',        1099,1499,   'F-B1','👗'],
+  ['Biba',           'Biba Anarkali Suit',                   'Women',        1899,2699,   'F-B2','👘'],
+  ['Nike',           'Nike Air Max 270 White',               'Footwear',     8999,10999,  'F-C1','👟'],
+  ['Puma',           'Puma Softride Running Shoes',          'Footwear',     3499,4999,   'F-C2','🏃'],
+  ['Bata',           'Bata Formal Oxford Shoes',             'Footwear',     1999,2599,   'F-C3','👞'],
+  ['Fastrack',       'Fastrack Chronograph Watch',           'Accessories',  2995,3495,   'F-D1','⌚'],
+  ['Wildcraft',      'Wildcraft 40L Backpack Navy',          'Accessories',  1799,2499,   'F-D2','🎒'],
+  ['Prestige',       'Prestige Pressure Cooker 5L',          'Kitchen',      1850,2200,   'S-A1','🍲'],
+  ['Milton',         'Milton Thermosteel Flask 1L',          'Kitchen',       599, 750,   'S-A2','☕'],
+  ['Hawkins',        'Hawkins Classic Cooker 3L',            'Kitchen',      1299,1599,   'S-A1','🍳'],
+  ['Bombay Dyeing',  'Bombay Dyeing Bath Towel Set 2pc',     'Home Essentials',549,699,   'S-B1','🛁'],
+  ['Nilkamal',       'Nilkamal Plastic Chair White',         'Home Essentials',899,1099,  'S-B2','🪑'],
+  ['LEGO',           'LEGO Classic Creative Box 484pcs',     'Toys',         3499,3999,   'S-C1','🧱'],
+  ['Funskool',       "Funskool Rubik's Cube 3×3",            'Toys',          299, 399,   'S-C2','🧩'],
+  ['Kurl-On',        'Kurl-On Foam Mattress Queen 6"',       'Furniture',   12999,15999,  'S-D1','🛏'],
+  ['Godrej',         'Godrej Interio Study Table',           'Furniture',    6499,7999,   'S-D2','📚'],
+].map(([b,n,c,pr,m,a,e],i) => ({
+  id:i, b, n, c, pr, m:m||0, a, e, f:a[0],
+  d: m ? Math.round((1-pr/m)*100) : 0,
+  st: i===2 ? 6 : (i*37+11)%88+12
+}));
+
+/* ─── state ─── */
+const S = { q:'', f:'all', c:'all', sale:false, so:'def', list:[], cur:null, res:[] };
+try { S.list = JSON.parse(localStorage.getItem('gmr-list')||'[]').filter(i=>P[i]); } catch(e){}
+const save = () => { try { localStorage.setItem('gmr-list', JSON.stringify(S.list)); } catch(e){} };
+
+/* ─── floor filter ─── */
+$('#floor-seg').innerHTML = [['all','All floors'],['G','Ground'],['F','First'],['S','Second']]
+  .map(([k,l]) => `<button type="button" data-f="${k}" aria-pressed="${k==='all'}">${l}</button>`).join('');
+
+/* ─── category chips ─── */
+$('#cats-row').innerHTML = ['all',...Object.keys(HUE)]
+  .map(c => `<button type="button" data-c="${c}" aria-pressed="${c==='all'}">${c==='all'?'All categories':c}</button>`).join('');
+
+/* ─── filter handlers ─── */
+function pickGroup(sel, key, attr) {
+  $(sel).addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    S[key] = b.dataset[attr];
+    $$(sel+' button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    render();
+  });
+}
+pickGroup('#floor-seg','f','f');
+pickGroup('#cats-row','c','c');
+$('#sort-sel').onchange = e => { S.so = e.target.value; render(); };
+$('#offers-btn').onclick = e => {
+  S.sale = !S.sale;
+  e.currentTarget.setAttribute('aria-pressed', S.sale);
+  render();
+};
+$('#search-input').oninput = e => {
+  S.q = norm(e.target.value.trim());
+  $('#search-bar').classList.toggle('has-query', !!S.q);
+  render();
+};
+$('#search-clear').onclick = () => {
+  $('#search-input').value = ''; S.q = '';
+  $('#search-bar').classList.remove('has-query');
+  $('#search-input').focus(); render();
+};
+
+/* ─── toast ─── */
+let toastTimer = 0;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+/* ─── badge ─── */
+function badge() {
+  const b = $('#list-badge');
+  b.textContent = S.list.length;
+  b.classList.toggle('show', S.list.length > 0);
+}
+
+/* ─── toggle list ─── */
+function toggle(id) {
+  const k = S.list.indexOf(id);
+  if (k > -1) { S.list.splice(k,1); toast('Removed from My List'); }
+  else         { S.list.push(id);    toast('Added to My List'); }
+  save(); badge();
+}
+
+/* ─── barcode ─── */
+function barcode(id) {
+  let x=0, r='';
+  for (let i=0; i<34; i++) {
+    const k = (id*7 + i*13 + i*i)%4 + 1;
+    if (i%2===0) r += `<rect x="${x}" width="${k>3?2.4:k>1?1.6:1}" height="26"/>`;
+    x += k>3?3.6:k>1?2.8:2.2;
+  }
+  return `<svg class="barcode" viewBox="0 0 ${x} 26" aria-hidden="true" fill="currentColor">${r}</svg>`;
+}
+
+/* ─── render card ─── */
+function card(p, k) {
+  const sv = S.list.includes(p.id);
+  return `<div class="card-wrap" style="--k:${Math.min(k,16)}">
+<div class="card" role="button" tabindex="0" data-id="${p.id}" aria-label="View ${es(p.n)}">
+  <div class="stage" style="--h:${HUE[p.c]}">
+    ${p.d ? `<span class="rib">−${p.d}%</span>` : ''}
+    <button type="button" class="heart-btn${sv?' saved':''}" data-action="heart"
+      aria-pressed="${sv}" aria-label="${sv?'Remove from':'Save to'} My List">
+      ${ic('heart')}
+    </button>
+    <span class="emoji" aria-hidden="true">${p.e}</span>
+    <i class="shelf-line"></i>
+  </div>
+  <div class="tag">
+    <small>${es(p.b)}</small>
+    <h3>${es(p.n)}</h3>
+    <div class="price"><b>${rs(p.pr)}</b>${p.m?`<s>${rs(p.m)}</s>`:''}</div>
+    <div class="tag-foot">${barcode(p.id)}<span class="aisle-pill">Aisle ${p.a.slice(2)} · ${FL[p.f][1]}</span></div>
+  </div>
+</div></div>`;
+}
+
+/* ─── render grid ─── */
+let firstRender = true;
+function render() {
+  let r = P.filter(p =>
+    (S.f==='all' || p.f===S.f) &&
+    (S.c==='all' || p.c===S.c) &&
+    (!S.sale || p.d) &&
+    (!S.q || norm(`${p.n} ${p.b} ${p.c} ${p.a} ${FL[p.f][0]}`).includes(S.q))
+  );
+  const fns = {
+    asc:(a,b)=>a.pr-b.pr, desc:(a,b)=>b.pr-a.pr,
+    az:(a,b)=>a.n.localeCompare(b.n), off:(a,b)=>b.d-a.d||a.id-b.id
+  };
+  if (fns[S.so]) r = r.slice().sort(fns[S.so]);
+  S.res = r;
+
+  $('#result-count').textContent = `Showing ${r.length} of ${P.length} products`;
+
+  const g = $('#product-grid');
+  g.classList.toggle('fresh', firstRender); firstRender = false;
+
+  g.innerHTML = r.length
+    ? r.map(card).join('')
+    : `<div class="empty"><b>No products match</b>Try another search, floor or category.<br><button type="button" id="clear-btn">Clear all filters</button></div>`;
+}
+
+/* ─── grid click handler ─── */
+$('#product-grid').addEventListener('click', e => {
+  if (e.target.closest('#clear-btn')) {
+    S.q=''; S.f='all'; S.c='all'; S.sale=false;
+    $('#search-input').value=''; $('#search-bar').classList.remove('has-query');
+    $('#offers-btn').setAttribute('aria-pressed','false');
+    $$('#floor-seg button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.f==='all'));
+    $$('#cats-row button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.c==='all'));
+    render(); return;
+  }
+  const card = e.target.closest('.card'); if (!card) return;
+  const id = +card.dataset.id;
+  if (e.target.closest('[data-action="heart"]')) {
+    toggle(id);
+    const hb = card.querySelector('.heart-btn');
+    const on = S.list.includes(id);
+    hb.classList.toggle('saved', on);
+    hb.setAttribute('aria-pressed', on);
+    return;
+  }
+  openDetail(id);
+});
+
+$('#product-grid').addEventListener('keydown', e => {
+  if (e.key==='Enter' && e.target.classList.contains('card')) openDetail(+e.target.dataset.id);
+});
+
+/* ─── store map SVG ─── */
+function mapSvg(p) {
+  const codes = {}; P.filter(x=>x.f===p.f).forEach(x=>codes[x.a]=1);
+  let cells='', tx=0, ty=0;
+  'ABCD'.split('').forEach((z,ci) => [1,2,3].forEach((n,ri) => {
+    const k=`${p.f}-${z}${n}`, x=20+ci*68, y=14+ri*48, t=(k===p.a);
+    if(t){tx=x;ty=y;}
+    cells += `<rect class="cell${t?' target':codes[k]?' h':''}" x="${x}" y="${y}" width="60" height="40" rx="7"/>`;
+    cells += `<text x="${x+30}" y="${y+24}">${z}${n}</text>`;
+  }));
+  const gx = tx+64>284 ? tx-4 : tx+64;
+  const cy = ty+20, cx = tx+30;
+  return `<svg viewBox="0 0 304 214" role="img" aria-label="Store map showing aisle ${p.a}">
+${cells}
+<rect x="122" y="196" width="60" height="14" rx="7" fill="var(--ink)"/>
+<text x="152" y="206" style="fill:var(--bg)">Entrance</text>
+<path class="route-line" pathLength="1" d="M152 194V164H${gx}V${cy}H${cx}"/>
+<circle class="pulse" cx="${cx}" cy="${cy}" r="8"/>
+</svg>`;
+}
+
+/* ─── fill detail ─── */
+function fillDetail(p) {
+  const sv = S.list.includes(p.id);
+  const lo = p.st < 20;
+  const seq = S.res.some(x=>x.id===p.id) ? S.res : P;
+  const ix = seq.findIndex(x=>x.id===p.id);
+  const rel = P.filter(x=>x.id!==p.id&&(x.c===p.c||x.a.slice(0,3)===p.a.slice(0,3))).slice(0,4);
+  const steps = ['Enter through the main gate']
+    .concat(p.f!=='G' ? ['Take the lift or stairs to the '+FL[p.f][0].toLowerCase()] : [])
+    .concat(['Head to zone '+p.a[2]+', then aisle '+p.a[3]]);
+  const bar = String(p.id*104729+10000000).padStart(9,'0');
+  let seg=''; for(let i=0;i<10;i++) seg+=`<i${i<Math.ceil(p.st/10)?' class="f"':''}></i>`;
+  let d=0; const rv = () => `class="rv" style="--d:${d++}"`;
+
+  $('#detail-body').innerHTML = `
+<div class="detail-toolbar">
+  <button type="button" class="back-btn" id="detail-back">${ic('left')}<span>All products</span></button>
+  <div class="pager">
+    <button type="button" id="detail-prev" aria-label="Previous product">${ic('left')}</button>
+    <span>${ix+1} of ${seq.length}</span>
+    <button type="button" id="detail-next" aria-label="Next product">${ic('right')}</button>
+  </div>
+</div>
+
+<div class="detail-grid">
+  <div class="detail-stage" style="--h:${HUE[p.c]}">
+    ${p.d?`<span class="rib">−${p.d}% off</span>`:''}
+    <span class="emoji" aria-hidden="true">${p.e}</span>
+    <i class="shelf-line"></i>
+    <div class="location-chip">Aisle ${p.a}<small>${FL[p.f][0]}</small></div>
+  </div>
+
+  <div>
+    <div ${rv()}>
+      <div class="crumb">${FL[p.f][0]}${ic('right')}${p.c}</div>
+      <div class="detail-brand">${es(p.b)}</div>
+      <h1 class="detail-h1">${es(p.n)}</h1>
+      <div class="detail-price">
+        <b>${rs(p.pr)}</b>
+        ${p.m?`<s>${rs(p.m)}</s><em class="savings-pill">You save ${rs(p.m-p.pr)}</em>`:''}
+      </div>
+      <p class="detail-desc">${es(p.b)} ${p.c.toLowerCase()}, shelved in aisle ${p.a} on the ${FL[p.f][0].toLowerCase()}. Prices and stock update as the shelves do.</p>
+    </div>
+
+    <div ${rv()}>
+      <div class="stock-wrap">
+        <div class="stock-label"><span>${lo?'Low stock':'In stock'}</span><b>${p.st} available</b></div>
+        <div class="seg10${lo?' low':''}">${seg}</div>
+      </div>
+    </div>
+
+    <dl class="specs rv" style="--d:${d++}">
+      <div><dt>Category</dt><dd>${p.c}</dd></div>
+      <div><dt>Location</dt><dd>Aisle ${p.a}, ${FL[p.f][1]}</dd></div>
+      <div><dt>SKU</dt><dd>GMR-${1000+p.id*37}</dd></div>
+      <div><dt>Barcode</dt><dd>8901${bar}</dd></div>
+    </dl>
+
+    <div ${rv()}>
+      <div class="acts">
+        <button type="button" class="act-btn${sv?' saved':''}" id="detail-save">
+          ${ic('list')}${sv?'Saved to My List':'Add to My List'}
+        </button>
+        <button type="button" class="act-btn primary" id="detail-route">
+          ${ic('nav')}Show route
+        </button>
+      </div>
+    </div>
+
+    <div ${rv()}>
+      <div class="map-card" id="detail-map">
+        <h2>Your route to aisle ${p.a}</h2>
+        <p>${FL[p.f][0]} layout. Highlighted aisle is where this product is shelved.</p>
+        ${mapSvg(p)}
+        <ol class="steps">${steps.map(s=>`<li>${s}</li>`).join('')}</ol>
+      </div>
+    </div>
+
+    ${rel.length ? `<div ${rv()}>
+      <div class="related">
+        <h3>On the same shelves</h3>
+        <div class="related-grid">
+          ${rel.map(x=>`<button type="button" class="rel-btn" data-go="${x.id}">
+            <span class="rel-thumb">${x.e}</span>
+            <span><b>${es(x.n)}</b><small>${rs(x.pr)} · ${x.a}</small></span>
+          </button>`).join('')}
+        </div>
+      </div>
+    </div>` : ''}
+  </div>
+</div>`;
+
+  /* detail button handlers */
+  const go = i => {
+    const q = seq[(i+seq.length)%seq.length];
+    S.cur = q.id;
+    vt(() => { fillDetail(q); $('#detail-overlay').scrollTop=0; });
+  };
+  $('#detail-back').onclick = closeDetail;
+  $('#detail-prev').onclick = () => go(ix-1);
+  $('#detail-next').onclick = () => go(ix+1);
+  $('#detail-save').onclick = () => { toggle(p.id); render(); fillDetail(p); };
+  $('#detail-route').onclick = () => {
+    const m = $('#detail-map');
+    m.scrollIntoView({behavior:'smooth',block:'center'});
+    const r = m.querySelector('.route-line');
+    if (r) { r.style.animation='none'; void r.getBoundingClientRect(); r.style.animation=''; }
+  };
+  $$('[data-go]', $('#detail-overlay')).forEach(b => b.onclick = () => {
+    S.cur = +b.dataset.go;
+    vt(() => { fillDetail(P[S.cur]); $('#detail-overlay').scrollTop=0; });
+  });
+}
+
+/* ─── open/close detail ─── */
+function openDetail(id) {
+  const stageEl = $(`.card[data-id="${id}"] .stage`);
+  S.cur = id;
+  const open = () => {
+    if (stageEl) stageEl.style.viewTransitionName='';
+    $('#detail-overlay').classList.add('open');
+    fillDetail(P[id]);
+    $('#detail-overlay').scrollTop = 0;
+    const ds = $('.detail-stage');
+    if (ds && t0) ds.style.viewTransitionName='hero';
+  };
+  let t0=false;
+  if (stageEl && document.startViewTransition) { stageEl.style.viewTransitionName='hero'; t0=true; }
+  const t = vt(open);
+  if (t) t.finished.finally(() => {
+    const ds = $('.detail-stage');
+    if (ds) ds.style.viewTransitionName='';
+    if (stageEl) stageEl.style.viewTransitionName='';
+  });
+  setTimeout(() => { const b = $('#detail-back'); if(b) b.focus({preventScroll:true}); }, 50);
+}
+
+function closeDetail() {
+  const ov = $('#detail-overlay');
+  if (!ov.classList.contains('open')) return;
+  const stageEl = $(`.card[data-id="${S.cur}"] .stage`);
+  const ds = $('.detail-stage');
+  if (ds && stageEl && document.startViewTransition) ds.style.viewTransitionName='hero';
+  const t = vt(() => {
+    if (ds) ds.style.viewTransitionName='';
+    ov.classList.remove('open');
+    if (stageEl && document.startViewTransition) stageEl.style.viewTransitionName='hero';
+  });
+  if (t) t.finished.finally(() => { if(stageEl) stageEl.style.viewTransitionName=''; });
+  const c = $(`.card[data-id="${S.cur}"]`);
+  if (c) c.focus({preventScroll:true});
+  S.cur = null;
+}
+
+/* ─── list drawer ─── */
+function renderDrawer(open) {
+  const items = S.list.map(i=>P[i]);
+  const tot = items.reduce((s,p)=>s+p.pr,0);
+  const sv  = items.reduce((s,p)=>s+(p.m?p.m-p.pr:0),0);
+  $('#drawer-body').innerHTML = `
+<button class="back-btn" id="drawer-close" type="button" style="margin-bottom:22px">${ic('x')}<span>Close</span></button>
+<h2>My List</h2>
+<p class="sub">${items.length ? `${items.length} item${items.length>1?'s':''} saved for your visit.` : 'Nothing saved yet. Tap the heart on any product to add it.'}</p>
+${items.map(p=>`<div class="list-item">
+  <span class="li-thumb">${p.e}</span>
+  <div><b>${es(p.n)}</b><small>Aisle ${p.a} · ${FL[p.f][1]} · ${rs(p.pr)}</small></div>
+  <button type="button" data-remove="${p.id}" aria-label="Remove ${es(p.n)}">${ic('x')}</button>
+</div>`).join('')}
+${items.length ? `
+<div class="list-total">
+  <span>Total${sv?`<br><small style="color:var(--mut)">You save ${rs(sv)}</small>`:''}</span>
+  <b>${rs(tot)}</b>
+</div>
+<div class="acts">
+  <button type="button" class="act-btn" id="list-clear">Clear list</button>
+</div>` : ''}`;
+
+  $('#drawer-close').onclick = closeDrawer;
+  $$('[data-remove]','#drawer-body' in document ? document : document).forEach(b => {
+    b.onclick = () => { toggle(+b.dataset.remove); render(); renderDrawer(false); };
+  });
+  const lc = $('#list-clear');
+  if (lc) lc.onclick = () => { S.list=[]; save(); badge(); render(); renderDrawer(false); };
+  if (open) {
+    $('#list-drawer').classList.add('open');
+    $('#drawer-scrim').classList.add('open');
+  }
+}
+
+function closeDrawer() {
+  $('#list-drawer').classList.remove('open');
+  $('#drawer-scrim').classList.remove('open');
+}
+
+$('#list-btn').onclick = () => renderDrawer(true);
+$('#drawer-scrim').onclick = closeDrawer;
+
+/* ─── keyboard ─── */
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') {
+    if ($('#list-drawer').classList.contains('open')) { closeDrawer(); return; }
+    closeDetail(); return;
+  }
+  const ov = $('#detail-overlay');
+  if (ov.classList.contains('open')) {
+    if (e.key==='ArrowRight') { const b=$('#detail-next'); if(b)b.click(); }
+    if (e.key==='ArrowLeft')  { const b=$('#detail-prev'); if(b)b.click(); }
+  }
+  if (e.key==='/' && !['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName) && !ov.classList.contains('open')) {
+    e.preventDefault(); $('#search-input').focus();
+  }
+});
+
+/* ─── init ─── */
+badge();
+render();
+})();
+</script>
+</body>
+</html>

@@ -1,459 +1,687 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../services/api';
 import { useAuth } from '../auth/AuthProvider';
 import './Stock.css';
 
-/* ─── Rich Demo Products (always shown when backend offline) ─── */
-const DEMO_PRODUCTS = [
-  /* GROUND — DAIRY */
-  { id:'d01', name:'Amul Full Cream Milk 500ml',        brand:'Amul',       price:32,    mrp:35,    stock:120, unit:'pcs', location:'G-A1', floor:'GROUND', category:'DAIRY',         discount:'8% OFF' },
-  { id:'d02', name:'Mother Dairy Curd 400g',            brand:'Mother Dairy',price:45,   mrp:50,    stock:90,  unit:'pcs', location:'G-A2', floor:'GROUND', category:'DAIRY',         discount:'' },
-  { id:'d03', name:'Amul Butter 500g',                  brand:'Amul',       price:220,   mrp:240,   stock:60,  unit:'pcs', location:'G-A1', floor:'GROUND', category:'DAIRY',         discount:'8% OFF' },
-  /* GROUND — SNACKS */
-  { id:'d04', name:"Lay's Classic Salted 55g",          brand:"Lay's",      price:20,    mrp:20,    stock:200, unit:'pcs', location:'G-B1', floor:'GROUND', category:'SNACKS',        discount:'' },
-  { id:'d05', name:'Parle-G Biscuits 800g',             brand:'Parle',      price:52,    mrp:60,    stock:80,  unit:'pcs', location:'G-B2', floor:'GROUND', category:'SNACKS',        discount:'13% OFF' },
-  { id:'d06', name:'Haldiram Bhujia 400g',              brand:'Haldiram',   price:115,   mrp:130,   stock:55,  unit:'pcs', location:'G-B3', floor:'GROUND', category:'SNACKS',        discount:'12% OFF' },
-  { id:'d07', name:'Hide & Seek Chocolate Biscuits 300g',brand:'Parle',     price:85,    mrp:95,    stock:70,  unit:'pcs', location:'G-B2', floor:'GROUND', category:'SNACKS',        discount:'11% OFF' },
-  /* GROUND — SOFT DRINKS */
-  { id:'d08', name:'Coca-Cola 2L Pet Bottle',           brand:'Coca-Cola',  price:85,    mrp:95,    stock:50,  unit:'pcs', location:'G-C1', floor:'GROUND', category:'SOFT DRINKS',   discount:'10% OFF' },
-  { id:'d09', name:'Pepsi 2L Pet Bottle',               brand:'Pepsi',      price:82,    mrp:95,    stock:45,  unit:'pcs', location:'G-C1', floor:'GROUND', category:'SOFT DRINKS',   discount:'14% OFF' },
-  { id:'d10', name:'Minute Maid Pulpy Orange 1L',       brand:'Coca-Cola',  price:65,    mrp:75,    stock:65,  unit:'pcs', location:'G-C2', floor:'GROUND', category:'SOFT DRINKS',   discount:'13% OFF' },
-  { id:'d11', name:'Real Fruit Juice Mango 1L',         brand:'Dabur',      price:110,   mrp:125,   stock:48,  unit:'pcs', location:'G-C2', floor:'GROUND', category:'SOFT DRINKS',   discount:'12% OFF' },
-  /* GROUND — PERSONAL CARE */
-  { id:'d12', name:'Head & Shoulders Shampoo 340ml',    brand:'H&S',        price:245,   mrp:285,   stock:35,  unit:'pcs', location:'G-D1', floor:'GROUND', category:'PERSONAL CARE', discount:'14% OFF' },
-  { id:'d13', name:'Dove Moisturising Bar 100g',        brand:'Dove',       price:58,    mrp:68,    stock:90,  unit:'pcs', location:'G-D2', floor:'GROUND', category:'PERSONAL CARE', discount:'15% OFF' },
-  { id:'d14', name:'Colgate MaxFresh Toothpaste 150g',  brand:'Colgate',    price:95,    mrp:105,   stock:110, unit:'pcs', location:'G-D3', floor:'GROUND', category:'PERSONAL CARE', discount:'10% OFF' },
-  /* FIRST — CLOTHING */
-  { id:'d15', name:"Levi's 511 Slim Jeans",             brand:"Levi's",     price:2499,  mrp:3999,  stock:15,  unit:'pcs', location:'F-A1', floor:'FIRST',  category:'MEN',           discount:'38% OFF' },
-  { id:'d16', name:'Arrow Formal Shirt XL',             brand:'Arrow',      price:1299,  mrp:1799,  stock:22,  unit:'pcs', location:'F-A2', floor:'FIRST',  category:'MEN',           discount:'28% OFF' },
-  { id:'d17', name:'W Women Kurta Set M',               brand:'W',          price:1099,  mrp:1499,  stock:18,  unit:'pcs', location:'F-B1', floor:'FIRST',  category:'WOMEN',         discount:'27% OFF' },
-  { id:'d18', name:'Biba Anarkali Suit',                brand:'Biba',       price:1899,  mrp:2699,  stock:10,  unit:'pcs', location:'F-B2', floor:'FIRST',  category:'WOMEN',         discount:'30% OFF' },
-  /* FIRST — FOOTWEAR */
-  { id:'d19', name:'Nike Air Max 270 White',            brand:'Nike',       price:8999,  mrp:10999, stock:8,   unit:'pcs', location:'F-C1', floor:'FIRST',  category:'FOOTWEAR',      discount:'18% OFF' },
-  { id:'d20', name:'Puma Softride Running Shoes',       brand:'Puma',       price:3499,  mrp:4999,  stock:14,  unit:'pcs', location:'F-C2', floor:'FIRST',  category:'FOOTWEAR',      discount:'30% OFF' },
-  { id:'d21', name:'Bata Formal Oxford Shoes',          brand:'Bata',       price:1999,  mrp:2599,  stock:20,  unit:'pcs', location:'F-C3', floor:'FIRST',  category:'FOOTWEAR',      discount:'23% OFF' },
-  /* FIRST — ACCESSORIES */
-  { id:'d22', name:'Fastrack Chronograph Watch',        brand:'Fastrack',   price:2995,  mrp:3495,  stock:12,  unit:'pcs', location:'F-D1', floor:'FIRST',  category:'ACCESSORIES',   discount:'14% OFF' },
-  { id:'d23', name:'Wildcraft 40L Backpack Navy',       brand:'Wildcraft',  price:1799,  mrp:2499,  stock:9,   unit:'pcs', location:'F-D2', floor:'FIRST',  category:'ACCESSORIES',   discount:'28% OFF' },
-  /* SECOND — KITCHEN */
-  { id:'d24', name:'Prestige Pressure Cooker 5L',       brand:'Prestige',   price:1850,  mrp:2200,  stock:12,  unit:'pcs', location:'S-A1', floor:'SECOND', category:'KITCHEN',       discount:'16% OFF' },
-  { id:'d25', name:'Milton Thermosteel Flask 1L',       brand:'Milton',     price:599,   mrp:750,   stock:30,  unit:'pcs', location:'S-A2', floor:'SECOND', category:'KITCHEN',       discount:'20% OFF' },
-  { id:'d26', name:'Hawkins Classic Pressure Cooker 3L',brand:'Hawkins',    price:1299,  mrp:1599,  stock:16,  unit:'pcs', location:'S-A1', floor:'SECOND', category:'KITCHEN',       discount:'19% OFF' },
-  /* SECOND — HOME */
-  { id:'d27', name:'Bombay Dyeing Bath Towel Set 2pc',  brand:'Bombay Dyeing',price:549, mrp:699,   stock:40,  unit:'pcs', location:'S-B1', floor:'SECOND', category:'HOME ESSENTIALS',discount:'21% OFF' },
-  { id:'d28', name:'Nilkamal Plastic Chair White',      brand:'Nilkamal',   price:899,   mrp:1099,  stock:25,  unit:'pcs', location:'S-B2', floor:'SECOND', category:'HOME ESSENTIALS',discount:'18% OFF' },
-  /* SECOND — TOYS */
-  { id:'d29', name:'LEGO Classic Creative Box 484pcs',  brand:'LEGO',       price:3499,  mrp:3999,  stock:5,   unit:'pcs', location:'S-C1', floor:'SECOND', category:'TOYS',          discount:'13% OFF' },
-  { id:'d30', name:'Funskool Rubik\'s Cube 3x3',        brand:'Funskool',   price:299,   mrp:399,   stock:35,  unit:'pcs', location:'S-C2', floor:'SECOND', category:'TOYS',          discount:'25% OFF' },
-  /* SECOND — FURNITURE */
-  { id:'d31', name:'Kurl-On Foam Mattress Queen 6"',    brand:'Kurl-On',    price:12999, mrp:15999, stock:3,   unit:'pcs', location:'S-D1', floor:'SECOND', category:'FURNITURE',     discount:'19% OFF' },
-  { id:'d32', name:'Godrej Interio Study Table',        brand:'Godrej',     price:6499,  mrp:7999,  stock:4,   unit:'pcs', location:'S-D2', floor:'SECOND', category:'FURNITURE',     discount:'19% OFF' },
-];
+/* ─────────────────────────────────────────────
+   DATA
+───────────────────────────────────────────── */
+const FL = { G:['Ground floor','Ground'], F:['First floor','First'], S:['Second floor','Second'] };
 
-const STORAGE_KEY = 'gmr_reminder_queue';
-
-const FLOORS = [
-  { key:'ALL',    label:'All Floors',    short:'All' },
-  { key:'GROUND', label:'Ground Floor',  short:'GF'  },
-  { key:'FIRST',  label:'First Floor',   short:'1F'  },
-  { key:'SECOND', label:'Second Floor',  short:'2F'  },
-];
-
-const CATEGORIES = {
-  ALL:    [],
-  GROUND: ['DAIRY','SOFT DRINKS','SNACKS','PERSONAL CARE'],
-  FIRST:  ['MEN','WOMEN','FOOTWEAR','ACCESSORIES'],
-  SECOND: ['KITCHEN','HOME ESSENTIALS','TOYS','FURNITURE'],
+const HUE = {
+  'Dairy':205,'Snacks':32,'Soft Drinks':8,'Personal Care':285,
+  'Men':222,'Women':335,'Footwear':160,'Accessories':45,
+  'Kitchen':18,'Home Essentials':175,'Toys':268,'Furniture':28,
 };
 
-const StockPage = () => {
+const DEMO = [
+  ['Amul',           'Amul Full Cream Milk 500ml',           'Dairy',           32,  35,   'G-A1','🥛'],
+  ['Mother Dairy',   'Mother Dairy Curd 400g',               'Dairy',           45,  50,   'G-A2','🫙'],
+  ['Amul',           'Amul Butter 500g',                     'Dairy',          220, 240,   'G-A1','🧈'],
+  ["Lay's",          "Lay's Classic Salted 55g",             'Snacks',          20,   0,   'G-B1','🍟'],
+  ['Parle',          'Parle-G Biscuits 800g',                'Snacks',          52,  60,   'G-B2','🍪'],
+  ['Haldiram',       'Haldiram Bhujia 400g',                 'Snacks',         115, 130,   'G-B3','🍜'],
+  ['Parle',          'Hide & Seek Choco Biscuits 300g',      'Snacks',          85,  95,   'G-B2','🍫'],
+  ['Coca-Cola',      'Coca-Cola 2L Pet Bottle',              'Soft Drinks',     85,  95,   'G-C1','🥤'],
+  ['Pepsi',          'Pepsi 2L Pet Bottle',                  'Soft Drinks',     82,  95,   'G-C1','🥤'],
+  ['Coca-Cola',      'Minute Maid Pulpy Orange 1L',          'Soft Drinks',     65,  75,   'G-C2','🍊'],
+  ['Dabur',          'Real Fruit Juice Mango 1L',            'Soft Drinks',    110, 125,   'G-C2','🥭'],
+  ['H&S',            'Head & Shoulders Shampoo 340ml',       'Personal Care',  245, 285,   'G-D1','🧴'],
+  ['Dove',           'Dove Moisturising Bar 100g',           'Personal Care',   58,  68,   'G-D2','🧼'],
+  ['Colgate',        'Colgate MaxFresh Toothpaste 150g',     'Personal Care',   95, 105,   'G-D3','🪥'],
+  ["Levi's",         "Levi's 511 Slim Jeans",                'Men',           2499,3999,   'F-A1','👖'],
+  ['Arrow',          'Arrow Formal Shirt XL',                'Men',           1299,1799,   'F-A2','👔'],
+  ['W',              'W Women Kurta Set M',                  'Women',         1099,1499,   'F-B1','👗'],
+  ['Biba',           'Biba Anarkali Suit',                   'Women',         1899,2699,   'F-B2','👘'],
+  ['Nike',           'Nike Air Max 270 White',               'Footwear',      8999,10999,  'F-C1','👟'],
+  ['Puma',           'Puma Softride Running Shoes',          'Footwear',      3499,4999,   'F-C2','🏃'],
+  ['Bata',           'Bata Formal Oxford Shoes',             'Footwear',      1999,2599,   'F-C3','👞'],
+  ['Fastrack',       'Fastrack Chronograph Watch',           'Accessories',   2995,3495,   'F-D1','⌚'],
+  ['Wildcraft',      'Wildcraft 40L Backpack Navy',          'Accessories',   1799,2499,   'F-D2','🎒'],
+  ['Prestige',       'Prestige Pressure Cooker 5L',          'Kitchen',       1850,2200,   'S-A1','🍲'],
+  ['Milton',         'Milton Thermosteel Flask 1L',          'Kitchen',        599, 750,   'S-A2','☕'],
+  ['Hawkins',        'Hawkins Classic Cooker 3L',            'Kitchen',       1299,1599,   'S-A1','🍳'],
+  ['Bombay Dyeing',  'Bombay Dyeing Bath Towel Set 2pc',     'Home Essentials', 549,699,   'S-B1','🛁'],
+  ['Nilkamal',       'Nilkamal Plastic Chair White',         'Home Essentials', 899,1099,  'S-B2','🪑'],
+  ['LEGO',           'LEGO Classic Creative Box 484pcs',     'Toys',          3499,3999,   'S-C1','🧱'],
+  ['Funskool',       "Funskool Rubik's Cube 3×3",            'Toys',           299, 399,   'S-C2','🧩'],
+  ['Kurl-On',        'Kurl-On Foam Mattress Queen 6"',       'Furniture',    12999,15999,  'S-D1','🛏'],
+  ['Godrej',         'Godrej Interio Study Table',           'Furniture',     6499,7999,   'S-D2','📚'],
+].map(([b,n,c,pr,m,a,e],i) => ({
+  id: i, b, n, c, pr, m: m||0, a, e,
+  f: a[0],
+  d: m ? Math.round((1-pr/m)*100) : 0,
+  st: i===2 ? 6 : (i*37+11)%88+12,
+}));
+
+const CATS = ['All categories','Dairy','Snacks','Soft Drinks','Personal Care',
+              'Men','Women','Footwear','Accessories','Kitchen','Home Essentials','Toys','Furniture'];
+
+const STORAGE_KEY = 'gmr-list';
+
+/* ─────────────────────────────────────────────
+   HELPERS
+───────────────────────────────────────────── */
+const rs   = n => '₹' + Number(n).toLocaleString('en-IN');
+const es   = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const norm = s => s.toLowerCase().replace(/[\u2019']/g,"'");
+
+function buildBarcode(id) {
+  let x=0, r='';
+  for (let i=0;i<34;i++) {
+    const k=(id*7+i*13+i*i)%4+1;
+    if (i%2===0) r+=`<rect x="${x}" width="${k>3?2.4:k>1?1.6:1}" height="24"/>`;
+    x+=k>3?3.6:k>1?2.8:2.2;
+  }
+  return { d: r, w: x };
+}
+
+function buildCoilRects() {
+  return Array.from({length:7},(_,i)=>({
+    x:14+i*11, y:12+i*8, w:172-i*22, h:102-i*16, rx:16-i,
+  }));
+}
+
+/* ─────────────────────────────────────────────
+   ICON (inline SVG, all stroke-based)
+───────────────────────────────────────────── */
+const Ico = ({d,d2,d3,children,...p}) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
+    aria-hidden="true" {...p}>
+    {children}
+  </svg>
+);
+const ISearch = p=><Ico {...p}><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></Ico>;
+const IHeart  = p=><Ico {...p}><path d="M12 21s-8-4.9-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6.1-8 11-8 11z"/></Ico>;
+const IArrow  = p=><Ico {...p}><path d="M5 12h14M13 6l6 6-6 6"/></Ico>;
+const ILeft   = p=><Ico {...p}><path d="m15 5-7 7 7 7"/></Ico>;
+const IRight  = p=><Ico {...p}><path d="m9 5 7 7-7 7"/></Ico>;
+const IList   = p=><Ico {...p}><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></Ico>;
+const IX      = p=><Ico {...p}><path d="M6 6l12 12M18 6 6 18"/></Ico>;
+const ITag    = p=><Ico {...p}><path d="m20.6 13.4-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8zM7.5 7.5h.01"/></Ico>;
+const INav    = p=><Ico {...p}><path d="m3 11 18-8-8 18-2-8z"/></Ico>;
+const IInfo   = p=><Ico {...p}><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></Ico>;
+const ICheck  = p=><Ico {...p}><polyline points="20 6 9 17 4 12"/></Ico>;
+
+/* ─────────────────────────────────────────────
+   STORE MAP
+───────────────────────────────────────────── */
+function MapSvg({ p, animKey }) {
+  const codes = {};
+  DEMO.filter(x=>x.f===p.f).forEach(x=>{codes[x.a]=1;});
+  const cells=[], txRef={x:0,y:0};
+  'ABCD'.split('').forEach((z,ci)=>{
+    [1,2,3].forEach((n,ri)=>{
+      const k=`${p.f}-${z}${n}`, x=20+ci*68, y=14+ri*48, t=(k===p.a);
+      if(t){txRef.x=x;txRef.y=y;}
+      cells.push({k,x,y,t,h:!!codes[k]});
+    });
+  });
+  const {x:tx,y:ty}=txRef;
+  const gx=tx+64>284?tx-4:tx+64;
+  const cy=ty+20, cx=tx+30;
+  return (
+    <svg key={animKey} className="map" viewBox="0 0 304 214"
+      role="img" aria-label={`Store map, aisle ${p.a}`}>
+      {cells.map(({k,x,y,t,h})=>(
+        <g key={k}>
+          <rect className={`cell${t?' target':h?' h':''}`} x={x} y={y} width="60" height="40" rx="7"/>
+          <text x={x+30} y={y+24}>{k.slice(2)}</text>
+        </g>
+      ))}
+      <rect x="122" y="196" width="60" height="14" rx="7" fill="var(--ink)"/>
+      <text x="152" y="206" style={{fill:'var(--bg)'}}>Entrance</text>
+      <path className="sp-route" pathLength="1" d={`M152 194V164H${gx}V${cy}H${cx}`}/>
+      <circle className="sp-pulse" cx={cx} cy={cy} r="8"/>
+    </svg>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   MAIN COMPONENT
+───────────────────────────────────────────── */
+export default function StockPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const [activeFloor, setActiveFloor]               = useState('ALL');
-  const [activeCategory, setActiveCategory]         = useState('');
-  const [lockedId, setLockedId]                     = useState(null);
-  const [searchTerm, setSearchTerm]                 = useState('');
-  const [showOnlyOffers, setShowOnlyOffers]         = useState(false);
-  const [sortBy, setSortBy]                         = useState('DEFAULT');
-  const [reminderStatus, setReminderStatus]         = useState('');
-  const [products, setProducts]                     = useState([]);
-  const [loading, setLoading]                       = useState(true);
-  const [loadError, setLoadError]                   = useState('');
-  const [isDemo, setIsDemo]                         = useState(false);
-  const [reloadKey, setReloadKey]                   = useState(0);
-  const [cartId, setCartId]                         = useState(null);
-  const [cartItemQuantities, setCartItemQuantities] = useState({});
-  const [cartBusy, setCartBusy]                     = useState(false);
-  const [cartStatus, setCartStatus]                 = useState('');
-  const [currentOrder, setCurrentOrder]             = useState(null);
+  /* ── filter state ── */
+  const [q,     setQ]     = useState('');
+  const [floor, setFloor] = useState('all');
+  const [cat,   setCat]   = useState('All categories');
+  const [sale,  setSale]  = useState(false);
+  const [sort,  setSort]  = useState('def');
 
-  const cartItemCount = Object.values(cartItemQuantities).reduce((s, q) => s + q, 0);
+  /* ── product state ── */
+  const [products, setProducts] = useState(DEMO);
+  const [isDemo,   setIsDemo]   = useState(true);
+  const [fresh,    setFresh]    = useState(true);
 
-  /* ─── Load Products ── */
-  useEffect(() => {
-    const controller = new AbortController();
-    const params = new URLSearchParams({ limit: '500' });
-    if (searchTerm.trim()) params.set('q', searchTerm.trim());
-
-    setLoading(true);
-    setLoadError('');
-
-    apiRequest(`/api/v1/products?${params}`, { signal: controller.signal })
-      .then(result => {
-        const items = result?.products;
-        if (Array.isArray(items) && items.length > 0) {
-          setProducts(items);
-          setIsDemo(false);
-        } else {
-          setProducts(DEMO_PRODUCTS);
-          setIsDemo(true);
-        }
-        setLoadError('');
-      })
-      .catch(err => {
-        if (err.name !== 'AbortError') {
-          /* Backend offline — show demo products, no error */
-          setProducts(DEMO_PRODUCTS);
-          setIsDemo(true);
-          setLoadError('');
-        }
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setLoading(false);
-      });
-
-    return () => controller.abort();
-  }, [searchTerm, reloadKey]);
-
-  /* ─── Cart helpers ── */
-  const handleProductClick = id => setLockedId(prev => prev === id ? null : id);
-
-  const addToServerCart = async (e, product) => {
-    e.stopPropagation();
-    if (isDemo) { setCartStatus('Demo mode — connect live backend to use cart.'); return; }
-    setCartBusy(true); setCartStatus('');
-    try {
-      let cid = cartId;
-      if (!cid) {
-        const cart = await apiRequest('/api/v1/carts', {
-          method: 'POST',
-          body: JSON.stringify({ storeId: '11111111-1111-4111-8111-111111111111' }),
-        });
-        cid = cart.id; setCartId(cid);
-      }
-      await apiRequest(`/api/v1/carts/${cid}/items`, {
-        method: 'PUT',
-        body: JSON.stringify({ productId: product.id, quantity: (cartItemQuantities[product.id] ?? 0) + 1 }),
-      });
-      setCartItemQuantities(q => ({ ...q, [product.id]: (q[product.id] ?? 0) + 1 }));
-      setCartStatus(`✓ ${product.name} added to cart.`);
-    } catch (err) { setCartStatus(err.message); }
-    finally { setCartBusy(false); }
-  };
-
-  const placeOrder = async () => {
-    if (!cartId) return;
-    setCartBusy(true); setCartStatus('');
-    try {
-      const res = await apiRequest('/api/v1/orders', {
-        method: 'POST',
-        headers: { 'Idempotency-Key': `order-${cartId}` },
-        body: JSON.stringify({ cartId }),
-      });
-      setCurrentOrder(res.order);
-      setCartId(null); setCartItemQuantities({});
-      setCartStatus(`Order ${res.order.id} created.`);
-    } catch (err) { setCartStatus(err.message); }
-    finally { setCartBusy(false); }
-  };
-
-  const addToQueue = (e, product) => {
-    e.stopPropagation();
-    try {
-      const q = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      if (!q.find(i => i?.id === product.id)) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify([...q, { ...product, quantity: 1 }]));
-        setReminderStatus(`✓ "${product.name}" saved to your list!`);
-      } else {
-        setReminderStatus(`"${product.name}" is already in your list.`);
-      }
-    } catch { setReminderStatus('Could not update list.'); }
-    setTimeout(() => setReminderStatus(''), 3000);
-  };
-
-  /* ─── Filter & Sort ── */
-  let displayProducts = products.filter(p => {
-    const q = searchTerm.toLowerCase();
-    const matchSearch = !q ||
-      p.name.toLowerCase().includes(q) ||
-      (p.brand || '').toLowerCase().includes(q) ||
-      (p.category || '').toLowerCase().includes(q);
-
-    if (showOnlyOffers && !p.discount) return false;
-    if (activeFloor !== 'ALL' && (p.floor || '').toUpperCase() !== activeFloor) return false;
-    if (activeCategory && (p.category || '').toUpperCase() !== activeCategory) return false;
-    return matchSearch;
+  /* ── list (saved items) ── */
+  const [listIds, setListIds] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]').filter(i=>DEMO[i]); }
+    catch { return []; }
   });
 
-  if (sortBy === 'PRICE_LOW')  displayProducts = [...displayProducts].sort((a, b) => a.price - b.price);
-  if (sortBy === 'PRICE_HIGH') displayProducts = [...displayProducts].sort((a, b) => b.price - a.price);
-  if (sortBy === 'NAME')       displayProducts = [...displayProducts].sort((a, b) => a.name.localeCompare(b.name));
-  if (sortBy === 'DISCOUNT')   displayProducts = [...displayProducts].sort((a, b) => (b.discount ? 1 : 0) - (a.discount ? 1 : 0));
+  /* ── detail ── */
+  const [detailId,  setDetailId]  = useState(null);
+  const [mapKey,    setMapKey]    = useState(0);
 
-  const cats = CATEGORIES[activeFloor] || [];
+  /* ── drawer ── */
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  return (
-    <div className="pro-terminal">
+  /* ── toast ── */
+  const [toastMsg,  setToastMsg]  = useState('');
+  const [toastShow, setToastShow] = useState(false);
+  const toastTimer = useRef(null);
 
-      {/* ── Sidebar ─────────────────────────────── */}
-      <aside className="pro-sidebar">
+  /* ── save list to localStorage ── */
+  useEffect(() => {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(listIds)); }
+    catch {}
+  }, [listIds]);
 
-        {/* Search */}
-        <div className="search-neon-box">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
-          <input
-            type="text"
-            className="pro-search-input"
-            placeholder="Search products, brands…"
-            value={searchTerm}
-            onChange={e => { setSearchTerm(e.target.value); setActiveFloor('ALL'); setActiveCategory(''); }}
-          />
-          {searchTerm && (
-            <button
-              onClick={() => setSearchTerm('')}
-              style={{ background:'none',border:'none',color:'#9ca3af',cursor:'pointer',padding:0,display:'flex',alignItems:'center' }}
-              aria-label="Clear search"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-          )}
+  /* ── load products from API ── */
+  useEffect(() => {
+    const ctrl = new AbortController();
+    apiRequest('/api/v1/products?limit=500', { signal: ctrl.signal })
+      .then(res => {
+        const items = res?.products;
+        if (Array.isArray(items) && items.length > 0) {
+          // Map live API shape to our internal shape
+          const mapped = items.map((p,i) => ({
+            id: i, b: p.brand||'', n: p.name||'', c: p.category||'',
+            pr: +p.price||0, m: +p.mrp||0,
+            a: p.location||'G-A1', e: p.emoji||'📦',
+            f: (p.location||'G')[0], d: p.mrp ? Math.round((1-p.price/p.mrp)*100) : 0,
+            st: p.stock || 50,
+          }));
+          setProducts(mapped); setIsDemo(false);
+        }
+      })
+      .catch(() => { /* stay on demo */ })
+      .finally(() => {});
+    return () => ctrl.abort();
+  }, []);
+
+  /* ── toast helper ── */
+  const toast = useCallback(msg => {
+    setToastMsg(msg); setToastShow(true);
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToastShow(false), 2200);
+  }, []);
+
+  /* ── toggle saved list ── */
+  const toggleList = useCallback(id => {
+    setListIds(prev => {
+      const k = prev.indexOf(id);
+      if (k > -1) { toast('Removed from My List'); return prev.filter(x=>x!==id); }
+      toast('Added to My List'); return [...prev, id];
+    });
+  }, [toast]);
+
+  /* ── filter + sort ── */
+  let result = products.filter(p =>
+    (floor==='all' || p.f===floor) &&
+    (cat==='All categories' || p.c===cat) &&
+    (!sale || p.d>0) &&
+    (!q || norm(`${p.n} ${p.b} ${p.c} ${p.a} ${FL[p.f]?.[0]||''}`).includes(norm(q)))
+  );
+  const fns = {
+    asc:(a,b)=>a.pr-b.pr, desc:(a,b)=>b.pr-a.pr,
+    az:(a,b)=>a.n.localeCompare(b.n), off:(a,b)=>b.d-a.d||a.id-b.id,
+  };
+  if (fns[sort]) result = result.slice().sort(fns[sort]);
+
+  /* ── detail product ── */
+  const dp = detailId !== null ? (products.find(p=>p.id===detailId)||null) : null;
+  const seq = dp ? (result.some(p=>p.id===dp.id) ? result : products) : [];
+  const dix = dp ? seq.findIndex(p=>p.id===dp.id) : -1;
+  const goDetail = i => {
+    const next = seq[(i+seq.length)%seq.length];
+    setDetailId(next.id); setMapKey(k=>k+1);
+  };
+
+  /* ── open/close detail ── */
+  const openDetail = id => { setDetailId(id); setMapKey(k=>k+1); };
+  const closeDetail = () => setDetailId(null);
+
+  /* ── keyboard navigation ── */
+  useEffect(() => {
+    const handler = e => {
+      if (e.key==='Escape') {
+        if (drawerOpen) { setDrawerOpen(false); return; }
+        if (detailId!==null) { closeDetail(); return; }
+      }
+      if (detailId!==null) {
+        if (e.key==='ArrowRight') goDetail(dix+1);
+        if (e.key==='ArrowLeft')  goDetail(dix-1);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [detailId, dix, drawerOpen]); // eslint-disable-line
+
+  /* ─────────────── MAP SVG helper ─────────────── */
+  const mapSvg = p => <MapSvg p={p} animKey={mapKey}/>;
+
+  /* ─────────────── BARCODE ELEMENT ─────────────── */
+  const Barcode = ({ id }) => {
+    const { d, w } = buildBarcode(id);
+    return (
+      <svg className="sp-barcode" viewBox={`0 0 ${w} 24`} aria-hidden="true" fill="currentColor"
+        dangerouslySetInnerHTML={{ __html: d }}/>
+    );
+  };
+
+  /* ─────────────── STOCK SEGMENTS ─────────────── */
+  const StockMeter = ({ st }) => {
+    const lo = st < 20;
+    return (
+      <div className={`sp-seg10${lo?' low':''}`}>
+        {Array.from({length:10},(_,i)=>(
+          <i key={i} className={i<Math.ceil(st/10)?'on':''}/>
+        ))}
+      </div>
+    );
+  };
+
+  /* ─────────────── DETAIL INFO ─────────────── */
+  const DetailInfo = ({ p }) => {
+    if (!p) return null;
+    const sv = listIds.includes(p.id);
+    const lo = p.st < 20;
+    const rel = products.filter(x=>x.id!==p.id&&(x.c===p.c||x.a.slice(0,3)===p.a.slice(0,3))).slice(0,4);
+    const steps = ['Enter through the main gate']
+      .concat(p.f!=='G' ? ['Take the lift or stairs to the '+((FL[p.f]||[''])[0]).toLowerCase()] : [])
+      .concat(['Head to zone '+p.a[2]+', then aisle '+p.a[3]]);
+    const bar = String(p.id*104729+10000000).padStart(9,'0');
+
+    return (
+      <div className="sp-dinfo">
+        <div className="sp-rv" style={{'--d':0}}>
+          <div className="sp-crumb">
+            {(FL[p.f]||['?'])[0]}<IRight style={{width:13,height:13}}/>{p.c}
+          </div>
+          <div className="sp-dbrand">{es(p.b)}</div>
+          <h1 className="sp-dh1">{es(p.n)}</h1>
+          <div className="sp-dprice">
+            <b>{rs(p.pr)}</b>
+            {p.m>0 && <><s>{rs(p.m)}</s><em className="sp-save-pill">Save {rs(p.m-p.pr)}</em></>}
+          </div>
+          <p className="sp-desc">
+            {es(p.b)} {p.c.toLowerCase()}, shelved in aisle {p.a} on the {((FL[p.f]||['?'])[0]).toLowerCase()}.
+            Prices and stock update as the shelves do.
+          </p>
         </div>
 
-        {/* Offers Toggle */}
-        <button
-          className={`mega-offer-btn ${showOnlyOffers ? 'mega-active' : ''}`}
-          onClick={() => { setShowOnlyOffers(v => !v); setActiveCategory(''); }}
-        >
-          🏷️ Sale & Offers Only
+        <div className="sp-rv" style={{'--d':1}}>
+          <div className="sp-stock">
+            <div className="sp-stock-lbl">
+              <span>{lo?'Low stock':'In stock'}</span>
+              <b>{p.st} available</b>
+            </div>
+            <StockMeter st={p.st}/>
+          </div>
+        </div>
+
+        <dl className="sp-specs sp-rv" style={{'--d':2}}>
+          <div><dt>Category</dt><dd>{p.c}</dd></div>
+          <div><dt>Location</dt><dd>Aisle {p.a}, {(FL[p.f]||['?','?'])[1]}</dd></div>
+          <div><dt>SKU</dt><dd>GMR-{1000+p.id*37}</dd></div>
+          <div><dt>Barcode</dt><dd>8901{bar}</dd></div>
+        </dl>
+
+        <div className="sp-rv" style={{'--d':3}}>
+          <div className="sp-acts">
+            <button type="button"
+              className={`sp-act${sv?' in-list':''}`}
+              onClick={() => toggleList(p.id)}>
+              <IList style={{width:17,height:17}}/>
+              {sv ? 'Saved to My List' : 'Add to My List'}
+            </button>
+            <button type="button" className="sp-act primary"
+              onClick={() => {
+                const m = document.getElementById('sp-map-card');
+                if (m) m.scrollIntoView({behavior:'smooth',block:'center'});
+                setMapKey(k=>k+1);
+              }}>
+              <INav style={{width:17,height:17}}/>Show route
+            </button>
+          </div>
+        </div>
+
+        <div className="sp-rv" style={{'--d':4}}>
+          <div className="sp-map-card" id="sp-map-card">
+            <h2>Your route to aisle {p.a}</h2>
+            <p>{(FL[p.f]||['?'])[0]} layout. The highlighted aisle is where this product is shelved.</p>
+            {mapSvg(p)}
+            <ol className="sp-steps">
+              {steps.map((s,i) => <li key={i}>{s}</li>)}
+            </ol>
+          </div>
+        </div>
+
+        {rel.length > 0 && (
+          <div className="sp-rv" style={{'--d':5}}>
+            <div className="sp-related">
+              <h3>On the same shelves</h3>
+              <div className="sp-rel-grid">
+                {rel.map(x=>(
+                  <button key={x.id} type="button" className="sp-rel-btn"
+                    onClick={() => { setDetailId(x.id); setMapKey(k=>k+1); }}>
+                    <span className="sp-rel-thumb">{x.e}</span>
+                    <span>
+                      <b>{es(x.n)}</b>
+                      <small>{rs(x.pr)} · {x.a}</small>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  /* ─────────────── DRAWER CONTENT ─────────────── */
+  const DrawerContent = () => {
+    const items = listIds.map(i=>products.find(p=>p.id===i)).filter(Boolean);
+    const tot = items.reduce((s,p)=>s+p.pr,0);
+    const sv  = items.reduce((s,p)=>s+(p.m?p.m-p.pr:0),0);
+    return (
+      <>
+        <button type="button" className="sp-back" onClick={()=>setDrawerOpen(false)}
+          style={{marginBottom:22}}>
+          <IX style={{width:17,height:17}}/><span>Close</span>
         </button>
-
-        {/* Floor Tabs */}
-        <span className="sidebar-section-label">Browse by floor</span>
-        {FLOORS.map(f => (
-          <button
-            key={f.key}
-            className={`pro-floor-id ${activeFloor === f.key ? 'floor-active' : ''}`}
-            onClick={() => { setActiveFloor(f.key); setActiveCategory(''); setShowOnlyOffers(false); }}
-          >
-            <span style={{ display:'flex',alignItems:'center',gap:8 }}>
-              <span style={{
-                display:'inline-flex',alignItems:'center',justifyContent:'center',
-                width:26,height:26,borderRadius:7,
-                background: activeFloor === f.key ? '#00c853' : '#f3f4f6',
-                color: activeFloor === f.key ? '#fff' : '#6b7280',
-                fontSize:11,fontWeight:800,flexShrink:0,
-              }}>{f.short}</span>
-              {f.label}
-            </span>
-          </button>
+        <h2>My List</h2>
+        <p className="sub">
+          {items.length
+            ? `${items.length} item${items.length>1?'s':''} saved for your visit.`
+            : 'Nothing saved yet. Tap the heart on any product to add it.'}
+        </p>
+        {items.map(p=>(
+          <div key={p.id} className="sp-li">
+            <span className="sp-li-thumb">{p.e}</span>
+            <div>
+              <b>{es(p.n)}</b>
+              <small>Aisle {p.a} · {(FL[p.f]||['?','?'])[1]} · {rs(p.pr)}</small>
+            </div>
+            <button type="button" className="sp-li-rm"
+              aria-label={`Remove ${p.n}`}
+              onClick={()=>toggleList(p.id)}>
+              <IX style={{width:15,height:15}}/>
+            </button>
+          </div>
         ))}
-
-        {/* Category Filter */}
-        {cats.length > 0 && (
+        {items.length > 0 && (
           <>
-            <span className="sidebar-section-label" style={{ marginTop:4 }}>Categories</span>
-            {cats.map(cat => (
-              <button
-                key={cat}
-                className={`pro-cat-btn ${activeCategory === cat ? 'cat-glow' : ''}`}
-                onClick={() => setActiveCategory(activeCategory === cat ? '' : cat)}
-              >
-                {cat}
-                {activeCategory === cat && (
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                )}
-              </button>
-            ))}
+            <div className="sp-total">
+              <span>
+                Total
+                {sv>0 && <><br/><small style={{color:'var(--mut)',fontWeight:400}}>You save {rs(sv)}</small></>}
+              </span>
+              <b>{rs(tot)}</b>
+            </div>
+            <button type="button" className="sp-clear-btn"
+              onClick={()=>{setListIds([]);toast('List cleared');}}>
+              Clear list
+            </button>
           </>
         )}
-      </aside>
+      </>
+    );
+  };
 
-      {/* ── Main ──────────────────────────────────── */}
-      <main className="pro-main-viewport">
+  /* ══════════════════════════════════════════
+     RENDER
+  ══════════════════════════════════════════ */
+  return (
+    <div className="sp-root">
 
-        {/* Demo Notice */}
-        {isDemo && (
-          <div className="cart-status-bar" style={{ background:'#fffbeb', borderColor:'#fcd34d', color:'#b45309' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      {/* ── HERO ── */}
+      <section className="sp-hero">
+        <svg className="sp-hero-bg" aria-hidden="true" preserveAspectRatio="xMidYMax slice">
+          <defs>
+            <pattern id="sp-shelf-bg" width="440" height="190" patternUnits="userSpaceOnUse">
+              <g fill="currentColor">
+                <rect x="6"   y="104" width="30" height="76" rx="4"/>
+                <rect x="42"  y="124" width="22" height="56" rx="3"/>
+                <rect x="70"  y="92"  width="34" height="88" rx="5"/>
+                <rect x="82"  y="80"  width="10" height="12" rx="2"/>
+                <rect x="112" y="116" width="40" height="64" rx="4"/>
+                <rect x="160" y="100" width="26" height="80" rx="13"/>
+                <rect x="194" y="128" width="36" height="52" rx="4"/>
+                <rect x="238" y="88"  width="30" height="92" rx="5"/>
+                <rect x="276" y="120" width="44" height="60" rx="6"/>
+                <rect x="328" y="104" width="24" height="76" rx="4"/>
+                <rect x="360" y="132" width="34" height="48" rx="4"/>
+                <rect x="402" y="96"  width="28" height="84" rx="5"/>
+              </g>
+              <rect x="0" y="180" width="440" height="6" fill="currentColor"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#sp-shelf-bg)"/>
+        </svg>
+
+        <h1>
+          Find anything in
+          <em>
+            the store
+            <svg viewBox="0 0 300 16" preserveAspectRatio="none" fill="none"
+              stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+              <path d="M3 11C60 4 120 4 180 8s90 2 117-2"/>
             </svg>
-            Showing demo products — backend not connected. All {DEMO_PRODUCTS.length} sample products are displayed.
-          </div>
-        )}
+          </em>
+        </h1>
+        <p>Every product comes with its aisle, live stock and a route from the entrance. Search, save to your list and walk straight to it.</p>
 
-        {/* Reminder / Cart Status */}
-        {(reminderStatus || cartStatus) && (
-          <div className="cart-status-bar" role="status" aria-live="polite">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-            {reminderStatus || cartStatus}
-          </div>
-        )}
+        <label className={`sp-search${q?' has-query':''}`} aria-label="Search products">
+          <ISearch className="sp-search-ico" style={{width:19,height:19}}/>
+          <input
+            type="search" placeholder="Search products, brands or aisles"
+            value={q} autoComplete="off"
+            onChange={e => { setQ(e.target.value); setFresh(false); }}
+          />
+          <button type="button" className="sp-search-clear"
+            aria-label="Clear search"
+            onClick={() => { setQ(''); setFresh(false); }}>
+            <IX style={{width:17,height:17}}/>
+          </button>
+        </label>
+      </section>
 
-        {/* Sort Bar */}
-        <div className="pro-sort-bar">
-          <span className="pro-sort-label">Sort</span>
-          {[['DEFAULT','Default'],['PRICE_LOW','Price ↑'],['PRICE_HIGH','Price ↓'],['NAME','A–Z'],['DISCOUNT','On Sale']].map(([v,l]) => (
-            <button
-              key={v}
-              className={`pro-sort-btn ${sortBy === v ? 'active-sort' : ''}`}
-              onClick={() => setSortBy(v)}
-            >{l}</button>
-          ))}
-          <span className="pro-sort-count">
-            {loading ? '…' : `${displayProducts.length} of ${products.length} products`}
-          </span>
-        </div>
+      {/* demo notice */}
+      {isDemo && (
+        <p className="sp-notice">
+          <IInfo style={{width:15,height:15,color:'var(--ac)'}}/>
+          Showing {DEMO.length} demo products — backend not connected.
+        </p>
+      )}
 
-        {/* ── Product Grid ── */}
-        {loading ? (
-          <div className="pro-loading-grid">
-            {Array.from({ length: 8 }).map((_, i) => <div key={i} className="pro-skeleton-card" />)}
-          </div>
-        ) : displayProducts.length === 0 ? (
-          <div className="pro-empty-state">
-            <div className="pro-empty-icon">{showOnlyOffers ? '🏷️' : searchTerm ? '🔍' : '📦'}</div>
-            <p style={{ color:'#374151', fontSize:15, fontWeight:600 }}>
-              {showOnlyOffers ? 'No offers right now' : searchTerm ? `No results for "${searchTerm}"` : 'No products in this section'}
-            </p>
-            <p style={{ color:'#9ca3af', fontSize:13 }}>Try a different filter or browse all floors</p>
-            <button
-              style={{ padding:'9px 20px',background:'#edfaf3',border:'1.5px solid rgba(0,200,83,0.3)',borderRadius:10,color:'#009624',fontWeight:700,cursor:'pointer',fontSize:13,fontFamily:'Inter,sans-serif' }}
-              onClick={() => { setActiveFloor('ALL'); setActiveCategory(''); setShowOnlyOffers(false); setSearchTerm(''); }}
-            >
-              Show all products
-            </button>
-          </div>
-        ) : (
-          <div className="pro-scroll-grid">
-            {displayProducts.map(p => (
-              <div
-                key={p.id}
-                className={`pro-product-card ${lockedId === p.id ? 'locked-glow' : ''}`}
-                onClick={() => handleProductClick(p.id)}
-              >
-                {p.discount && <div className="yellow-offer-tag">{p.discount}</div>}
+      {/* ── FILTER BAR ── */}
+      <div className="sp-filters">
+        <div className="sp-filters-inner">
 
-                {/* Image / Icon */}
-                <div className="pro-img-wrapper">
-                  {p.image ? (
-                    <img src={p.image} alt={p.name} className="pro-product-img" loading="lazy"
-                      onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }}
-                    />
-                  ) : null}
-                  <div style={{
-                    display: p.image ? 'none' : 'flex',
-                    flexDirection:'column', alignItems:'center', gap:6,
-                    color:'#d1d5db',
-                  }}>
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-                      <line x1="3" y1="6" x2="21" y2="6"/>
-                      <path d="M16 10a4 4 0 01-8 0"/>
-                    </svg>
-                    <span style={{ fontSize:10, color:'#9ca3af', fontFamily:'Inter,sans-serif' }}>{p.category}</span>
-                  </div>
-                </div>
-
-                {/* Body */}
-                <div className="pro-card-body">
-                  {p.brand && <span className="pro-brand-label">{p.brand}</span>}
-                  <h3 className="pro-product-name">{p.name}</h3>
-
-                  <div className="pro-price-container">
-                    <span className="pro-offer-price">₹{Number(p.price).toFixed(2)}</span>
-                    {p.mrp && Number(p.mrp) > Number(p.price) && (
-                      <span className="pro-mrp-strike">₹{Number(p.mrp).toFixed(2)}</span>
-                    )}
-                  </div>
-
-                  {/* Floor + Zone badges */}
-                  <div style={{ display:'flex', gap:5, flexWrap:'wrap' }}>
-                    <span style={{ display:'inline-flex',alignItems:'center',gap:3,padding:'2px 8px',background:'#f3f4f6',border:'1px solid #e5e7eb',borderRadius:999,fontSize:10.5,color:'#6b7280',fontWeight:600 }}>
-                      📍 {p.location}
-                    </span>
-                    <span style={{ display:'inline-flex',alignItems:'center',gap:3,padding:'2px 8px',background:'#f3f4f6',border:'1px solid #e5e7eb',borderRadius:999,fontSize:10.5,color:'#6b7280',fontWeight:600 }}>
-                      🏢 {p.floor}
-                    </span>
-                  </div>
-
-                  {/* Expanded Details */}
-                  {lockedId === p.id && (
-                    <div className="pro-expanded-details">
-                      <div className="detail-line"><span>Stock</span><span className="blue-val">{p.stock} {p.unit}</span></div>
-                      <div className="detail-line"><span>Category</span><span className="blue-val">{p.category}</span></div>
-                      <div className="detail-line"><span>Status</span><span className="status-live">● Available</span></div>
-
-                      {user?.role === 'customer' && !isDemo && (
-                        <button
-                          className="pro-add-cart-btn"
-                          disabled={cartBusy}
-                          onClick={e => addToServerCart(e, p)}
-                        >
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-                            <path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.72a2 2 0 001.99-1.61L23 6H6"/>
-                          </svg>
-                          Add to Cart
-                        </button>
-                      )}
-
-                      <div className="pro-action-row">
-                        <button className="pro-remind-btn" onClick={e => addToQueue(e, p)}>
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
-                            <line x1="3" y1="6" x2="3.01" y2="6"/>
-                          </svg>
-                          Save to List
-                        </button>
-                        <button
-                          className="pro-track-btn"
-                          onClick={e => { e.stopPropagation(); navigate('/tracking', { state: { product: p } }); }}
-                        >
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 010 16c-4.418 0-8-3.582-8-8s3.582-8 8-8z"/>
-                          </svg>
-                          Navigate
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
+          {/* floor segmented control */}
+          <div className="sp-seg" role="group" aria-label="Filter by floor">
+            {[['all','All'],['G','Ground'],['F','First'],['S','Second']].map(([k,l])=>(
+              <button key={k} type="button"
+                className={`sp-seg-btn${floor===k?' active':''}`}
+                aria-pressed={floor===k}
+                onClick={()=>{setFloor(k);setCat('All categories');setFresh(false);}}>
+                {l}
+              </button>
             ))}
           </div>
-        )}
 
-        {/* Cart FAB */}
-        {cartItemCount > 0 && (
-          <button className="sticky-cart-fab" onClick={placeOrder} disabled={cartBusy}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-              <path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.72a2 2 0 001.99-1.61L23 6H6"/>
-            </svg>
-            {cartItemCount} item{cartItemCount !== 1 ? 's' : ''} — Place Order
+          {/* category chips */}
+          <div className="sp-cats" role="group" aria-label="Filter by category">
+            {CATS.map(c=>(
+              <button key={c} type="button"
+                className={`sp-cat-btn${cat===c?' active':''}`}
+                aria-pressed={cat===c}
+                onClick={()=>{setCat(c);setFresh(false);}}>
+                {c}
+              </button>
+            ))}
+          </div>
+
+          {/* sort */}
+          <select className="sp-sort" value={sort}
+            aria-label="Sort products"
+            onChange={e=>{setSort(e.target.value);setFresh(false);}}>
+            <option value="def">Featured</option>
+            <option value="asc">Price: low to high</option>
+            <option value="desc">Price: high to low</option>
+            <option value="az">Name: A to Z</option>
+            <option value="off">Biggest discount</option>
+          </select>
+
+          {/* offers toggle */}
+          <button type="button"
+            className={`sp-offers-btn${sale?' active':''}`}
+            aria-pressed={sale}
+            onClick={()=>{setSale(v=>!v);setFresh(false);}}>
+            <ITag style={{width:15,height:15}}/> Offers only
           </button>
+        </div>
+      </div>
+
+      {/* result count */}
+      <p className="sp-count">
+        Showing {result.length} of {products.length} products
+        {user && <> · <button type="button"
+          style={{border:0,background:'none',color:'var(--ac)',fontWeight:600,cursor:'pointer',padding:'0 4px'}}
+          onClick={()=>setDrawerOpen(true)}>
+          My List ({listIds.length})
+        </button></>}
+      </p>
+
+      {/* ── GRID ── */}
+      <div className={`sp-grid${fresh?' fresh':''}`} aria-live="polite">
+        {result.length === 0 ? (
+          <div className="sp-empty">
+            <b>No products match</b>
+            Try another search, floor or category.
+            <br/>
+            <button type="button" className="sp-empty-btn"
+              onClick={()=>{setQ('');setFloor('all');setCat('All categories');setSale(false);setFresh(false);}}>
+              Clear all filters
+            </button>
+          </div>
+        ) : result.map((p,k) => {
+          const sv = listIds.includes(p.id);
+          const { d: bcPath, w: bcW } = buildBarcode(p.id);
+          return (
+            <div key={p.id} className="sp-wrap" style={{'--k':Math.min(k,16)}}>
+              <div className="sp-card"
+                role="button" tabIndex={0}
+                aria-label={`View ${p.n}`}
+                onClick={() => openDetail(p.id)}
+                onKeyDown={e => e.key==='Enter' && openDetail(p.id)}>
+
+                <div className="sp-stage" style={{'--h':HUE[p.c]||210}}>
+                  {p.d>0 && <span className="sp-rib">−{p.d}%</span>}
+                  <button type="button"
+                    className={`sp-heart${sv?' saved':''}`}
+                    aria-pressed={sv}
+                    aria-label={sv?'Remove from My List':'Save to My List'}
+                    onClick={e=>{e.stopPropagation();toggleList(p.id);}}>
+                    <IHeart style={{width:16,height:16}}/>
+                  </button>
+                  <span className="sp-emoji" aria-hidden="true">{p.e}</span>
+                  <i className="sp-shelf"/>
+                </div>
+
+                <div className="sp-tag">
+                  <small>{es(p.b)}</small>
+                  <h3>{es(p.n)}</h3>
+                  <div className="sp-price">
+                    <b>{rs(p.pr)}</b>
+                    {p.m>0 && <s>{rs(p.m)}</s>}
+                  </div>
+                  <div className="sp-tag-foot">
+                    <svg className="sp-barcode" viewBox={`0 0 ${bcW} 24`}
+                      aria-hidden="true" fill="currentColor"
+                      dangerouslySetInnerHTML={{ __html: bcPath }}/>
+                    <span className="sp-aisle">
+                      {p.a.slice(2)} · {(FL[p.f]||['?','?'])[1]}
+                    </span>
+                  </div>
+                  <button type="button"
+                    className={`sp-add-btn${sv?' in-list':''}`}
+                    onClick={e=>{e.stopPropagation();toggleList(p.id);}}>
+                    {sv
+                      ? <><ICheck style={{width:15,height:15}}/>Saved</>
+                      : <><IList style={{width:15,height:15}}/>Add to My List</>
+                    }
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ── DETAIL OVERLAY ── */}
+      <div className={`sp-detail${dp?' open':''}`}
+        role="dialog" aria-label="Product details"
+        aria-modal={dp?'true':undefined}>
+        {dp && (
+          <>
+            <div className="sp-dtoolbar">
+              <button type="button" className="sp-back" onClick={closeDetail}>
+                <ILeft style={{width:17,height:17}}/><span>All products</span>
+              </button>
+              <div className="sp-pager">
+                <button type="button" aria-label="Previous product"
+                  onClick={()=>goDetail(dix-1)}>
+                  <ILeft style={{width:17,height:17}}/>
+                </button>
+                <span>{dix+1} of {seq.length}</span>
+                <button type="button" aria-label="Next product"
+                  onClick={()=>goDetail(dix+1)}>
+                  <IRight style={{width:17,height:17}}/>
+                </button>
+              </div>
+            </div>
+
+            <div className="sp-dgrid">
+              {/* stage */}
+              <div className="sp-dstage" style={{'--h':HUE[dp.c]||210}}>
+                {dp.d>0 && <span className="sp-rib">−{dp.d}% off</span>}
+                <span className="sp-emoji" aria-hidden="true">{dp.e}</span>
+                <i className="sp-shelf"/>
+                <div className="sp-loc">
+                  Aisle {dp.a}
+                  <small>{(FL[dp.f]||['?'])[0]}</small>
+                </div>
+              </div>
+
+              {/* info */}
+              <DetailInfo p={dp}/>
+            </div>
+          </>
         )}
-      </main>
+      </div>
+
+      {/* ── DRAWER (My List) ── */}
+      <div className={`sp-scrim${drawerOpen?' open':''}`}
+        onClick={()=>setDrawerOpen(false)}/>
+      <aside className={`sp-drawer${drawerOpen?' open':''}`}
+        aria-label="My List">
+        <DrawerContent/>
+      </aside>
+
+      {/* ── TOAST ── */}
+      <div className={`sp-toast${toastShow?' show':''}`} role="status">
+        {toastMsg}
+      </div>
+
     </div>
   );
-};
-
-export default StockPage;
+}
